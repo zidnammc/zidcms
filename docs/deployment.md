@@ -16,7 +16,8 @@
 | admin   | `apps/admin`   | all admin variables in `.env.example`; `PUBLISH_TARGET=github` |
 | web     | `apps/web`     | `SITE_URL`                                                     |
 
-- `apps/admin/vercel.json` skips admin builds when only content paths changed (`ignoreCommand`) and enables Git deployments for `main` and `dev` only.
+- `ignoreCommand` in both `vercel.json` files compares against `VERCEL_GIT_PREVIOUS_SHA` with repo-root pathspecs (`:/apps/admin`, …): admin skips content-only commits, web skips admin-only commits, and the first deployment always builds. Git deployments are enabled for `main` and `dev` only.
+- `pnpm exec tsx scripts/vercel-env-sync.ts dev` pushes the variables from `.local/secrets/dev.env` to both projects via the Vercel CLI without printing values.
 - `apps/web/vercel.json` sets security headers, `zidcms-version.json` no-cache, and immutable caching for `/media/*`.
 - Deployment budget (Hobby, 100/day, 1 concurrent build): batch code pushes; ≤ 40 code deploys + ≤ 30 publishes + 30 reserve per day.
 
