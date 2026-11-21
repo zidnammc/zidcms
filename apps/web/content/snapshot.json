@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 9,
-  "basedOnVersion": null,
-  "generatedAt": "2026-11-21T17:04:07.845Z",
+  "version": 10,
+  "basedOnVersion": 7,
+  "generatedAt": "2026-11-21T17:05:22.088Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
@@ -19,10 +19,10 @@
       "slug": "e2e-mwqnk4inbtf-artikel-demo",
       "title": "E2E mwqnk4inbtf artikel demo",
       "excerpt": "Ringkasan dari tab pertama.",
-      "markdown": "# Halo\n\nIsi **ketiga** (build gagal) dari uji E2E.\n![](/media/532292c9add21fe577fb43e1f64337977993d0aee49246c06c5d76b821113d94.png)\n",
+      "markdown": "# Halo\n\nIsi **pertama** dari uji E2E.\n![](/media/532292c9add21fe577fb43e1f64337977993d0aee49246c06c5d76b821113d94.png)\n",
       "authorName": "",
       "publishedAt": "2026-11-21T17:00:25.530Z",
-      "updatedAt": "2026-11-21T17:03:35.439Z",
+      "updatedAt": "2026-11-21T17:00:25.530Z",
       "category": null,
       "tags": [],
       "cover": null,
@@ -59,5 +59,5 @@
       "mime": "image/png"
     }
   ],
-  "checksum": "sha256:8d947adfdd7a6ac911ee85be5befc6777521351f478e40418bdeb66ec1e25df7"
+  "checksum": "sha256:027ef87c33b2a4c3602f8be98b1cb1af575a604c0ad51a51573f3f7aa4084e3d"
 }
