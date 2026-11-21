@@ -461,7 +461,7 @@ Selamat, ZidCMS Anda sudah online dengan biaya **Rp0**.
 
 ### 3.11 Menambah admin lain
 
-Di Vercel proyek admin: ubah `ADMIN_EMAILS` menjadi `email-anda@gmail.com,email-teman@gmail.com` → **Redeploy**. Tambahkan juga email teman di **Test users** Google Cloud (3.8).
+Di Vercel proyek admin: ubah `ADMIN_EMAILS` menjadi `email-anda@example.com,email-teman@example.com` → **Redeploy**. Tambahkan juga email teman di **Test users** Google Cloud (3.8).
 
 ---
 

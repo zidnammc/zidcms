@@ -142,10 +142,10 @@ describe('gas-client', () => {
 describe('log redaction', () => {
   it('redacts secret-like keys and email local parts', () => {
     const out = JSON.stringify(
-      redact({ token: 'abc', nested: { GAS_HMAC_SECRET: 'x' }, actor: 'owner.real@gmail.com' }),
+      redact({ token: 'abc', nested: { GAS_HMAC_SECRET: 'x' }, actor: 'owner.real@example.org' }),
     );
     expect(out).not.toContain('abc');
     expect(out).not.toContain('owner.real@');
-    expect(out).toContain('o***@gmail.com');
+    expect(out).toContain('o***@example.org');
   });
 });
