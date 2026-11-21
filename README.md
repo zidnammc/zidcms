@@ -12,7 +12,7 @@ ZidCMS is an open-source, spreadsheet-native headless CMS:
 
 Readers never trigger Apps Script, Sheets, Drive, or any serverless function. Content becomes public only through a verifiable publish job: `queued → collecting → committing → deploying → verifying → live`.
 
-> **Status: experimental (v0.1.0 in progress).** This is a non-commercial open-source experiment built during a seven-day AI-executed sprint — not a WordPress replacement. See [`docs/limitations.md`](docs/limitations.md).
+> **Status: early stage.** v0.1.0 is an early-stage release and ZidCMS may be developed further. It is a non-commercial open-source experiment built during a seven-day AI-executed sprint — not a WordPress replacement. See [`docs/limitations.md`](docs/limitations.md) and the [changelog](CHANGELOG.md).
 
 ```text
 Admin browser ──► apps/admin (Next.js) ──HMAC RPC──► services/apps-script ──► Sheets / Drive
@@ -49,13 +49,17 @@ Production setup (Google account, Apps Script, Vercel Hobby, GitHub PAT): [`docs
 
 Set `ADMIN_EMAILS` to your own Google account. Never commit it.
 
+## Environments
+
+The reference deployment has two environments: **dev/staging** builds from `main`, **prod** builds from `release`; each has its own Google resources, secrets, Vercel projects, and content folder (`apps/web/content/<env>/`). See [`docs/deployment.md`](docs/deployment.md) and ADR-0011.
+
 ## Quality gates
 
 `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:web && pnpm scan:secrets` — the same steps run in [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Documentation
 
-[Beginner guide](docs/beginner-guide.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
+[Beginner guide](docs/beginner-guide.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/) · [Changelog](CHANGELOG.md)
 
 References such as "plan §21" in the docs point to the project's internal execution plan, which is not published; the ADRs in `docs/decisions/` record every decision that matters for users and contributors.
 
@@ -65,7 +69,7 @@ The reference deployment runs on Vercel Hobby, GitHub Free, and a free Google ac
 
 ## Acknowledgments
 
-ZidCMS was developed during a seven-day sprint using Devin AI Max access provided by Poke. _(Wording to be confirmed by the owner before release.)_
+ZidCMS was developed during a seven-day sprint using Devin AI Max access provided by Poke.
 
 ## License
 

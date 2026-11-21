@@ -4,29 +4,29 @@
 
 All routes are JSON, require an admin session (`401 UNAUTHENTICATED` otherwise) and, for mutations, `Origin` equal to `ADMIN_URL` (`403 FORBIDDEN`). Error body: `{ "error": { "code", "message", "details?", "requestId" } }`.
 
-| Method       | Route                                  | Body / query                          | Success                                                      |
-| ------------ | -------------------------------------- | ------------------------------------- | ------------------------------------------------------------ |
-| GET          | `/api/posts`                           | `status=all                           | draft                                                        | published | archived | trash`, `q`, `cursor`, `limit≤50` | `{ items, total, counts, nextCursor }` (no bodies) |
-| POST         | `/api/posts`                           | post fields                           | 201 item (status `draft`)                                    |
-| GET          | `/api/posts/:id`                       | —                                     | item                                                         |
-| PATCH        | `/api/posts/:id`                       | `{ expected_version, patch }`         | `{ item, publishJob }` (job when the item is published)      |
-| POST         | `/api/posts/:id/status`                | `{ expected_version, to }`            | `{ item, publishJob }`                                       |
-| DELETE       | `/api/posts/:id`                       | `{ expected_version }`                | `{ item, publishJob }`                                       |
-| POST         | `/api/posts/:id/restore`               | `{ expected_version }`                | `{ item, publishJob: null }`                                 |
-| GET          | `/api/posts/:id/revisions`             | —                                     | revision summaries                                           |
-| *            | `/api/pages[...]`                      | same as posts                         |                                                              |
-| GET/POST     | `/api/categories`, `/api/tags`         | `{ name, slug?, description? }`       | list / 201 item                                              |
-| PATCH/DELETE | `/api/categories/:id`, `/api/tags/:id` | `{ expected_version, patch? }`        | item                                                         |
-| GET          | `/api/media`                           | —                                     | `{ items }`                                                  |
-| POST         | `/api/media`                           | multipart `file`, `alt_text`          | 201 `{ item, deduplicated }`                                 |
-| PATCH        | `/api/media/:id`                       | `{ expected_version, alt_text }`      | item                                                         |
-| GET          | `/api/media/:id/preview`               | —                                     | image bytes (admin only)                                     |
-| GET/PATCH    | `/api/settings`                        | `{ patch }`                           | `{ settings, updated_at }`                                   |
-| GET          | `/api/publish`                         | —                                     | `{ jobs, snapshots }`                                        |
-| POST         | `/api/publish`                         | `{ idempotency_key }`                 | 202 `{ job, coalesced, existing }`                           |
-| GET          | `/api/publish/:jobId`                  | —                                     | `{ job, followUp, warnings }` — advances the job by one step |
-| POST         | `/api/publish/rollback`                | `{ target_version, idempotency_key }` | 202 `{ job }`                                                |
-| GET          | `/api/health`                          | —                                     | admin + GAS health                                           |
+| Method       | Route                                  | Body / query                                                               | Success                                                      |
+| ------------ | -------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| GET          | `/api/posts`                           | `status=all\|draft\|published\|archived\|trash`, `q`, `cursor`, `limit≤50` | `{ items, total, counts, nextCursor }` (no bodies)           |
+| POST         | `/api/posts`                           | post fields                                                                | 201 item (status `draft`)                                    |
+| GET          | `/api/posts/:id`                       | —                                                                          | item                                                         |
+| PATCH        | `/api/posts/:id`                       | `{ expected_version, patch }`                                              | `{ item, publishJob }` (job when the item is published)      |
+| POST         | `/api/posts/:id/status`                | `{ expected_version, to }`                                                 | `{ item, publishJob }`                                       |
+| DELETE       | `/api/posts/:id`                       | `{ expected_version }`                                                     | `{ item, publishJob }`                                       |
+| POST         | `/api/posts/:id/restore`               | `{ expected_version }`                                                     | `{ item, publishJob: null }`                                 |
+| GET          | `/api/posts/:id/revisions`             | —                                                                          | revision summaries                                           |
+| *            | `/api/pages[...]`                      | same as posts                                                              |                                                              |
+| GET/POST     | `/api/categories`, `/api/tags`         | `{ name, slug?, description? }`                                            | list / 201 item                                              |
+| PATCH/DELETE | `/api/categories/:id`, `/api/tags/:id` | `{ expected_version, patch? }`                                             | item                                                         |
+| GET          | `/api/media`                           | —                                                                          | `{ items }`                                                  |
+| POST         | `/api/media`                           | multipart `file`, `alt_text`                                               | 201 `{ item, deduplicated }`                                 |
+| PATCH        | `/api/media/:id`                       | `{ expected_version, alt_text }`                                           | item                                                         |
+| GET          | `/api/media/:id/preview`               | —                                                                          | image bytes (admin only)                                     |
+| GET/PATCH    | `/api/settings`                        | `{ patch }`                                                                | `{ settings, updated_at }`                                   |
+| GET          | `/api/publish`                         | —                                                                          | `{ jobs, snapshots }`                                        |
+| POST         | `/api/publish`                         | `{ idempotency_key }`                                                      | 202 `{ job, coalesced, existing }`                           |
+| GET          | `/api/publish/:jobId`                  | —                                                                          | `{ job, followUp, warnings }` — advances the job by one step |
+| POST         | `/api/publish/rollback`                | `{ target_version, idempotency_key }`                                      | 202 `{ job }`                                                |
+| GET          | `/api/health`                          | —                                                                          | admin + GAS health                                           |
 
 ### Fields
 
@@ -55,11 +55,11 @@ Transport: `POST <GAS_WEBAPP_URL>` with body `{ "e": "<envelope JSON>", "s": "<h
 
 | Action                                                          | Lock                                | Payload → result                                                                                                                                                                                                     |
 | --------------------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `system.health`                                                 | no                                  | → env, schema_version, row counts, invalid rows                                                                                                                                                                      |
-| `system.setup`                                                  | yes                                 | → created sheets/columns; `FORBIDDEN` in prod after first run                                                                                                                                                        |
+| `system.health`                                                 | no                                  | → env, schema_version, installed_at, row counts, invalid rows, media folder flag (reads every sheet)                                                                                                                 |
+| `system.setup`                                                  | yes                                 | → created sheets/columns; `FORBIDDEN` in prod once installed with a media folder                                                                                                                                     |
 | `system.summary`                                                | no                                  | → counts, brief item list, active/last job, live snapshot, settings/taxonomy timestamps                                                                                                                              |
 | `posts.*`, `pages.*`                                            | list/get/revisions: no; others: yes | `list {status,q,cursor,limit}` · `get {id}` · `create {fields}` · `update {id, expected_version, patch}` · `setStatus {id, expected_version, to}` · `softDelete`/`restore {id, expected_version}` · `revisions {id}` |
-| `taxonomy.list/create/update/softDelete`                        | list: no                            | `{ kind: category                                                                                                                                                                                                    | tag, … }` |
+| `taxonomy.list/create/update/softDelete`                        | list: no                            | `{ kind: category\|tag, … }`                                                                                                                                                                                         |
 | `media.upload`                                                  | yes                                 | `{ filename, mime, sha256, base64, alt_text }` → `{ item, deduplicated }`                                                                                                                                            |
 | `media.list` / `media.update` / `media.getBytes`                | no / yes / no                       |                                                                                                                                                                                                                      |
 | `settings.get` / `settings.update`                              | no / yes                            | `{ patch }`                                                                                                                                                                                                          |
@@ -72,4 +72,4 @@ Transport: `POST <GAS_WEBAPP_URL>` with body `{ "e": "<envelope JSON>", "s": "<h
 
 ## Snapshot format
 
-`apps/web/content/<env>/snapshot.json` (`zidcms.snapshot/1`) and `apps/web/content/<env>/zidcms-version.json` (served as `/zidcms-version.json`; ADR-0011) — see plan §14 and `packages/core/src/snapshot.ts`. `checksum = "sha256:" + sha256(canonical JSON without version/basedOnVersion/generatedAt/checksum)`.
+`apps/web/content/<env>/snapshot.json` (`zidcms.snapshot/1`) and `apps/web/content/<env>/zidcms-version.json` (served as `/zidcms-version.json`; copied to the build paths by `apps/web/scripts/prepare-content.mjs`; ADR-0011) — see plan §14 and `packages/core/src/snapshot.ts`. `checksum = "sha256:" + sha256(canonical JSON without version/basedOnVersion/generatedAt/checksum)`.

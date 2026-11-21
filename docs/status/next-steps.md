@@ -1,34 +1,35 @@
-## ZidCMS — handoff and next steps (2026-11-21, end of session 1)
+## ZidCMS — handoff and next steps (2026-11-21, end of session 2)
 
 ### Where things stand
 
-- Day 0 complete for **dev** (`docs/status/day-0.md`). Day 1–4 scope implemented and unit/contract-tested (`docs/status/day-1.md`).
-- Live dev stack: admin <https://zidcms-admin.vercel.app>, public site <https://zidcms-web.vercel.app>, repo <https://github.com/zidnammc/zidcms>. Owner published v1 successfully (PoC-2 pass).
-- PoC-1 (HMAC RPC) and PoC-4 (Sheets round trip) pass against real Apps Script; PoC-3 (media) not yet run.
-- Tests: core 73, apps-script 24, admin 72. CI green on `main`.
+- **v0.1.0 is an early-stage pre-release.** P0 + P1 shipped; the project may be developed further. Evidence: `docs/status/day-2.md`, `docs/status/release-v0.1.0.md`; lessons and roadmap: `docs/status/retrospective.md`.
+- Repo <https://github.com/zidnammc/zidcms>.
+- **Dev/staging** (branch `main`, content `apps/web/content/dev/`): admin <https://zidcms-admin.vercel.app>, site <https://zidcms-web.vercel.app>.
+- **Prod** (branch `release`, content `apps/web/content/prod/`): admin <https://zidcms-prod-admin.vercel.app>, site <https://zidcms-prod-web.vercel.app>. Topology: ADR-0011.
+- Passed: CI on `main`; integration suite vs. the real dev Apps Script (16 pass, 2 skip); staging E2E demo; `pnpm check:deployed` on dev and prod; prod TC-GAS-01…08 and prod smoke + rollback; fresh-clone local dry run.
+- The backend benchmark ran up to 550 posts. The 500-item publish and the cleanup were still pending at handoff (raw JSON in `tests/load/results/`, summary in `docs/benchmarks.md`). No CDN load test is allowed on Vercel Hobby (ADR-0010).
 
-### Next steps (agreed order)
+### How to resume
 
-**Stage 1 — complete staging evidence**
+1. Read `AGENTS.md`, then this file and the retrospective.
+2. Private plan: `.local/ZIDCMS_EXECUTION_PLAN.md` (no longer in the repo). Env files: `.local/secrets/dev.env`, `.local/secrets/prod.env` (never print values).
+3. Apps Script: dev uses `services/apps-script/.clasp.json`, prod uses `services/apps-script/.clasp.prod.json` (`clasp -P .clasp.prod.json …`; prod deploys need owner approval).
+4. Changes land on `main` first. Promote with `main` → `release` (owner approval; `docs/deployment.md` §3), then run `check:deployed` / `smoke:deployed` with the prod env file. Never merge `release` into `main`.
 
-- Owner: PoC-3 (upload an image in _Pustaka Media_, insert into a post, _Perbarui_, confirm it renders on the site); sign in with a non-allowlisted Google account and confirm "Akses ditolak".
-- Executor: Playwright E2E for the demo scenario (TC-E2E-01) on the local stack + `e2e.yml` (`workflow_dispatch`); integration suite against the dev Apps Script (TC-CONC-01/02, TC-DATA, TC-GAS) + `integration.yml`; a web-project build-failure switch to demonstrate TC-PUB-07 on staging without breaking code.
+### Open owner items
 
-**Stage 2 — acceptance run on staging** (plan §24.1, demo §24.3) with evidence in `docs/status/`.
-
-**Stage 3 — benchmarks + fresh-account setup dry run** (ideally by another person following `docs/beginner-guide.md`).
-
-**Stage 4 — release:** prod resources (separate sheet/script/secrets/deployment, owner approval), prod rollback test, tag `v0.1.0`, release notes, retrospective.
-
-### Open owner decisions
-
-1. Benchmark ceiling (default: ≤ 100 concurrent users, ≤ 5 GB transfer/month).
-2. Storing dev secrets as GitHub Actions environment secrets with a required reviewer (needed for `integration.yml`).
-3. When to set up prod.
-4. Final wording of the Poke acknowledgment in the README.
+1. Manual sign-in with a non-allowlisted Google account → expect "Akses ditolak".
+2. Add the prod admin redirect URI to the OAuth client (until then, Google sign-in on the prod admin does not work).
+3. Screenshot of this month's Vercel usage (without private IDs).
+4. Fresh-account setup by another person following `docs/beginner-guide.md`.
+5. Decide whether to purge the execution plan from old Git history (destructive; not done).
 
 ### Reminders
 
-- Enable 2FA on the Vercel and Google accounts.
-- The dev GitHub PAT expires 90 days after 2026-11-21; renew, update `.local/secrets/dev.env`, run `pnpm exec tsx scripts/vercel-env-sync.ts dev`.
-- Keep a password-manager copy of `.local/secrets/dev.env`.
+- The GitHub PAT used by dev and prod expires 90 days after 2026-11-21. Renew it before **2027-02-19**, update both env files and run `pnpm exec tsx scripts/vercel-env-sync.ts dev` and `… prod`.
+- Enable 2FA on the Vercel, Google and GitHub accounts.
+- Keep a password-manager copy of `.local/secrets/*.env`.
+
+### Roadmap
+
+P2 backlog in recommended order (dual-secret HMAC rotation → cheaper health check → Revisions/AuditLog pruning → published-revision pointer → autosave → scheduled publishing → RSS → search): see `docs/status/retrospective.md`.
