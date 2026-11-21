@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 12,
-  "basedOnVersion": null,
-  "generatedAt": "2026-11-21T17:18:05.577Z",
+  "version": 13,
+  "basedOnVersion": 10,
+  "generatedAt": "2026-11-21T17:44:19.508Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
@@ -15,49 +15,16 @@
   },
   "posts": [
     {
-      "id": "0426fcfa-9e32-4a36-a018-09527067a86e",
-      "slug": "menulis-dengan-markdown",
-      "title": "Menulis dengan Markdown",
-      "excerpt": "ZidCMS mendukung CommonMark + GFM: Fitur Didukung ------ Tabel ya Coret ya Daftar tugas ya [x] Tulis draf [ ] Terbitkan HTML mentah seperti selalu di-escape.",
-      "markdown": "ZidCMS mendukung CommonMark + GFM:\n\n| Fitur | Didukung |\n|---|---|\n| Tabel | ya |\n| ~~Coret~~ | ya |\n| Daftar tugas | ya |\n\n- [x] Tulis draf\n- [ ] Terbitkan\n\nHTML mentah seperti `<script>` selalu di-escape.",
+      "id": "02666cb7-818c-48c9-acc5-eb93bd572cea",
+      "slug": "e2e-mwqnk4inbtf-artikel-demo",
+      "title": "E2E mwqnk4inbtf artikel demo",
+      "excerpt": "Ringkasan dari tab pertama.",
+      "markdown": "# Halo\n\nIsi **pertama** dari uji E2E.\n![](/media/532292c9add21fe577fb43e1f64337977993d0aee49246c06c5d76b821113d94.png)\n",
       "authorName": "",
-      "publishedAt": "2026-11-21T17:17:03.637Z",
-      "updatedAt": "2026-11-21T17:17:03.637Z",
-      "category": {
-        "slug": "panduan",
-        "name": "Panduan"
-      },
-      "tags": [
-        {
-          "slug": "google-sheets",
-          "name": "Google Sheets"
-        }
-      ],
-      "cover": null,
-      "seo": {
-        "title": "",
-        "description": ""
-      }
-    },
-    {
-      "id": "4819d431-bb5e-4b53-a326-743867be2425",
-      "slug": "selamat-datang-di-zidcms",
-      "title": "Selamat datang di ZidCMS",
-      "excerpt": "Pengantar singkat tentang alur Sheets → Git → CDN.",
-      "markdown": "ZidCMS menyimpan konten di **Google Sheets** dan menayangkannya sebagai situs statis.\n\n## Cara kerja\n\n1. Tulis artikel di dasbor admin.\n2. Klik **Terbitkan** — job publikasi membuat snapshot JSON.\n3. Snapshot di-commit ke Git, lalu Vercel membangun ulang situs.\n\n> Pembaca tidak pernah menyentuh Sheets, Apps Script, atau fungsi serverless.",
-      "authorName": "",
-      "publishedAt": "2026-11-21T17:16:54.897Z",
-      "updatedAt": "2026-11-21T17:16:54.897Z",
-      "category": {
-        "slug": "panduan",
-        "name": "Panduan"
-      },
-      "tags": [
-        {
-          "slug": "google-sheets",
-          "name": "Google Sheets"
-        }
-      ],
+      "publishedAt": "2026-11-21T17:00:25.530Z",
+      "updatedAt": "2026-11-21T17:00:25.530Z",
+      "category": null,
+      "tags": [],
       "cover": null,
       "seo": {
         "title": "",
@@ -82,34 +49,15 @@
       }
     }
   ],
-  "pages": [
+  "pages": [],
+  "categories": [],
+  "tags": [],
+  "media": [
     {
-      "id": "23584751-4f35-48f2-85c6-55d1325f814c",
-      "slug": "tentang",
-      "title": "Tentang",
-      "markdown": "Situs contoh yang dibangun dengan ZidCMS — CMS open-source berbasis spreadsheet.",
-      "navOrder": 1,
-      "updatedAt": "2026-11-21T17:17:12.390Z",
-      "seo": {
-        "title": "",
-        "description": ""
-      }
+      "sha256": "532292c9add21fe577fb43e1f64337977993d0aee49246c06c5d76b821113d94",
+      "path": "/media/532292c9add21fe577fb43e1f64337977993d0aee49246c06c5d76b821113d94.png",
+      "mime": "image/png"
     }
   ],
-  "categories": [
-    {
-      "slug": "panduan",
-      "name": "Panduan",
-      "description": "Cara memakai ZidCMS."
-    }
-  ],
-  "tags": [
-    {
-      "slug": "google-sheets",
-      "name": "Google Sheets",
-      "description": ""
-    }
-  ],
-  "media": [],
-  "checksum": "sha256:661206e6a3808fde78ba810344039e7b8a49f54076ecebc06f85ea5737013011"
+  "checksum": "sha256:027ef87c33b2a4c3602f8be98b1cb1af575a604c0ad51a51573f3f7aa4084e3d"
 }
