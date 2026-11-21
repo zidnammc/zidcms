@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { encode } from '@auth/core/jwt';
+import { type AdminApi, adminApi, waitForJob } from '../../scripts/lib/admin';
 import { attempt, type Outcome } from '../../scripts/lib/gas-checks';
 import { call } from '../../scripts/lib/rpc';
 
@@ -212,23 +212,7 @@ async function contention() {
   save({ levels });
 }
 
-async function adminSession() {
-  const admin = (process.env.ADMIN_URL ?? '').replace(/\/+$/, '');
-  const email = (process.env.ADMIN_EMAILS ?? '').split(',')[0]?.trim() ?? '';
-  const secret = process.env.AUTH_SECRET ?? '';
-  if (!admin || !email || secret.length < 32) throw new Error('ADMIN_URL, ADMIN_EMAILS and AUTH_SECRET are required');
-  const name = `${admin.startsWith('https:') ? '__Secure-' : ''}authjs.session-token`;
-  const cookie = `${name}=${await encode({ token: { name: email, email, sub: email }, secret, salt: name, maxAge: 3600 })}`;
-  return async <T>(method: string, path: string, data?: unknown): Promise<T> => {
-    const res = await fetch(`${admin}${path}`, {
-      method,
-      headers: { cookie, origin: admin, ...(data ? { 'content-type': 'application/json' } : {}) },
-      body: data ? JSON.stringify(data) : undefined,
-    });
-    if (!res.ok) throw new Error(`${method} ${path} → ${res.status} ${(await res.text()).slice(0, 200)}`);
-    return (await res.json()) as T;
-  };
-}
+const adminSession = adminApi;
 
 async function setPublished(want: Set<string>, posts: Summary[]) {
   const changes = posts.filter((p) => (p.status === 'published') !== want.has(p.id));
@@ -243,33 +227,14 @@ async function setPublished(want: Set<string>, posts: Summary[]) {
   });
 }
 
-async function runPublish(api: Awaited<ReturnType<typeof adminSession>>, rollbackTo?: number) {
-  const t0 = Date.now();
+async function runPublish(api: AdminApi, rollbackTo?: number) {
   const { job } = await api<{ job: { id: string } }>(
     'POST',
     rollbackTo ? '/api/publish/rollback' : '/api/publish',
     rollbackTo ? { idempotency_key: randomUUID(), target_version: rollbackTo } : { idempotency_key: randomUUID() },
   );
-  const timeline: { state: string; atMs: number }[] = [];
-  for (;;) {
-    const { job: j } = await api<{
-      job: {
-        state: string;
-        snapshot_version: number;
-        git_commit_sha: string | null;
-        error_code: string | null;
-        deploy_detail: string;
-      };
-    }>('GET', `/api/publish/${job.id}`);
-    if (timeline.at(-1)?.state !== j.state) {
-      timeline.push({ state: j.state, atMs: Date.now() - t0 });
-      console.log(`  ${((Date.now() - t0) / 1000).toFixed(1)} s ${j.state} ${j.deploy_detail ?? ''}`);
-    }
-    if (j.state === 'live' || j.state === 'failed')
-      return { jobId: job.id, final: j, timeline, totalMs: Date.now() - t0 };
-    if (Date.now() - t0 > 20 * 60_000) throw new Error('publish did not finish in 20 min');
-    await new Promise((r) => setTimeout(r, 3000));
-  }
+  const run = await waitForJob(api, job.id, console.log);
+  return { jobId: job.id, final: run.job, timeline: run.timeline, totalMs: run.totalMs };
 }
 
 async function commitFacts(sha: string | null) {

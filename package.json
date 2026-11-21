@@ -27,6 +27,7 @@
     "test:e2e": "playwright test",
     "build-switch": "tsx scripts/staging-build-switch.ts",
     "check:deployed": "tsx scripts/check-deployed.ts",
+    "smoke:deployed": "tsx scripts/smoke-deployed.ts",
     "smoke:local": "tsx scripts/smoke-local.ts",
     "check:web": "tsx scripts/check-web-output.ts",
     "init:local": "tsx scripts/init-local-env.ts"
