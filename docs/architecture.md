@@ -31,7 +31,7 @@
 | `@zidcms/core` | Types, sheet schema (`SHEET_COLUMNS`), cell codec (formula escape), validators, slugs, status transitions, RPC envelope/verification, snapshot builder + checksum, live-state, Markdown renderer, pure sha256 | `packages/core/src/*`                                                    |
 | Apps Script    | The only component touching Sheets/Drive. Dispatcher verifies the RPC, runs an action (under the script lock for writes), writes revision + audit rows                                                        | `services/apps-script/src/dispatcher.ts`, `actions/*`, `gas/adapters.ts` |
 | Admin          | Auth, HTTP API, server-rendered screens, publish orchestration                                                                                                                                                | `apps/admin/lib/*`, `apps/admin/app/*`                                   |
-| Public site    | Static HTML generated from `content/<env>/snapshot.json`                                                                                                                                                            | `apps/web/*`                                                             |
+| Public site    | Static HTML generated from `content/<env>/snapshot.json`                                                                                                                                                      | `apps/web/*`                                                             |
 
 ## Request flows
 
