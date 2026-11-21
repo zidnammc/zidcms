@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 1,
+  "version": 2,
   "basedOnVersion": null,
-  "generatedAt": "2026-11-21T15:48:04.271Z",
+  "generatedAt": "2026-11-21T16:39:38.733Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
@@ -14,6 +14,23 @@
     "allowExternalImages": false
   },
   "posts": [
+    {
+      "id": "037c3722-1806-4669-bee5-fdfe737694cb",
+      "slug": "e2e-mwqmtkmjt6h-artikel-demo",
+      "title": "E2E mwqmtkmjt6h artikel demo",
+      "excerpt": "Halo Isi pertama dari uji E2E.",
+      "markdown": "# Halo\n\nIsi **pertama** dari uji E2E.\n![](/media/537433f960d28788f7121571db02af09f71625b626548f6131c45a3f46d7f499.png)\n",
+      "authorName": "",
+      "publishedAt": "2026-11-21T16:39:13.188Z",
+      "updatedAt": "2026-11-21T16:39:13.188Z",
+      "category": null,
+      "tags": [],
+      "cover": null,
+      "seo": {
+        "title": "",
+        "description": ""
+      }
+    },
     {
       "id": "e76f8175-0eb8-4a05-b7a3-0743e2c74d52",
       "slug": "tes-satu-dua",
@@ -35,6 +52,12 @@
   "pages": [],
   "categories": [],
   "tags": [],
-  "media": [],
-  "checksum": "sha256:ceac63d9c33f131a0d592d0ce88b2bf897bd0e5a6eb57505d50fc3300412a2e5"
+  "media": [
+    {
+      "sha256": "537433f960d28788f7121571db02af09f71625b626548f6131c45a3f46d7f499",
+      "path": "/media/537433f960d28788f7121571db02af09f71625b626548f6131c45a3f46d7f499.png",
+      "mime": "image/png"
+    }
+  ],
+  "checksum": "sha256:72b4285f0a8073be7072953ab67f5fee0523123963f063e6e785abf896cbe0a6"
 }
