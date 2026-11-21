@@ -31,6 +31,8 @@ Admin browser ──► apps/admin (Next.js) ──HMAC RPC──► services/ap
 | `scripts`              | setup, seed, smoke test, PoCs, secret scan, static-output check                                                                                                                      |
 | `docs`                 | architecture, API, security, setup, deployment, operations, limitations, benchmarks, ADRs, daily status                                                                              |
 
+> **Pemula?** Baca [Panduan ZidCMS untuk Pemula](docs/panduan-pemula.md) (Bahasa Indonesia): cara memakai dasbor, mencoba di komputer sendiri, dan memasang online langkah demi langkah.
+
 ## Quick start (local, no Google/GitHub/Vercel account needed)
 
 ```bash
@@ -53,7 +55,7 @@ Set `ADMIN_EMAILS` to your own Google account. Never commit it.
 
 ## Documentation
 
-[Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
+[Panduan pemula (ID)](docs/panduan-pemula.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
 
 ## Hosting note
 
