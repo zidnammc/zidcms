@@ -17,7 +17,7 @@ Readers never trigger Apps Script, Sheets, Drive, or any serverless function. Co
 ```text
 Admin browser ──► apps/admin (Next.js) ──HMAC RPC──► services/apps-script ──► Sheets / Drive
                          │
-                         └── GitHub Git Data API ──► apps/web/content/snapshot.json ──► Vercel static build ──► Readers
+                         └── GitHub Git Data API ──► apps/web/content/<env>/       ──► Vercel static build ──► Readers
 ```
 
 ## Repository layout
@@ -27,7 +27,7 @@ Admin browser ──► apps/admin (Next.js) ──HMAC RPC──► services/ap
 | `packages/core`        | Shared, framework-free domain logic: types, sheet schema + codec, validators, slugs, status transitions, RPC envelope + verification, snapshot builder + checksum, Markdown renderer |
 | `services/apps-script` | GAS dispatcher, actions, GAS adapters, in-memory adapters, local GAS emulator, esbuild bundle                                                                                        |
 | `apps/admin`           | Admin dashboard (Auth.js + allowlist, HTTP API, publish orchestrator, UI in Bahasa Indonesia)                                                                                        |
-| `apps/web`             | Static public site generated from `content/snapshot.json`                                                                                                                            |
+| `apps/web`             | Static public site generated from `content/<env>/snapshot.json`                                                                                                                      |
 | `scripts`              | setup, seed, smoke test, PoCs, secret scan, static-output check                                                                                                                      |
 | `docs`                 | architecture, API, security, setup, deployment, operations, limitations, benchmarks, ADRs, daily status                                                                              |
 

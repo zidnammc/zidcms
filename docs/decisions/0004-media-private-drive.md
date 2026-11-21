@@ -9,5 +9,5 @@
 - Deduplication by sha256 among non-deleted media.
 - Width/height parsed cheaply from headers (PNG, GIF, WebP VP8/VP8L/VP8X, JPEG SOF).
 - ZidCMS never changes Drive sharing. `system.setup` creates a private folder `ZidCMS Media (<env>)` when `MEDIA_FOLDER_ID` is empty — `DriveApp` requires the full `drive` scope (verified 2026-11-21, see ADR-0006).
-- Publish copies exactly the referenced set to `apps/web/public/media/<sha256>.<ext>`; unreferenced files are deleted in the same commit. Media paths use the full sha256 (the prototype used a 16-char prefix).
+- Publish copies exactly the referenced set to `apps/web/content/<env>/media/<sha256>.<ext>` (served as `/media/…`, ADR-0011); unreferenced files are deleted in the same commit. Media paths use the full sha256 (the prototype used a 16-char prefix).
 - Admin previews stream bytes through `GET /api/media/:id/preview` (admin-only, `private` cache, sandbox CSP).

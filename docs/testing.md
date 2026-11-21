@@ -28,5 +28,5 @@ E2E_TARGET=staging pnpm test:e2e                                 # deployed dev 
 ## Local stack notes
 
 - `pnpm test:e2e` starts the emulator, admin and web dev servers if they are not running (`reuseExistingServer`).
-- Local publishing writes `apps/web/content/snapshot.json`, `apps/web/public/zidcms-version.json` and `apps/web/public/media/*`. Restore the committed versions afterwards with `git checkout -- apps/web/content apps/web/public/zidcms-version.json` and delete stray files in `apps/web/public/media/` (never commit them).
+- Local publishing writes the gitignored build paths `apps/web/content/snapshot.json`, `apps/web/public/zidcms-version.json` and `apps/web/public/media/*`; `pnpm reset:content` returns them to the empty snapshot.
 - Under `next dev` the public site answers unknown static params with HTTP 500 instead of the exported 404 page; the local E2E therefore only asserts "not 200 and not containing the title", the staging E2E asserts 404.

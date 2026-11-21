@@ -13,7 +13,7 @@ export function snapshotStore(): SnapshotStore {
   if (cachedStore) return cachedStore;
   cachedStore =
     env.publishTarget() === 'local'
-      ? new LocalStore(process.env.LOCAL_REPO_ROOT ?? resolve(process.cwd(), '../..'), env.contentRoot())
+      ? new LocalStore(process.env.LOCAL_REPO_ROOT ?? resolve(process.cwd(), '../..'))
       : new GitHubStore({
           token: env.githubToken(),
           repo: env.githubRepo(),

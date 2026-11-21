@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
@@ -8,6 +9,8 @@ const envFile = resolve(root, process.env.ZIDCMS_ENV_FILE ?? '.local/secrets/dev
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 const ADMIN = (process.env.ADMIN_URL ?? '').replace(/\/+$/, '');
 const WEB = (process.env.PUBLIC_SITE_URL ?? '').replace(/\/+$/, '');
+const ENV = (process.env.ZIDCMS_ENV ?? 'dev').toLowerCase() === 'prod' ? 'prod' : 'dev';
+const BRANCH = process.env.GITHUB_BRANCH ?? (ENV === 'prod' ? 'release' : 'main');
 if (!ADMIN.startsWith('https://') || !WEB.startsWith('https://')) {
   console.error('ADMIN_URL and PUBLIC_SITE_URL (https) are required (ZIDCMS_ENV_FILE).');
   process.exit(1);
@@ -94,12 +97,18 @@ async function webChecks() {
     version: number;
     checksum: string;
   };
-  const snapshot = JSON.parse(readFileSync(resolve(root, 'apps/web/content/snapshot.json'), 'utf8')) as Snapshot;
+  spawnSync('git', ['fetch', '-q', 'origin', BRANCH], { cwd: root });
+  const shown = spawnSync('git', ['show', `origin/${BRANCH}:apps/web/content/${ENV}/snapshot.json`], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  const snapshot = JSON.parse(shown.stdout) as Snapshot;
   const sameVersion = snapshot.version === version.version && snapshot.checksum === version.checksum;
   check(
     'live = repo snapshot',
     sameVersion,
-    `live v${version.version}, apps/web/content/snapshot.json v${snapshot.version} (run git pull first if they differ)`,
+    `live v${version.version}, origin/${BRANCH}:apps/web/content/${ENV}/snapshot.json v${snapshot.version}`,
   );
 
   const missing = await fetch(`${WEB}/blog/does-not-exist-${randomUUID().slice(0, 8)}/`);

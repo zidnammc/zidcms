@@ -3,11 +3,10 @@ name: ci
 on:
   pull_request:
   push:
-    branches: [main, dev]
+    branches: [main, release]
     paths-ignore:
-      - apps/web/content/**
-      - apps/web/public/media/**
-      - apps/web/public/zidcms-version.json
+      - apps/web/content/dev/**
+      - apps/web/content/prod/**
 
 permissions:
   contents: read

@@ -18,7 +18,7 @@ const store = new GitHubStore({
   token: process.env.GITHUB_TOKEN as string,
   repo: process.env.GITHUB_REPO as string,
   branch: process.env.GITHUB_BRANCH ?? 'main',
-  contentRoot: process.env.CONTENT_ROOT ?? 'apps/web',
+  contentRoot: process.env.CONTENT_ROOT ?? 'apps/web/content/dev',
   statusContext: process.env.VERCEL_STATUS_CONTEXT ?? 'Vercel',
 });
 const site = (process.env.PUBLIC_SITE_URL as string).replace(/\/+$/, '');

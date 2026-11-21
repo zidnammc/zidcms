@@ -72,4 +72,4 @@ Transport: `POST <GAS_WEBAPP_URL>` with body `{ "e": "<envelope JSON>", "s": "<h
 
 ## Snapshot format
 
-`apps/web/content/snapshot.json` (`zidcms.snapshot/1`) and `apps/web/public/zidcms-version.json` — see plan §14 and `packages/core/src/snapshot.ts`. `checksum = "sha256:" + sha256(canonical JSON without version/basedOnVersion/generatedAt/checksum)`.
+`apps/web/content/<env>/snapshot.json` (`zidcms.snapshot/1`) and `apps/web/content/<env>/zidcms-version.json` (served as `/zidcms-version.json`; ADR-0011) — see plan §14 and `packages/core/src/snapshot.ts`. `checksum = "sha256:" + sha256(canonical JSON without version/basedOnVersion/generatedAt/checksum)`.

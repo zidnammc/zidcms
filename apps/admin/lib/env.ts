@@ -24,8 +24,13 @@ export const env = {
   publishTarget: (): 'github' | 'local' => (optional('PUBLISH_TARGET', 'github') === 'local' ? 'local' : 'github'),
   githubToken: () => required('GITHUB_TOKEN'),
   githubRepo: () => required('GITHUB_REPO'),
-  githubBranch: () => optional('GITHUB_BRANCH', 'main'),
-  contentRoot: () => optional('CONTENT_ROOT', 'apps/web').replace(/^\/+|\/+$/g, ''),
+  githubBranch: () =>
+    optional('GITHUB_BRANCH', optional('ZIDCMS_ENV', 'dev').toLowerCase() === 'prod' ? 'release' : 'main'),
+  contentRoot: () =>
+    optional(
+      'CONTENT_ROOT',
+      `apps/web/content/${optional('ZIDCMS_ENV', 'dev').toLowerCase() === 'prod' ? 'prod' : 'dev'}`,
+    ).replace(/^\/+|\/+$/g, ''),
   vercelStatusContext: () => optional('VERCEL_STATUS_CONTEXT', 'Vercel'),
   environment: (): 'DEV' | 'PROD' => (optional('ZIDCMS_ENV', 'dev').toLowerCase() === 'prod' ? 'PROD' : 'DEV'),
   devLoginEnabled: () =>

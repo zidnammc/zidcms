@@ -5,9 +5,9 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev --port 3001",
-    "build": "node scripts/build-guard.mjs && next build",
-    "typecheck": "tsc --noEmit"
+    "dev": "node scripts/prepare-content.mjs && next dev --port 3001",
+    "build": "node scripts/build-guard.mjs && node scripts/prepare-content.mjs && next build",
+    "typecheck": "node scripts/prepare-content.mjs && tsc --noEmit"
   },
   "dependencies": {
     "@zidcms/core": "workspace:*",

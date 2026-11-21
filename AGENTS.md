@@ -11,24 +11,28 @@ Source of truth for scope and acceptance: `ZIDCMS_EXECUTION_PLAN.md`. Decisions:
 
 ## Commands
 
-| Task                                   | Command                                                                             |
-| -------------------------------------- | ----------------------------------------------------------------------------------- |
-| Install                                | `pnpm install`                                                                      |
-| Lint / format                          | `pnpm lint` / `pnpm format`                                                         |
-| Typecheck                              | `pnpm typecheck`                                                                    |
-| Unit + contract tests                  | `pnpm test`                                                                         |
-| Build everything                       | `pnpm build` (core has no build; GAS bundle → `services/apps-script/dist`)          |
-| Static-output check                    | `pnpm check:web` (after build)                                                      |
-| Secret scan                            | `pnpm scan:secrets` (bundles) / `pnpm scan:secrets --repo` (tracked files)          |
-| Local stack                            | `pnpm dev:gas` (emulator :8787) + `pnpm dev:admin` (:3000) + `pnpm dev:web` (:3001) |
-| End-to-end smoke (local stack running) | `pnpm smoke:local`                                                                  |
-| Reset published content to empty v0    | `pnpm reset:content`                                                                |
-| PoCs against real services             | `pnpm poc:gas`, `pnpm poc:sheets`, `pnpm poc:git`                                   |
+| Task                                   | Command                                                                                  |
+| -------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Install                                | `pnpm install`                                                                           |
+| Lint / format                          | `pnpm lint` / `pnpm format`                                                              |
+| Typecheck                              | `pnpm typecheck`                                                                         |
+| Unit + contract tests                  | `pnpm test`                                                                              |
+| Build everything                       | `pnpm build` (core has no build; GAS bundle → `services/apps-script/dist`)               |
+| Static-output check                    | `pnpm check:web` (after build)                                                           |
+| Secret scan                            | `pnpm scan:secrets` (bundles) / `pnpm scan:secrets --repo` (tracked files)               |
+| Local stack                            | `pnpm dev:gas` (emulator :8787) + `pnpm dev:admin` (:3000) + `pnpm dev:web` (:3001)      |
+| End-to-end smoke (local stack running) | `pnpm smoke:local`                                                                       |
+| Integration (emulator / dev GAS)       | `pnpm test:integration` / `ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm test:integration` |
+| E2E (local stack / staging)            | `pnpm test:e2e` / `E2E_TARGET=staging pnpm test:e2e`                                     |
+| Deployed checks (staging)              | `pnpm check:deployed`                                                                    |
+| Failed-build switch (dev web)          | `pnpm build-switch on\|off`                                                              |
+| Reset published content to empty v0    | `pnpm reset:content`                                                                     |
+| PoCs against real services             | `pnpm poc:gas`, `pnpm poc:sheets`, `pnpm poc:git`                                        |
 
 ## Rules that are easy to break
 
 - The repo is public: never commit `.env*` (except `.env.example`), `.clasp.json`, GAS URLs/IDs, spreadsheet/Drive IDs, or the admin e-mail. Tests use `@example.com`.
-- Before committing, run `pnpm reset:content` unless you intend to commit a published snapshot (only the publisher does that).
+- Published content lives in `apps/web/content/{dev,prod}/` and is written only by the publisher. Build paths (`apps/web/content/snapshot.json`, `apps/web/public/zidcms-version.json`, `apps/web/public/media/`) are generated and gitignored (ADR-0011).
 - Shell heredocs longer than ~10 KB get truncated by the agent tool; write large files with the file-write tool.
 - Do not add comments unless asked; `biome-ignore` directives are allowed where a rule is intentionally bypassed.
 - UI copy is Bahasa Indonesia (owner decision); docs and code identifiers are English.
@@ -38,7 +42,7 @@ Source of truth for scope and acceptance: `ZIDCMS_EXECUTION_PLAN.md`. Decisions:
 - Status and next steps: `docs/status/next-steps.md` (then `day-0.md`, `day-1.md`).
 - Owner communicates in Bahasa Indonesia; reply in Indonesian.
 - Commit identity: always `git -c user.name="Devin" -c user.email="158243242+devin-ai-integration[bot]@users.noreply.github.com" commit …` (owner decision; never change git config). Push to `origin main` is allowed for this project.
-- The publisher commits `content: publish vN (job …)` to `main`: run `git pull --rebase` before pushing. Never stage `apps/web/content/snapshot.json`, `apps/web/public/zidcms-version.json`, or `apps/web/public/media/*` produced by local publishing (`git stash` holds one such local test output).
+- The dev publisher commits `content: publish vN (job …)` to `main` (prod: to `release`): run `git pull --rebase` before pushing. Promote code to prod by merging `main` into `release`; never merge `release` back.
 - CLIs on the owner's machine are logged in: `gh`, `clasp` (cwd `services/apps-script`), `vercel`.
 - Private config lives only in gitignored files: `.local/secrets/dev.env` (secrets, GAS URL, PAT, OAuth client), `.local/secrets/dev-deployment-id.txt`, `services/apps-script/.clasp.json`. Never print their values; redirect CLI output that contains IDs/URLs to `.local/secrets/*.log`.
 - Real-GAS scripts: `ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm poc:gas [action json]`, `pnpm poc:sheets`.

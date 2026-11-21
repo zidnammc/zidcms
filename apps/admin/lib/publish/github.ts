@@ -60,13 +60,18 @@ export class GitHubStore implements SnapshotStore {
   private paths() {
     const root = this.config.contentRoot;
     return {
-      snapshot: `${root}/content/snapshot.json`,
-      version: `${root}/public/zidcms-version.json`,
-      mediaDir: `${root}/public/media/`,
+      snapshot: `${root}/snapshot.json`,
+      version: `${root}/zidcms-version.json`,
+      mediaDir: `${root}/media/`,
     };
   }
 
-  private async mediaTree(commitSha: string): Promise<Map<string, string>> {
+  private legacyPaths() {
+    const web = /^(.*)\/content\/[a-z]+$/.exec(this.config.contentRoot)?.[1];
+    return web ? { snapshot: `${web}/content/snapshot.json`, mediaDir: `${web}/public/media/` } : null;
+  }
+
+  private async mediaTree(commitSha: string, includeLegacy = false): Promise<Map<string, string>> {
     const commit = await this.request<{ tree: { sha: string } }>('GET', `/git/commits/${commitSha}`);
     const tree = await this.request<{ tree: { path: string; sha: string; type: string }[]; truncated: boolean }>(
       'GET',
@@ -74,14 +79,21 @@ export class GitHubStore implements SnapshotStore {
     );
     if (tree.truncated) throw new ZidError('GITHUB_ERROR', 'Tree repositori terlalu besar untuk dibaca sekaligus.');
     const { mediaDir } = this.paths();
-    return new Map(
-      tree.tree.filter((e) => e.type === 'blob' && e.path.startsWith(mediaDir)).map((e) => [e.path, e.sha]),
-    );
+    const legacy = includeLegacy ? this.legacyPaths()?.mediaDir : undefined;
+    const map = new Map<string, string>();
+    for (const e of tree.tree) {
+      if (e.type !== 'blob') continue;
+      if (e.path.startsWith(mediaDir)) map.set(e.path, e.sha);
+      else if (legacy && e.path.startsWith(legacy)) map.set(`${mediaDir}${e.path.slice(legacy.length)}`, e.sha);
+    }
+    return map;
   }
 
   async commit(input: CommitInput): Promise<string> {
     const { snapshot, version, mediaDir } = this.paths();
-    const reuse = input.reuseMediaFromSha ? await this.mediaTree(input.reuseMediaFromSha) : new Map<string, string>();
+    const reuse = input.reuseMediaFromSha
+      ? await this.mediaTree(input.reuseMediaFromSha, true)
+      : new Map<string, string>();
     const uploaded = new Map<string, string>();
     for (let attempt = 1; ; attempt++) {
       const ref = await this.request<{ object: { sha: string } }>('GET', `/git/ref/heads/${this.config.branch}`);
@@ -139,13 +151,15 @@ export class GitHubStore implements SnapshotStore {
   }
 
   async readSnapshot(sha: string): Promise<Snapshot> {
-    const raw = await this.request<string>(
-      'GET',
-      `/contents/${this.paths().snapshot}?ref=${sha}`,
-      undefined,
-      'application/vnd.github.raw+json',
-    );
-    return JSON.parse(raw) as Snapshot;
+    const read = (path: string) =>
+      this.request<string>('GET', `/contents/${path}?ref=${sha}`, undefined, 'application/vnd.github.raw+json');
+    try {
+      return JSON.parse(await read(this.paths().snapshot)) as Snapshot;
+    } catch (err) {
+      const legacy = this.legacyPaths();
+      if (!legacy || !(err instanceof ZidError && err.code === 'NOT_FOUND')) throw err;
+      return JSON.parse(await read(legacy.snapshot)) as Snapshot;
+    }
   }
 
   async deployStatus(sha: string): Promise<{ state: DeployState; detail: string }> {
@@ -154,7 +168,10 @@ export class GitHubStore implements SnapshotStore {
       `/commits/${sha}/status`,
     );
     const needle = this.config.statusContext.toLowerCase();
-    const status = combined.statuses.find((s) => s.context.toLowerCase().includes(needle));
+    const contexts = combined.statuses.map((s) => ({ ...s, key: s.context.toLowerCase() }));
+    const status =
+      contexts.find((s) => s.key === needle || /[–-]\s+(\S+)$/.exec(s.key)?.[1] === needle) ??
+      contexts.find((s) => s.key.includes(needle));
     if (!status) return { state: 'pending', detail: 'Menunggu Vercel memulai build' };
     const detail = (status.description ?? status.context).slice(0, 200);
     if (status.state === 'success') return { state: 'success', detail };

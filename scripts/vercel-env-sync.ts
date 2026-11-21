@@ -13,8 +13,8 @@ for (const line of readFileSync(file, 'utf8').split(/\r?\n/)) {
   if (m?.[2]) values[m[1] as string] = m[2].trim();
 }
 
-const adminProject = values.VERCEL_ADMIN_PROJECT ?? 'zidcms-admin';
-const webProject = values.VERCEL_WEB_PROJECT ?? 'zidcms-web';
+const adminProject = values.VERCEL_ADMIN_PROJECT ?? (env === 'prod' ? 'zidcms-prod-admin' : 'zidcms-admin');
+const webProject = values.VERCEL_WEB_PROJECT ?? (env === 'prod' ? 'zidcms-prod-web' : 'zidcms-web');
 const adminUrl = values.ADMIN_URL ?? `https://${adminProject}.vercel.app`;
 const siteUrl = values.PUBLIC_SITE_URL ?? `https://${webProject}.vercel.app`;
 
@@ -32,11 +32,14 @@ const admin: Var[] = [
   { name: 'ZIDCMS_ENV', value: env, secret: false },
   { name: 'PUBLISH_TARGET', value: 'github', secret: false },
   { name: 'GITHUB_REPO', value: values.GITHUB_REPO, secret: false },
-  { name: 'GITHUB_BRANCH', value: values.GITHUB_BRANCH ?? 'main', secret: false },
-  { name: 'CONTENT_ROOT', value: 'apps/web', secret: false },
+  { name: 'GITHUB_BRANCH', value: values.GITHUB_BRANCH ?? (env === 'prod' ? 'release' : 'main'), secret: false },
+  { name: 'CONTENT_ROOT', value: `apps/web/content/${env}`, secret: false },
   { name: 'VERCEL_STATUS_CONTEXT', value: webProject, secret: false },
 ];
-const web: Var[] = [{ name: 'SITE_URL', value: siteUrl, secret: false }];
+const web: Var[] = [
+  { name: 'SITE_URL', value: siteUrl, secret: false },
+  { name: 'ZIDCMS_ENV', value: env, secret: false },
+];
 
 function sync(project: string, vars: Var[]) {
   for (const v of vars) {

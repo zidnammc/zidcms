@@ -276,7 +276,9 @@ async function commitFacts(sha: string | null) {
     ...(process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
   };
   const content = (await (
-    await fetch(`https://api.github.com/repos/${repo}/contents/apps/web/content/snapshot.json?ref=${sha}`, { headers })
+    await fetch(`https://api.github.com/repos/${repo}/contents/apps/web/content/dev/snapshot.json?ref=${sha}`, {
+      headers,
+    })
   ).json()) as { size?: number };
   const statuses = (await (
     await fetch(`https://api.github.com/repos/${repo}/commits/${sha}/statuses?per_page=50`, { headers })
@@ -337,10 +339,15 @@ async function cleanup() {
   }
 }
 
+async function republish() {
+  const run = await runPublish(await adminSession());
+  console.log(`publish: ${run.final.state} v${run.final.snapshot_version} in ${Math.round(run.totalMs / 1000)} s`);
+}
+
 async function main() {
   const health = await call<{ environment: string }>('system.health');
   if (health.environment === 'prod') throw new Error('Refusing to benchmark ENVIRONMENT=prod (plan §18.1).');
-  const commands: Record<string, () => Promise<void>> = { latency, seed, contention, publish, cleanup };
+  const commands: Record<string, () => Promise<void>> = { latency, seed, contention, publish, cleanup, republish };
   const fn = commands[command];
   if (!fn) throw new Error(`unknown command ${command}; use ${Object.keys(commands).join('|')}`);
   await fn();
