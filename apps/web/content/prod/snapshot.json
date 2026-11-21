@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 2,
-  "basedOnVersion": null,
-  "generatedAt": "2026-11-21T18:21:16.758Z",
+  "version": 3,
+  "basedOnVersion": 1,
+  "generatedAt": "2026-11-21T18:22:46.735Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
@@ -18,11 +18,11 @@
       "id": "4e35a7bb-655e-4378-9fbe-0f50d4f67c79",
       "slug": "uji-rilis-mwqqeqi1",
       "title": "Uji rilis mwqqeqi1",
-      "excerpt": "Versi kedua artikel tumbal mwqqeqi1.",
-      "markdown": "Versi **kedua** artikel tumbal mwqqeqi1.",
+      "excerpt": "Versi pertama artikel tumbal mwqqeqi1.",
+      "markdown": "Versi **pertama** artikel tumbal mwqqeqi1.",
       "authorName": "",
       "publishedAt": "2026-11-21T18:19:02.904Z",
-      "updatedAt": "2026-11-21T18:20:37.774Z",
+      "updatedAt": "2026-11-21T18:19:02.904Z",
       "category": null,
       "tags": [],
       "cover": null,
@@ -36,5 +36,5 @@
   "categories": [],
   "tags": [],
   "media": [],
-  "checksum": "sha256:de4aaa0994775dcd883ff6015cef2d4530737d47f3853004d57efb5278c92251"
+  "checksum": "sha256:f4bba9d45e80b25b23c3126958e07ebcf9f0352ed31cd897c52ddbfde835e524"
 }
