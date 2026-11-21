@@ -31,7 +31,7 @@ Admin browser ──► apps/admin (Next.js) ──HMAC RPC──► services/ap
 | `scripts`              | setup, seed, smoke test, PoCs, secret scan, static-output check                                                                                                                      |
 | `docs`                 | architecture, API, security, setup, deployment, operations, limitations, benchmarks, ADRs, daily status                                                                              |
 
-> **Pemula?** Baca [Panduan ZidCMS untuk Pemula](docs/panduan-pemula.md) (Bahasa Indonesia): cara memakai dasbor, mencoba di komputer sendiri, dan memasang online langkah demi langkah.
+> **New to all this?** Read the [Beginner Guide](docs/beginner-guide.md): using the dashboard, trying ZidCMS on your own computer, and putting it online step by step.
 
 ## Quick start (local, no Google/GitHub/Vercel account needed)
 
@@ -55,7 +55,9 @@ Set `ADMIN_EMAILS` to your own Google account. Never commit it.
 
 ## Documentation
 
-[Panduan pemula (ID)](docs/panduan-pemula.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
+[Beginner guide](docs/beginner-guide.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
+
+References such as "plan §21" in the docs point to the project's internal execution plan, which is not published; the ADRs in `docs/decisions/` record every decision that matters for users and contributors.
 
 ## Hosting note
 

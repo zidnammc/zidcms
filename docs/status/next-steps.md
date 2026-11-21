@@ -16,7 +16,7 @@
 
 **Stage 2 — acceptance run on staging** (plan §24.1, demo §24.3) with evidence in `docs/status/`.
 
-**Stage 3 — benchmarks + fresh-account setup dry run** (ideally by another person following `docs/panduan-pemula.md`).
+**Stage 3 — benchmarks + fresh-account setup dry run** (ideally by another person following `docs/beginner-guide.md`).
 
 **Stage 4 — release:** prod resources (separate sheet/script/secrets/deployment, owner approval), prod rollback test, tag `v0.1.0`, release notes, retrospective.
 

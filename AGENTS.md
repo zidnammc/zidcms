@@ -1,6 +1,6 @@
 # AGENTS.md — working notes for AI agents and contributors
 
-Source of truth for scope and acceptance: `ZIDCMS_EXECUTION_PLAN.md`. Decisions: `docs/decisions/`.
+Source of truth for scope and acceptance: the owner's private execution plan, kept outside Git at `.local/ZIDCMS_EXECUTION_PLAN.md` (ask the owner for a copy if it is missing; never commit it). References like "plan §21" in docs and code point to its sections. Decisions: `docs/decisions/`.
 
 ## Toolchain
 
