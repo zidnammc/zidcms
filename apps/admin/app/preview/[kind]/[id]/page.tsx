@@ -1,11 +1,10 @@
-import { deriveExcerpt, type Media, type Page, type Post, type SiteSettings, type Taxon, ZidError } from '@zidcms/core';
+import { deriveExcerpt } from '@zidcms/core';
 import { renderMarkdown } from '@zidcms/core/markdown';
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getAdmin } from '@/lib/data';
+import { loadEditorContext } from '@/lib/editor-data';
 import { formatDate } from '@/lib/format';
-import { gas } from '@/lib/gas-client';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Pratinjau', robots: { index: false, follow: false } };
@@ -13,18 +12,13 @@ export const metadata = { title: 'Pratinjau', robots: { index: false, follow: fa
 export default async function PreviewPage({ params }: { params: Promise<{ kind: string; id: string }> }) {
   const { kind, id } = await params;
   if (kind !== 'posts' && kind !== 'pages') notFound();
-  const admin = await getAdmin();
-  const ctx = { actor: admin.email };
-  const [item, { settings }, categories, tags, media] = await Promise.all([
-    gas<Post | Page>(`${kind}.get`, { id }, ctx).catch((err: unknown) => {
-      if (err instanceof ZidError && ['NOT_FOUND', 'BAD_REQUEST'].includes(err.code)) notFound();
-      throw err;
-    }),
-    gas<{ settings: SiteSettings }>('settings.get', {}, ctx),
-    kind === 'posts' ? gas<{ items: Taxon[] }>('taxonomy.list', { kind: 'category' }, ctx) : { items: [] },
-    kind === 'posts' ? gas<{ items: Taxon[] }>('taxonomy.list', { kind: 'tag' }, ctx) : { items: [] },
-    gas<{ items: Omit<Media, 'drive_file_id'>[] }>('media.list', {}, ctx),
-  ]);
+  const ctx = await loadEditorContext(kind === 'posts' ? 'post' : 'page', id);
+  const item = ctx.item;
+  if (!item) notFound();
+  const { settings } = ctx;
+  const categories = { items: ctx.categories };
+  const tags = { items: ctx.tags };
+  const media = { items: ctx.media };
   const post = 'author_name' in item ? item : null;
   const mediaById = new Map(media.items.map((m) => [m.id, m]));
   const html = renderMarkdown(item.content_markdown, {

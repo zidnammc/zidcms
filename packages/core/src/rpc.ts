@@ -43,6 +43,7 @@ export const RPC_ACTIONS = [
   'snapshots.get',
   'snapshots.setStatus',
   'audit.list',
+  'editor.context',
 ] as const;
 
 export type RpcAction = (typeof RPC_ACTIONS)[number];

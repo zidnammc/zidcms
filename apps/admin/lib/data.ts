@@ -55,8 +55,7 @@ export const getSummary = cache(async (): Promise<Summary> => {
 
 const snapshotCache = new Map<string, Snapshot>();
 
-export const getLiveSnapshot = cache(async (): Promise<Snapshot | null> => {
-  const { live } = await getSummary();
+export async function readLiveSnapshot(live: SnapshotRecord | null): Promise<Snapshot | null> {
   if (!live?.git_commit_sha) return null;
   const hit = snapshotCache.get(live.git_commit_sha);
   if (hit) return hit;
@@ -68,14 +67,19 @@ export const getLiveSnapshot = cache(async (): Promise<Snapshot | null> => {
     log('warn', 'live_snapshot_unavailable', { error: err instanceof Error ? err.message : String(err) });
     return null;
   }
-});
+}
 
-export async function getLiveIndex(): Promise<PlainLiveIndex | null> {
-  const snapshot = await getLiveSnapshot();
+export const getLiveSnapshot = cache(async (): Promise<Snapshot | null> => readLiveSnapshot((await getSummary()).live));
+
+export function plainLiveIndex(snapshot: Snapshot | null): PlainLiveIndex | null {
   if (!snapshot) return null;
   const items: Record<string, string> = {};
   for (const p of [...snapshot.posts, ...snapshot.pages]) items[p.id] = p.updatedAt;
   return { version: snapshot.version, isRollback: snapshot.basedOnVersion !== null, items };
+}
+
+export async function getLiveIndex(): Promise<PlainLiveIndex | null> {
+  return plainLiveIndex(await getLiveSnapshot());
 }
 
 export function toLiveIndex(plain: PlainLiveIndex | null) {

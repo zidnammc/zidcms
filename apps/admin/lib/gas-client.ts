@@ -22,6 +22,7 @@ const READ_ACTIONS = new Set<RpcAction>([
   'snapshots.list',
   'snapshots.get',
   'audit.list',
+  'editor.context',
 ]);
 
 export interface CallContext {

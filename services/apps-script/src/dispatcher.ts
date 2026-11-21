@@ -1,5 +1,6 @@
 import { type RpcResponse, rpcError, verifyRequest, ZidError } from '@zidcms/core';
 import { contentActions } from './actions/content';
+import { editorActions } from './actions/editor';
 import { mediaActions } from './actions/media';
 import { publishActions, snapshotActions } from './actions/publish';
 import { settingsActions } from './actions/settings';
@@ -18,6 +19,7 @@ export const ACTIONS: Record<string, ActionDef> = {
   ...contentActions('post'),
   ...contentActions('page'),
   ...taxonomyActions,
+  ...editorActions,
   ...mediaActions,
   ...settingsActions,
   ...publishActions,

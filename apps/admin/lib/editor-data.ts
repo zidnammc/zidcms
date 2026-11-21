@@ -1,46 +1,52 @@
 import {
   type ContentKind,
   computeLiveState,
+  type Media,
   type Page,
   type Post,
   type SiteSettings,
+  type SnapshotRecord,
   type Taxon,
   ZidError,
 } from '@zidcms/core';
 import { notFound } from 'next/navigation';
 import type { EditorProps } from '@/components/editor/content-editor';
-import type { MediaItem } from '@/components/media-picker';
-import { getAdmin, getLiveIndex, toLiveIndex } from './data';
+import { getAdmin, plainLiveIndex, readLiveSnapshot, toLiveIndex } from './data';
 import { env } from './env';
 import { gas } from './gas-client';
 
-export async function loadEditor(kind: ContentKind, id: string | null): Promise<EditorProps> {
+export interface EditorContext {
+  item: Post | Page | null;
+  settings: SiteSettings;
+  categories: Taxon[];
+  tags: Taxon[];
+  media: Omit<Media, 'drive_file_id'>[];
+  live: SnapshotRecord | null;
+}
+
+export async function loadEditorContext(kind: ContentKind, id: string | null): Promise<EditorContext> {
   const admin = await getAdmin();
-  const ctx = { actor: admin.email };
-  const empty = Promise.resolve({ items: [] as never[] });
-  const [item, settings, categories, tags, media, liveIndex] = await Promise.all([
-    id
-      ? gas<Post | Page>(`${kind}s.get`, { id }, ctx).catch((err: unknown) => {
-          if (err instanceof ZidError && (err.code === 'NOT_FOUND' || err.code === 'BAD_REQUEST')) notFound();
-          throw err;
-        })
-      : Promise.resolve(null),
-    gas<{ settings: SiteSettings }>('settings.get', {}, ctx),
-    kind === 'post' ? gas<{ items: Taxon[] }>('taxonomy.list', { kind: 'category' }, ctx) : empty,
-    kind === 'post' ? gas<{ items: Taxon[] }>('taxonomy.list', { kind: 'tag' }, ctx) : empty,
-    gas<{ items: MediaItem[] }>('media.list', {}, ctx),
-    getLiveIndex(),
-  ]);
-  if (item?.deleted_at) notFound();
+  try {
+    return await gas<EditorContext>('editor.context', { kind, id }, { actor: admin.email });
+  } catch (err) {
+    if (err instanceof ZidError && (err.code === 'NOT_FOUND' || err.code === 'BAD_REQUEST')) notFound();
+    throw err;
+  }
+}
+
+export async function loadEditor(kind: ContentKind, id: string | null): Promise<EditorProps> {
+  const ctx = await loadEditorContext(kind, id);
+  if (ctx.item?.deleted_at) notFound();
+  const index = ctx.item ? toLiveIndex(plainLiveIndex(await readLiveSnapshot(ctx.live))) : null;
   return {
     kind,
-    item,
-    liveState: item ? computeLiveState(item, toLiveIndex(liveIndex)) : null,
-    defaultAuthor: settings.settings.default_author_name,
-    allowExternalImages: settings.settings.allow_external_images,
+    item: ctx.item,
+    liveState: ctx.item ? computeLiveState(ctx.item, index) : null,
+    defaultAuthor: ctx.settings.default_author_name,
+    allowExternalImages: ctx.settings.allow_external_images,
     publicSiteUrl: env.publicSiteUrl(),
-    categories: categories.items,
-    tags: tags.items,
-    media: media.items,
+    categories: ctx.categories,
+    tags: ctx.tags,
+    media: ctx.media,
   };
 }

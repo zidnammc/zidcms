@@ -255,6 +255,21 @@ describe('settings, taxonomy, media', () => {
   });
 });
 
+describe('editor.context', () => {
+  it('returns everything the editor needs in one call, without Drive ids', () => {
+    const post = ok('posts.create', { title: 'Konteks' });
+    ok('taxonomy.create', { kind: 'category', fields: { name: 'Berita' } });
+    const ctx = ok('editor.context', { kind: 'post', id: post.id });
+    expect(ctx.item.id).toBe(post.id);
+    expect(ctx.categories).toHaveLength(1);
+    expect(ctx.settings.site_title).toBe('ZidCMS Site');
+    expect(ctx.live).toBeNull();
+    expect(JSON.stringify(ctx)).not.toContain('drive_file_id');
+    expect(ok('editor.context', { kind: 'page' })).toMatchObject({ item: null, categories: [], tags: [] });
+    expect(err('editor.context', { kind: 'post', id: '11111111-1111-4111-8111-111111111111' }).code).toBe('NOT_FOUND');
+  });
+});
+
 describe('publish jobs', () => {
   it('TC-PUB-04/05 coalescing and idempotency', () => {
     const a = ok('publish.acquire', { type: 'publish', idempotency_key: 'key-aaaaaaaa' });
