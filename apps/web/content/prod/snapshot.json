@@ -1,22 +1,40 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 0,
+  "version": 1,
   "basedOnVersion": null,
-  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "generatedAt": "2026-11-21T18:19:45.587Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
     "language": "id",
-    "url": "",
+    "url": "https://zidcms-prod-web.vercel.app",
     "postsPerPage": 10,
     "footerText": "",
     "socialImage": null,
     "allowExternalImages": false
   },
-  "posts": [],
+  "posts": [
+    {
+      "id": "4e35a7bb-655e-4378-9fbe-0f50d4f67c79",
+      "slug": "uji-rilis-mwqqeqi1",
+      "title": "Uji rilis mwqqeqi1",
+      "excerpt": "Versi pertama artikel tumbal mwqqeqi1.",
+      "markdown": "Versi **pertama** artikel tumbal mwqqeqi1.",
+      "authorName": "",
+      "publishedAt": "2026-11-21T18:19:02.904Z",
+      "updatedAt": "2026-11-21T18:19:02.904Z",
+      "category": null,
+      "tags": [],
+      "cover": null,
+      "seo": {
+        "title": "",
+        "description": ""
+      }
+    }
+  ],
   "pages": [],
   "categories": [],
   "tags": [],
   "media": [],
-  "checksum": "sha256:fabe28e925680d5a0fd3f52d6cd80b57980d976f46ef24fc47634e2ef52147fa"
+  "checksum": "sha256:f4bba9d45e80b25b23c3126958e07ebcf9f0352ed31cd897c52ddbfde835e524"
 }
