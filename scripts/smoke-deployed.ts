@@ -107,8 +107,8 @@ async function main() {
   await api('DELETE', `/api/posts/${created.id}`, { expected_version: unpublished.item.version });
 
   evidence.finishedAt = new Date().toISOString();
-  mkdirSync(resolve(root, 'test-results'), { recursive: true });
-  const file = resolve(root, `test-results/smoke-${new URL(WEB).host}.json`);
+  mkdirSync(resolve(root, 'tests/e2e/results'), { recursive: true });
+  const file = resolve(root, `tests/e2e/results/smoke-${new URL(WEB).host}.json`);
   writeFileSync(file, `${JSON.stringify(evidence, null, 2)}\n`);
   console.log(`SMOKE OK → ${file}`);
 }

@@ -136,7 +136,7 @@ export function uniquePng(size = 32): { buffer: Buffer; sha256: string } {
 }
 
 export function writeEvidence(data: unknown): string {
-  const dir = resolve(root, 'test-results');
+  const dir = resolve(root, 'tests/e2e/results');
   mkdirSync(dir, { recursive: true });
   const file = resolve(dir, `e2e-evidence-${target}.json`);
   writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);

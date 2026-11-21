@@ -23,7 +23,7 @@ E2E_TARGET=staging pnpm test:e2e                                 # deployed dev 
 
 - The integration suite refuses to run when `system.health` reports `environment=prod`. It soft-deletes the posts it creates and closes the publish job it opens for TC-PUB-04/05 as `failed` with `TEST_CLEANUP`.
 - The staging E2E signs in by minting an Auth.js session cookie with the dev `AUTH_SECRET` (ADR-0010). It creates one post with a freshly generated PNG, publishes, updates, forces one failed build (`pnpm build-switch on`, always switched off again), rolls back, and trashes the post. Expect about five Vercel deployments and 10–20 minutes. Traces and screenshots are off for staging because admin pages show the private admin address.
-- Evidence files: `tests/integration/results/*.json`, `test-results/e2e-evidence-<target>.json` (both gitignored; copy the relevant numbers into `docs/status/`).
+- Evidence files: `tests/integration/results/*.json`, `tests/e2e/results/e2e-evidence-<target>.json` (both gitignored; copy the relevant numbers into `docs/status/`).
 
 ## Local stack notes
 
