@@ -62,7 +62,7 @@ function record(name: string, trace: JobTrace, version?: VersionFile) {
 
 test.describe.configure({ mode: 'serial' });
 
-test('TC-E2E-01 demo scenario (plan §24.3) incl. PoC-3 media and TC-PUB-07/08/11', async ({
+test('TC-E2E-01 demo scenario (plan §24.3) incl. PoC-3 media, P0-5 errors and TC-PUB-07/08/11', async ({
   page,
   browser,
   context,
@@ -127,6 +127,40 @@ test('TC-E2E-01 demo scenario (plan §24.3) incl. PoC-3 media and TC-PUB-07/08/1
     evidence.post = { id: postId, slug, mediaId: media.id, mediaSha256: png.sha256 };
     const anon = await fetch(`${ADMIN}/api/media/${media.id}/preview`, { redirect: 'manual' });
     expect(anon.status).toBe(401);
+  });
+
+  await test.step('2b. duplicate slug, reserved page slug and stale version give specific errors (P0-5)', async () => {
+    const dup = await context.newPage();
+    await dup.goto('/posts/new');
+    await dup.locator('#title').fill(`${title} duplikat`);
+    await dup.locator('#slug').fill(slug);
+    await dup.getByRole('button', { name: 'Simpan draf' }).click();
+    await expect(dup.getByRole('alert').filter({ hasText: 'sudah dipakai' }).first()).toBeVisible();
+    await dup.close();
+
+    const reserved = await context.newPage();
+    await reserved.goto('/pages/new');
+    await reserved.locator('#title').fill(`${title} halaman`);
+    await reserved.locator('#slug').fill('blog');
+    await expect(reserved.getByText('dicadangkan oleh rute situs publik').first()).toBeVisible();
+    await reserved.close();
+
+    const stale = await context.newPage();
+    await stale.goto(`/posts/${postId}`);
+    await stale.locator('#excerpt').fill('Ringkasan dari tab kedua.');
+    await page.locator('#excerpt').fill('Ringkasan dari tab pertama.');
+    const [saved] = await Promise.all([
+      page.waitForResponse((r) => r.url().endsWith(`/api/posts/${postId}`) && r.request().method() === 'PATCH'),
+      page.getByRole('button', { name: 'Simpan draf' }).click(),
+    ]);
+    expect(saved.status()).toBe(200);
+    const [conflict] = await Promise.all([
+      stale.waitForResponse((r) => r.url().endsWith(`/api/posts/${postId}`) && r.request().method() === 'PATCH'),
+      stale.getByRole('button', { name: 'Simpan draf' }).click(),
+    ]);
+    expect(conflict.status()).toBe(409);
+    await expect(stale.getByRole('dialog').filter({ hasText: 'Item ini telah diubah di tempat lain' })).toBeVisible();
+    await stale.close();
   });
 
   await test.step('3. preview works; the draft is absent from the public site', async () => {
@@ -247,20 +281,25 @@ test('TC-E2E-01 demo scenario (plan §24.3) incl. PoC-3 media and TC-PUB-07/08/1
     expect(img.status).toBe(200);
   });
 
-  await test.step('cleanup: trash the post; it and its exclusive media leave the site (TC-PUB-11)', async () => {
+  await test.step('cleanup: unpublish via UI removes the post and its exclusive media (TC-PUB-11), then trash the draft', async () => {
+    await page.goto(`/posts/${postId}`);
+    const jobId = await jobFrom(
+      page,
+      () => page.getByRole('button', { name: 'Batalkan terbit' }).click(),
+      (url, method) => url.endsWith(`/api/posts/${postId}/status`) && method === 'POST',
+    );
+    const trace = await waitForJob(page.request, jobId);
+    expect(trace.job.state, trace.job.error_message ?? '').toBe('live');
+    record('unpublish', trace, await liveVersion());
+    await expectAbsent(`/blog/${slug}/`);
+    expect((await fetch(`${mediaUrl}?e2e=${Date.now()}`)).status).toBe(404);
     const current = (await (await page.request.get(`${ADMIN}/api/posts/${postId}`)).json()) as { version: number };
     const res = await page.request.delete(`${ADMIN}/api/posts/${postId}`, {
       headers: { origin: ADMIN, 'content-type': 'application/json' },
       data: { expected_version: current.version },
     });
     expect(res.status()).toBeLessThan(300);
-    const { publishJob } = (await res.json()) as { publishJob: { id: string } | null };
-    expect(publishJob).not.toBeNull();
-    const trace = await waitForJob(page.request, (publishJob as { id: string }).id);
-    expect(trace.job.state, trace.job.error_message ?? '').toBe('live');
-    record('cleanup', trace, await liveVersion());
-    await expectAbsent(`/blog/${slug}/`);
-    expect((await fetch(`${mediaUrl}?e2e=${Date.now()}`)).status).toBe(404);
+    expect(((await res.json()) as { publishJob: unknown }).publishJob).toBeNull();
   });
 
   await test.step('sign out clears the session (TC-AUTH-04)', async () => {

@@ -55,7 +55,7 @@ Set `ADMIN_EMAILS` to your own Google account. Never commit it.
 
 ## Documentation
 
-[Panduan pemula (ID)](docs/panduan-pemula.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
+[Panduan pemula (ID)](docs/panduan-pemula.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/)
 
 ## Hosting note
 

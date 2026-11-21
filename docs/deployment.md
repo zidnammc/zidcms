@@ -23,7 +23,7 @@
 
 ## 3. CI
 
-`.github/workflows/ci.yml` runs on PRs and pushes to `main`/`dev` (content-only commits are ignored): install (frozen lockfile) → lint → typecheck → tests → build → static-output check → secret scans → audit and license reports (non-blocking). No secrets are used in CI; integration/e2e workflows will be `workflow_dispatch` only.
+`.github/workflows/ci.yml` runs on PRs and pushes to `main`/`dev` (content-only commits are ignored): install (frozen lockfile) → lint → typecheck → tests → build → static-output check → secret scans → audit and license reports (non-blocking). No secrets are used in CI. `integration.yml` and `e2e.yml` are `workflow_dispatch` only and run against the local emulator stack; runs against the real dev services are done locally (see [testing.md](testing.md)).
 
 ## 4. Release checklist
 

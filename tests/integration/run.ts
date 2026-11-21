@@ -164,6 +164,62 @@ function dataChecks(): Check[] {
         return hidden && back;
       },
     },
+    {
+      id: 'P0-4 write trail',
+      name: 'every write: stable UUID, UTC timestamps, version +1, revision row, audit row; status lifecycle',
+      run: async () => {
+        const item = await create('trail');
+        const steps: [string, Record<string, unknown>][] = [
+          ['posts.update', { patch: { excerpt: 'ringkasan' } }],
+          ['posts.setStatus', { to: 'published' }],
+          ['posts.setStatus', { to: 'archived' }],
+          ['posts.setStatus', { to: 'draft' }],
+          ['posts.softDelete', {}],
+          ['posts.restore', {}],
+        ];
+        let version = item.version;
+        const seen: string[] = [];
+        for (const [action, extra] of steps) {
+          const res = await call<{ item: Item & { status: string; updated_at: string } }>(action, {
+            id: item.id,
+            expected_version: version,
+            ...extra,
+          });
+          if (res.item.id !== item.id || res.item.version !== version + 1) {
+            note(`${action}: id/version mismatch (v${res.item.version})`);
+            return false;
+          }
+          version = res.item.version;
+          seen.push(`${action.split('.')[1]}→${res.item.status}`);
+        }
+        const final = await call<
+          Item & { created_at: string; updated_at: string; status: string; deleted_at: string | null }
+        >('posts.get', { id: item.id });
+        created[created.indexOf(item)] = final;
+        const revisions = await call<{ version: number }[]>('posts.revisions', { id: item.id });
+        const audit = await call<{ items: { entity_id: string; action: string; result: string; at: string }[] }>(
+          'audit.list',
+          { limit: 50 },
+        );
+        const trail = audit.items.filter((a) => a.entity_id === item.id && a.result === 'ok');
+        const iso = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z$/;
+        const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+        note(
+          `${seen.join(', ')}; final v${final.version} ${final.status}; revisions ${revisions.length}; audit rows ${trail.length}; uuid ${uuid.test(item.id)}; UTC ${iso.test(final.created_at) && iso.test(final.updated_at)}`,
+        );
+        return (
+          final.version === steps.length + 1 &&
+          final.status === 'draft' &&
+          final.deleted_at === null &&
+          revisions.length === steps.length + 1 &&
+          trail.length === steps.length + 1 &&
+          trail.every((a) => iso.test(a.at)) &&
+          uuid.test(item.id) &&
+          iso.test(final.created_at) &&
+          iso.test(final.updated_at)
+        );
+      },
+    },
   ];
 }
 

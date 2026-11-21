@@ -10,7 +10,17 @@ const project = process.env.VERCEL_WEB_PROJECT ?? 'zidcms-web';
 const args =
   mode === 'on'
     ? ['env', 'add', 'ZIDCMS_FAIL_BUILD', 'production', '--project', project, '--force', '--yes', '--no-sensitive']
-    : ['env', 'rm', 'ZIDCMS_FAIL_BUILD', 'production', '--project', project, '--yes'];
+    : [
+        'env',
+        'rm',
+        'ZIDCMS_FAIL_BUILD',
+        '--environment',
+        'production',
+        '--project',
+        project,
+        '--confirm-name',
+        'ZIDCMS_FAIL_BUILD',
+      ];
 const result = spawnSync('vercel', args, {
   input: mode === 'on' ? '1' : undefined,
   encoding: 'utf8',
