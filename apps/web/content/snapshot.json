@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 3,
+  "version": 4,
   "basedOnVersion": null,
-  "generatedAt": "2026-11-21T16:40:57.177Z",
+  "generatedAt": "2026-11-21T16:42:29.530Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
@@ -18,11 +18,11 @@
       "id": "037c3722-1806-4669-bee5-fdfe737694cb",
       "slug": "e2e-mwqmtkmjt6h-artikel-demo",
       "title": "E2E mwqmtkmjt6h artikel demo",
-      "excerpt": "Halo Isi kedua dari uji E2E.",
-      "markdown": "# Halo\n\nIsi **kedua** dari uji E2E.\n![](/media/537433f960d28788f7121571db02af09f71625b626548f6131c45a3f46d7f499.png)\n",
+      "excerpt": "Halo Isi ketiga (build gagal) dari uji E2E.",
+      "markdown": "# Halo\n\nIsi **ketiga** (build gagal) dari uji E2E.\n![](/media/537433f960d28788f7121571db02af09f71625b626548f6131c45a3f46d7f499.png)\n",
       "authorName": "",
       "publishedAt": "2026-11-21T16:39:13.188Z",
-      "updatedAt": "2026-11-21T16:40:28.122Z",
+      "updatedAt": "2026-11-21T16:41:58.095Z",
       "category": null,
       "tags": [],
       "cover": null,
@@ -59,5 +59,5 @@
       "mime": "image/png"
     }
   ],
-  "checksum": "sha256:c5589c5c109daa8a8d1b01ad48dd79ab4bb545f6290a46e1712019ab2f548c8e"
+  "checksum": "sha256:15a455d207c7024a156c2db3ae349acf7c8b3b72dc6f3f9bde3177b8757f92e2"
 }
