@@ -44,6 +44,8 @@ See [`docs/limitations.md`](docs/limitations.md).
 
 ### Not yet validated
 
+- A staging E2E run on the final per-environment content layout (blocked by the Vercel Hobby deployment limit on release day; local and CI E2E pass on it).
+
 - Setup on fresh accounts by a third party following [`docs/beginner-guide.md`](docs/beginner-guide.md).
 - Public CDN capacity under load. Vercel permits load testing only on Enterprise plans, so only low-rate latency sampling was run (see [`docs/benchmarks.md`](docs/benchmarks.md)).
 

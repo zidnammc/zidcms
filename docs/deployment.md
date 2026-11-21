@@ -38,7 +38,13 @@ Then `ZIDCMS_ENV_FILE=.local/secrets/<env>.env pnpm poc:gas` (TC-GAS-01…08). A
 - Both `vercel.json` files skip every non-production deployment and every production deployment whose diff does not touch the app (`ignoreCommand`), so each project builds only its own branch. Skipped builds show as "Canceled by Ignored Build Step".
 - `apps/web/vercel.json` sets security headers, no-cache for `zidcms-version.json`, immutable caching for `/media/*`.
 - Google OAuth: one client, one redirect URI per admin domain (`https://<admin>/api/auth/callback/google`).
-- Deployment budget (Hobby: 100/day, 1 concurrent build): ≤ 40 code deploys + ≤ 30 publishes + 30 reserve per day. A staging E2E run costs ~5 deployments.
+- Deployment budget (Hobby: 100 deployments per 24 h for the whole account, 1 concurrent build). **Deployments cancelled by the Ignored Build Step count** (measured 2026-11-21: 64 of the 100 that hit the limit were cancelled). Only Vercel's native "Skipped - Not affected" monorepo skip is free. Approximate cost with four projects:
+  - dev publish (commit to `main` touching `apps/web/content/dev`): 1 dev web build + 2 cancelled prod previews = **3**;
+  - prod publish (commit to `release`): 1 prod web build + 2 cancelled dev previews = **3**;
+  - code push to `main`: up to **4** (affected dev builds + cancelled prod previews);
+  - staging E2E run (5 publishes): **~15**; `smoke:deployed` on one environment (4 publishes): **~12**.
+    Keep to ≤ 10 code pushes and ≤ 15 publishes per day on Hobby, batch commits, and do not run more than one staging E2E per day. When the limit is hit, publish jobs fail with `DEPLOY_FAILED` ("Deployment rate limited — retry in 24 hours") and the live sites stay unchanged.
+  - Possible improvement (not implemented): disconnect the prod projects from Git and trigger them with a Deploy Hook from the prod publisher and the promotion step, so `main` pushes create no prod previews.
 
 ## 3. Promoting code to prod
 

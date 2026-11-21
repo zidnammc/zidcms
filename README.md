@@ -20,6 +20,16 @@ Admin browser ──► apps/admin (Next.js) ──HMAC RPC──► services/ap
                          └── GitHub Git Data API ──► apps/web/content/<env>/       ──► Vercel static build ──► Readers
 ```
 
+## Screenshots
+
+| Admin dashboard                                          | Editor (Markdown, live preview)                |
+| -------------------------------------------------------- | ---------------------------------------------- |
+| ![Admin dashboard](docs/screenshots/admin-dashboard.png) | ![Editor](docs/screenshots/admin-editor.png)   |
+| **Publishing & snapshots**                               | **Public site**                                |
+| ![Publish screen](docs/screenshots/admin-publish.png)    | ![Public site](docs/screenshots/site-home.png) |
+
+The admin UI is in Bahasa Indonesia. Screenshots come from the local stack with sample content (`SCREENSHOTS=1 pnpm exec playwright test tests/e2e/screenshots.spec.ts`).
+
 ## Repository layout
 
 | Path                   | Contents                                                                                                                                                                             |

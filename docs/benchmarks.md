@@ -102,11 +102,11 @@ Taken from `tests/integration/results/2026-11-21T17-08-20-674Z-apps-script.json`
 
 ## Publish end-to-end
 
-| Items | Total (POST → `live`) | Before first poll | Collecting | Committing | Deploying | Verifying |   Snapshot bytes | Vercel build | Job / commit                                               |
-| ----: | --------------------: | ----------------: | ---------: | ---------: | --------: | --------: | ---------------: | -----------: | ---------------------------------------------------------- |
-|    10 |                  91 s |            12.9 s |     16.1 s |     20.2 s |    27.9 s |    14.2 s |   26,266 (26 KB) |         27 s | job `25410645-1efa-45de-93af-cff719f191c2`, v15, `c090bb0` |
-|   100 |                  78 s |             8.7 s |     14.5 s |     19.6 s |    21.2 s |    13.9 s | 231,108 (231 KB) |         16 s | job `6fa2bca7-13d1-4e39-b41b-ff9816952a0a`, v16, `5682b2e` |
-|   500 |   pending — see below |                 — |          — |          — |         — |         — |                — |            — | —                                                          |
+| Items |                          Total (POST → `live`) | Before first poll | Collecting | Committing |             Deploying | Verifying |      Snapshot bytes | Vercel build | Job / commit                                               |
+| ----: | ---------------------------------------------: | ----------------: | ---------: | ---------: | --------------------: | --------: | ------------------: | -----------: | ---------------------------------------------------------- |
+|    10 |                                           91 s |            12.9 s |     16.1 s |     20.2 s |                27.9 s |    14.2 s |      26,266 (26 KB) |         27 s | job `25410645-1efa-45de-93af-cff719f191c2`, v15, `c090bb0` |
+|   100 |                                           78 s |             8.7 s |     14.5 s |     19.6 s |                21.2 s |    13.9 s |    231,108 (231 KB) |         16 s | job `6fa2bca7-13d1-4e39-b41b-ff9816952a0a`, v16, `5682b2e` |
+|   500 | failed after 71 s (`DEPLOY_FAILED`, see below) |             9.5 s |     21.4 s |     25.2 s | 15.3 s (rate limited) |         — | 1,143,050 (1.14 MB) |    not built | job `061db927-60b2-45a9-9e2b-71a9df96631f`, v17, `a70017f` |
 
 Raw: `backend-2026-11-21T18-06-25-418Z-publish.json` (Posts ≈ 100 rows) and `…T18-23-36-064Z-publish.json` (Posts ≈ 250 rows). Both jobs ended `live` with no error. "Before first poll" is the time from the POST response to the first status response, which already showed `collecting`. `publish.readPublished` just before each publish took 4.3 s (10 items) and 5.3 s p50 (100 items).
 
@@ -125,9 +125,13 @@ Raw: `backend-2026-11-21T18-06-25-418Z-publish.json` (Posts ≈ 100 rows) and `�
 | Prod smoke                    | rollback v3 (checksum = v1)  |     79 s |
 | Prod smoke                    | unpublish v4                 |     78 s |
 
-### Pending
+### 500 items and the Vercel deployment limit
 
-The 500-item publish (400 bench posts switched to `published`, then publish) and the cleanup (unpublish, trash and republish the bench posts) were still running when this was written. Their results will be added here.
+Raw: `backend-2026-11-21T18-53-34-672Z-publish.json` (Posts ≈ 550 rows). Switching 400 bench posts to `published` over RPC took several minutes (concurrency 3). `publish.readPublished` returned 500 posts in 6.0 s p50 (14.1 s max). Collecting (21 s) and committing the 1.14 MB snapshot (25 s) worked; then Vercel refused the build with "Deployment rate limited — retry in 24 hours", and the job ended `failed` / `DEPLOY_FAILED` with the previous version (v16) still live — the failure path behaved as designed.
+
+The account had reached the Vercel Hobby limit of 100 deployments per 24 h. The Vercel API listed exactly 100 deployments for the four projects in the preceding 24 h: 33 `READY`, 3 `ERROR`, and **64 `CANCELED`** by the Ignored Build Step (39 production builds of projects not affected by a commit, 25 preview builds of the other environment's branch). Cancelled deployments count toward the limit, so a commit costs a deployment slot in every project that does not skip it natively. See the deployment budget in [deployment.md](deployment.md#2-vercel-hobby).
+
+Not measured because of the limit: the Vercel build time and verification for a 500-item snapshot. The cleanup (unpublish and trash the bench posts) ran over RPC; its final publish has to wait until the limit resets.
 
 ## Findings and limits
 
@@ -135,6 +139,7 @@ The 500-item publish (400 bench posts switched to `published`, then publish) and
 - **Row count up to 550 Posts rows had little effect** on reads. `posts.update` p50 rose from 4.1 s to 5.3 s and `publish.readPublished` p50 from 3.4 s to 4.8 s. One outlier, `posts.list` limit 20 at 550 rows, reached 8.0 s.
 - **Writes are serialized.** Effective write throughput was about one write every 2.5–3.6 s, both in contention runs and in seeding at concurrency 3.
 - **≥ 10 simultaneous writers produce `LOCK_TIMEOUT`** (6 of 10 in this run). 5 writers succeeded but the last one waited 12.6 s.
+- **Vercel Hobby deployment limit is the practical publish ceiling:** 100 deployments per 24 h across all projects, and builds cancelled by the Ignored Build Step count too. A day of heavy testing (two staging E2E runs, a prod install, benchmarks, ~20 pushes) exhausted it.
 - **`system.health` takes about 11 s** (p50) because it reads all 11 sheets. Its p95 reached 17.1 s. In this range it did not grow measurably with total rows (500 → 2,302).
 - **Cold start:** the first call after idle took 11.1 s, versus 1.3–1.6 s warm (PoC-1, `docs/status/day-0.md`).
 - **Publish takes about 1–1.5 min.** Measured values were 60–91 s across all runs on dev and prod. Apps Script calls (collecting and committing, about 35 s) and the Vercel build and verification (deploying and verifying, about 35–42 s) take most of that time.

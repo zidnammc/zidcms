@@ -41,6 +41,7 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 - An interrupted prod setup left the install marker in place, which locked the setup. The marker is now written last, and the lock requires the media folder.
 - After the content-layout change, the beginner guide no longer set `ZIDCMS_ENV` for the web project, so builds would have failed.
 - Biome reformatted raw load-test JSON. The folder is now excluded.
+- **The Vercel Hobby deployment limit was exhausted on release day.** 100 deployments per 24 h are shared by all four projects, and builds cancelled by the Ignored Build Step count too (64 of the 100). Two staging E2E runs, the prod install, benchmark publishes and ~20 pushes used it up, so the 500-item publish ended `DEPLOY_FAILED` (safely — the old version stayed live) and the final staging E2E re-run and prod promotion moved to the next session. The plan's assumption that skipped builds are free only holds for Vercel's native monorepo skip.
 
 **Platform discoveries**
 
@@ -59,6 +60,7 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 **Hurt / limits**
 
 - Account-bound steps needed the owner: OAuth consent screens, Cloud project linking, Vercel and GitHub tokens, manual sign-in checks. These were the critical path more than once.
+- The deployment budget was not tracked while testing; a running count of deployments per day would have prevented hitting the Vercel limit.
 - Platform policies were assumed rather than checked. The load-test plan was only corrected when the Vercel policy was read, and the `drive.file` assumption only failed at the PoC. Checking vendor policies and scopes up front would have saved rework.
 - A later run overwrote a test-evidence file (Playwright cleans its output folder), so the evidence had to be reconstructed from logs. Evidence now lives outside Playwright's output folder.
 - Some fixes had to be applied twice: the docs needed a follow-up once the content layout changed (beginner guide `ZIDCMS_ENV`).
@@ -85,14 +87,15 @@ These numbers fit the intended envelope of one admin, a few hundred items and a 
 
 The order favours safety and operating cost first, then authoring correctness, then reader features. Each step stays within the $0 / Hobby constraints.
 
-1. **Dual-secret HMAC rotation:** accept the current and next secret during a rotation window. Today a rotation needs a coordinated Vercel and Apps Script change with downtime. Small change, high operational value.
-2. **Cheaper health check:** split `system.health` into a fast liveness/config check and an on-demand full validation. At ~11 s it is the slowest RPC.
-3. **Pruning Revisions and AuditLog:** keep the last N revisions per item and archive old audit rows. Both sheets grow on every write (more than 900 audit rows after one benchmark run), which slowly increases read cost and moves toward spreadsheet cell limits.
-4. **Separate published-revision pointer:** allow editing a live post without exposing the edit until _Perbarui_. This removes today's biggest authoring limitation and is a prerequisite for 5 and 6.
-5. **Autosave:** debounced, based on 4 so drafts of live posts never go public. It must respect the ~4–5 s write latency and the single-lock contention numbers above.
-6. **Scheduled publishing:** a time-driven Apps Script trigger that starts a normal publish job. It counts against the Vercel deployment budget, so cap it per day.
-7. **RSS/Atom feed:** generated statically from the snapshot. Cheap and independent, so it can be done earlier if wanted.
-8. **Static full-text search:** build-time index served as a static file. It has to stay small enough for the snapshot size seen above.
-9. **Revision diff/restore and a media garbage-collection UI:** useful once real content exists.
+1. **Fewer wasted Vercel deployments:** trigger the prod projects through Deploy Hooks (from the prod publisher and the promotion step) instead of Git, so `main` pushes no longer create cancelled prod builds that eat the 100-per-day Hobby limit. This directly raises the practical publish ceiling.
+2. **Dual-secret HMAC rotation:** accept the current and next secret during a rotation window. Today a rotation needs a coordinated Vercel and Apps Script change with downtime. Small change, high operational value.
+3. **Cheaper health check:** split `system.health` into a fast liveness/config check and an on-demand full validation. At ~11 s it is the slowest RPC.
+4. **Pruning Revisions and AuditLog:** keep the last N revisions per item and archive old audit rows. Both sheets grow on every write (more than 900 audit rows after one benchmark run), which slowly increases read cost and moves toward spreadsheet cell limits.
+5. **Separate published-revision pointer:** allow editing a live post without exposing the edit until _Perbarui_. This removes today's biggest authoring limitation and is a prerequisite for 6 and 7.
+6. **Autosave:** debounced, based on 5 so drafts of live posts never go public. It must respect the ~4–5 s write latency and the single-lock contention numbers above.
+7. **Scheduled publishing:** a time-driven Apps Script trigger that starts a normal publish job. It counts against the Vercel deployment budget, so cap it per day.
+8. **RSS/Atom feed:** generated statically from the snapshot. Cheap and independent, so it can be done earlier if wanted.
+9. **Static full-text search:** build-time index served as a static file. It has to stay small enough for the snapshot size seen above.
+10. **Revision diff/restore and a media garbage-collection UI:** useful once real content exists.
 
 Items like a rich-text editor, RBAC/workflows, multilingual, themes or multi-tenant would need a different backend than one spreadsheet behind one script lock. They should be re-evaluated against the measured limits before they are started.

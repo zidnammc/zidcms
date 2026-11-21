@@ -7,7 +7,8 @@
 - **Dev/staging** (branch `main`, content `apps/web/content/dev/`): admin <https://zidcms-admin.vercel.app>, site <https://zidcms-web.vercel.app>.
 - **Prod** (branch `release`, content `apps/web/content/prod/`): admin <https://zidcms-prod-admin.vercel.app>, site <https://zidcms-prod-web.vercel.app>. Topology: ADR-0011.
 - Passed: CI on `main`; integration suite vs. the real dev Apps Script (16 pass, 2 skip); staging E2E demo; `pnpm check:deployed` on dev and prod; prod TC-GAS-01…08 and prod smoke + rollback; fresh-clone local dry run.
-- The backend benchmark ran up to 550 posts. The 500-item publish and the cleanup were still pending at handoff (raw JSON in `tests/load/results/`, summary in `docs/benchmarks.md`). No CDN load test is allowed on Vercel Hobby (ADR-0010).
+- The backend benchmark ran up to 550 posts (`docs/benchmarks.md`). No CDN load test is allowed on Vercel Hobby (ADR-0010).
+- **The Vercel Hobby deployment limit (100 per 24 h, cancelled builds count) was reached on 2026-11-21 ~19:17 UTC.** Until it resets: the dev site still shows 100 bench posts (snapshot v16), the latest `main` is not promoted to `release` (prod runs `b75ffad` code, content v4), and the staging E2E has not been re-run on the per-environment layout. First thing next session: `ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm exec tsx tests/load/backend.ts republish` (and `cleanup` again if bench posts remain), `E2E_TARGET=staging pnpm test:e2e`, promote `main` → `release`, `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed`. Mind the budget in `docs/deployment.md` §2.
 
 ### How to resume
 
