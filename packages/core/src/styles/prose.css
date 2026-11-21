@@ -1,0 +1,63 @@
+.zid-prose {
+  @apply text-slate-700 dark:text-slate-300 leading-relaxed space-y-4 text-[16px];
+}
+
+.zid-prose h1 {
+  @apply text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white mt-8 mb-4;
+}
+
+.zid-prose h2 {
+  @apply text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white mt-7 mb-3 pb-2 border-b border-slate-200 dark:border-slate-800;
+}
+
+.zid-prose h3 {
+  @apply text-lg font-semibold text-slate-900 dark:text-white mt-6 mb-2;
+}
+
+.zid-prose p {
+  @apply leading-7;
+}
+
+.zid-prose a {
+  @apply text-emerald-600 dark:text-emerald-400 underline underline-offset-4 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium;
+}
+
+.zid-prose blockquote {
+  @apply border-l-4 border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 pl-4 py-2.5 pr-4 italic text-slate-700 dark:text-slate-300 rounded-r-lg;
+}
+
+.zid-prose ul {
+  @apply list-disc pl-6 space-y-1.5;
+}
+
+.zid-prose ol {
+  @apply list-decimal pl-6 space-y-1.5;
+}
+
+.zid-prose code:not(pre code) {
+  @apply font-mono text-[13px] bg-slate-100 dark:bg-slate-800/90 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700/80;
+}
+
+.zid-prose pre {
+  @apply font-mono text-[13px] bg-slate-900 dark:bg-slate-900/90 text-slate-100 p-4 rounded-xl overflow-x-auto border border-slate-800;
+}
+
+.zid-prose table {
+  @apply w-full text-sm border-collapse my-4 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800;
+}
+
+.zid-prose th {
+  @apply bg-slate-100 dark:bg-slate-800/80 text-left font-semibold text-slate-900 dark:text-slate-100 px-3.5 py-2.5 border-b border-slate-200 dark:border-slate-700;
+}
+
+.zid-prose td {
+  @apply px-3.5 py-2.5 border-b border-slate-200/70 dark:border-slate-800/70;
+}
+
+.zid-prose hr {
+  @apply my-6 border-slate-200 dark:border-slate-800;
+}
+
+.zid-prose img {
+  @apply rounded-xl border border-slate-200 dark:border-slate-800 my-5 max-h-[440px] w-full object-cover shadow-sm;
+}

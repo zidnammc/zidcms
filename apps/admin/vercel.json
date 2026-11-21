@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- apps/admin packages pnpm-lock.yaml",
+  "git": { "deploymentEnabled": { "main": true, "dev": true, "*": false } }
+}

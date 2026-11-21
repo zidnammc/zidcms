@@ -1,0 +1,26 @@
+{
+  "name": "@zidcms/apps-script",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "dev:server": "tsx src/dev/server.ts",
+    "push": "pnpm build && clasp push",
+    "deploy": "pnpm build && clasp push && clasp deploy"
+  },
+  "dependencies": {
+    "@zidcms/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/google-apps-script": "2.0.15",
+    "@types/node": "26.6.6",
+    "esbuild": "0.28.2",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.1.0"
+  }
+}

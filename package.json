@@ -1,0 +1,36 @@
+{
+  "name": "zidcms",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "packageManager": "pnpm@12.21.0",
+  "engines": {
+    "node": ">=26 <27"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "pnpm -r --parallel typecheck",
+    "test": "pnpm -r test",
+    "build": "pnpm -r build",
+    "dev:gas": "pnpm --filter @zidcms/apps-script dev:server",
+    "dev:admin": "pnpm --filter @zidcms/admin dev",
+    "dev:web": "pnpm --filter @zidcms/web dev",
+    "scan:secrets": "tsx scripts/verify-bundle-secrets.ts",
+    "setup:sheet": "tsx scripts/setup-sheet.ts",
+    "seed": "tsx scripts/seed.ts",
+    "reset:content": "tsx scripts/reset-content.ts",
+    "poc:gas": "tsx scripts/poc/hmac-call.ts",
+    "poc:git": "tsx scripts/poc/git-publish.ts",
+    "poc:sheets": "tsx scripts/poc/sheets-roundtrip.ts",
+    "smoke:local": "tsx scripts/smoke-local.ts",
+    "check:web": "tsx scripts/check-web-output.ts",
+    "init:local": "tsx scripts/init-local-env.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.7",
+    "@types/node": "26.6.6",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}

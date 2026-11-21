@@ -1,0 +1,13 @@
+{
+  "secret": "zidcms-test-vector-secret-not-for-production",
+  "vectors": [
+    {
+      "e": "{\"v\":1,\"action\":\"system.health\",\"payload\":{},\"ts\":1763720130123,\"nonce\":\"AAAAAAAAAAAAAAAAAAAAAA\",\"actor\":\"admin@example.com\",\"requestId\":\"00000000-0000-4000-8000-000000000000\"}",
+      "s": "5aa73441bf693c9345cad08ad918d0141fb21aaafe7134d46c966f78a159f6e7"
+    },
+    {
+      "e": "{\"v\":1,\"action\":\"posts.create\",\"payload\":{\"title\":\"Halo dunia — ünïcödé 🚀\"},\"ts\":1763720130123,\"nonce\":\"AAAAAAAAAAAAAAAAAAAAAA\",\"actor\":\"admin@example.com\",\"requestId\":\"00000000-0000-4000-8000-000000000000\"}",
+      "s": "8562b59ad8aae0f662768274c61e114aba8c3e3a7c6915df0f651b90f4c7c8fa"
+    }
+  ]
+}
