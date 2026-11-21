@@ -21,4 +21,8 @@ Executed together with the owner after the local Day-1 work. Private values (URL
 - **PoC-1 — PASS.** `ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm poc:gas`: TC-GAS-01…08 all pass. Latency: first call 11.1 s (cold start), then 1.3–1.6 s; 5.3 MB oversize body rejected in 8.8 s.
 - **PoC-4 — PASS.** `pnpm poc:sheets`: `2026-01-01`, `001`, `TRUE`, `1e5`, `12:30`, `=IMPORTXML(...)`, `+1`, `-1`, `@SUM(A1)`, `'quoted`, `~tilde`, Unicode/emoji all round-trip unchanged; 0 invalid rows afterwards.
 - **Finding:** `drive.file` is insufficient for `DriveApp.createFolder`; switched to the `drive` scope (ADR-0006).
-- PoC-2 (GitHub → Vercel → verify) and PoC-3 (media) wait for O-05…O-07.
+- **PoC-2 — PASS.** Owner published v1 from <https://zidcms-admin.vercel.app>; publisher commit `7ac3141` → Vercel build → `https://zidcms-web.vercel.app/zidcms-version.json` = `{"version":1,"checksum":"sha256:ceac63d9…","generatedAt":"2026-11-21T15:48:04.271Z"}`. Live snapshot contains only allowlisted keys and no e-mail address.
+- **Deployed checks:** web 200 with CSP/HSTS/nosniff/Referrer-Policy; unknown slug 404; admin `/login` 200 with `X-Robots-Tag: noindex, nofollow` and `X-Frame-Options: DENY`; `/api/posts` without session → 401.
+- **Finding fixed:** "Tulis Artikel Baru" looked unresponsive on the deployed admin because the editor waited for five Apps Script calls (measured 3.4–7.1 s cold) with no feedback; repeated clicks cancelled navigation. Added a dashboard loading state and the single `editor.context` RPC (commit `1ea5eae`); verified with Playwright (indicator at 0.7 s, editor ready 1.8 s locally).
+- **Finding fixed:** `ignoreCommand` used cwd-relative pathspecs, so the first admin deployment was skipped (commit `b29767c`).
+- PoC-3 (media upload → Drive → build) is the remaining Day-1 PoC; it needs one image upload from the admin.

@@ -1,6 +1,6 @@
 # 0003 — Snapshot store: Git commits to the project repository
 
-- **Status:** accepted (2026-11-21). PoC-2 against GitHub + Vercel pending owner items O-02/O-06/O-07.
+- **Status:** accepted (2026-11-21). **PoC-2 passed on 2026-11-21**: the owner published v1 from the deployed admin; publisher commit `7ac3141` (authored by the PAT owner) triggered the Vercel build, the orchestrator detected the `Vercel – zidcms-web` commit status, and `zidcms-version.json` on the live site matched version 1 and its checksum.
 
 ## Decision
 
@@ -11,11 +11,12 @@
 - Freshness: `GET ${PUBLIC_SITE_URL}/zidcms-version.json?ts=<now>` with `cache: no-store`; `apps/web/vercel.json` sets `max-age=0, must-revalidate` on that file.
 - Staging (G10 default): `dev` branch + dev Google resources; `vercel.json` enables deployments only for `main` and `dev` **[NV exact semantics]**.
 
-## Open [NV] items for PoC-2
+## [NV] items resolved by PoC-2
 
-- Commits authored by the PAT owner trigger Hobby deployments; if not, the PAT must belong to the owner's account.
-- Branch protection on `main` vs. the bot token → fallback `content` branch.
-- Combined status contains a per-project context for the web project.
+- Commits authored by the PAT owner trigger Hobby deployments — **confirmed**.
+- Combined commit status contains one context per project (`Vercel – zidcms-web`, `Vercel – zidcms-admin`); `VERCEL_STATUS_CONTEXT=zidcms-web` selects the web project — **confirmed**.
+- Branch protection: not enabled on `main` yet; if enabled later, the publisher token needs a bypass or a `content` branch.
+- Fixed after PoC-2: the media-dir cleanup no longer deletes `public/media/.gitkeep`.
 
 ## Accepted consequence (G2)
 

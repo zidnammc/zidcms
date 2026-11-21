@@ -108,7 +108,8 @@ export class GitHubStore implements SnapshotStore {
         entries.push({ path, mode: '100644', type: 'blob', sha });
       }
       for (const path of existing.keys()) {
-        if (!wanted.has(path)) entries.push({ path, mode: '100644', type: 'blob', sha: null });
+        if (!wanted.has(path) && !path.endsWith('/.gitkeep'))
+          entries.push({ path, mode: '100644', type: 'blob', sha: null });
       }
       const tree = await this.request<{ sha: string }>('POST', '/git/trees', {
         base_tree: baseCommit.tree.sha,
