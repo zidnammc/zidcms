@@ -1,6 +1,6 @@
 # 0001 — Admin ↔ Apps Script: HMAC-signed RPC to a GAS web app
 
-- **Status:** accepted (2026-11-21). Live validation pending PoC-1 against a real deployment (owner Day-0 items O-03/O-04/O-08).
+- **Status:** accepted (2026-11-21). **PoC-1 passed against the real dev deployment on 2026-11-21** (TC-GAS-01…08; first call ~11 s cold start, then ~1.3–1.6 s per call).
 - **Context:** Apps Script web apps deployed as _Execute as: Me_ / _Anyone_ are reachable by anyone with the URL. `doPost(e)` cannot read request headers, always answers HTTP 200, and replies via a 302 to `script.googleusercontent.com` **[V per plan]**.
 
 ## Decision
@@ -20,4 +20,4 @@
 ## Evidence so far
 
 - `packages/core/src/rpc.test.ts` (TC-GAS-01…07 at protocol level) and `services/apps-script/src/dispatcher.test.ts` (TC-GAS-08, fail-closed secret).
-- `scripts/poc/hmac-call.ts` passes all TC-GAS-01…08 against the local emulator; the same script is PoC-1 once a real URL exists.
+- `scripts/poc/hmac-call.ts` passes all TC-GAS-01…08 against the local emulator and against the real Apps Script dev web app (`ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm poc:gas`).

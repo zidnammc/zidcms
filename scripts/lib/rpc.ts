@@ -3,11 +3,13 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { type RpcEnvelope, type RpcResponse, signEnvelope } from '../../packages/core/src/index';
 
-const envFile = resolve(import.meta.dirname, '../../apps/admin/.env.local');
+const envFile = process.env.ZIDCMS_ENV_FILE
+  ? resolve(process.cwd(), process.env.ZIDCMS_ENV_FILE)
+  : resolve(import.meta.dirname, '../../apps/admin/.env.local');
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 
 export const GAS_URL = process.env.GAS_WEBAPP_URL ?? '';
-export const SECRET = process.env.GAS_HMAC_SECRET ?? '';
+export const SECRET = process.env.GAS_HMAC_SECRET || process.env.HMAC_SECRET || '';
 export const ACTOR = process.env.SCRIPT_ACTOR ?? 'script@example.com';
 
 if (!GAS_URL || SECRET.length < 32) {
