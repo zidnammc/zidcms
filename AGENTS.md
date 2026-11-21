@@ -24,7 +24,8 @@ Source of truth for scope and acceptance: the owner's private execution plan, ke
 | End-to-end smoke (local stack running) | `pnpm smoke:local`                                                                       |
 | Integration (emulator / dev GAS)       | `pnpm test:integration` / `ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm test:integration` |
 | E2E (local stack / staging)            | `pnpm test:e2e` / `E2E_TARGET=staging pnpm test:e2e`                                     |
-| Deployed checks (staging)              | `pnpm check:deployed`                                                                    |
+| Deployed checks (dev / prod)           | `pnpm check:deployed` / `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed`    |
+| Sacrificial-post smoke + rollback      | `ZIDCMS_ENV_FILE=.local/secrets/<env>.env pnpm smoke:deployed` (~12 deployments)         |
 | Failed-build switch (dev web)          | `pnpm build-switch on\|off`                                                              |
 | Reset published content to empty v0    | `pnpm reset:content`                                                                     |
 | PoCs against real services             | `pnpm poc:gas`, `pnpm poc:sheets`, `pnpm poc:git`                                        |
@@ -39,7 +40,10 @@ Source of truth for scope and acceptance: the owner's private execution plan, ke
 
 ## Session handoff (read first in a new session)
 
-- Status and next steps: `docs/status/next-steps.md` (then `day-0.md`, `day-1.md`).
+- Status and next steps: `docs/status/next-steps.md` (then `day-2.md`, `release-v0.1.0.md`, `retrospective.md`). v0.1.0 is tagged as an early-stage pre-release.
+- Vercel Hobby allows 100 deployments per 24 h for the whole account, and builds cancelled by the Ignored Build Step count. A publish costs ~3, a staging E2E ~15, `smoke:deployed` ~12. Count before running anything that publishes (`vercel api /v6/deployments?limit=100`); never more than one staging E2E per day.
+- Prod Apps Script uses `services/apps-script/.clasp.prod.json` (`clasp -P .clasp.prod.json …`); dev uses `.clasp.json`. Promote code with `main` → `release` merges only.
+- E2E/smoke evidence is written to `tests/e2e/results/` (gitignored; Playwright wipes `test-results/` on every run).
 - Owner communicates in Bahasa Indonesia; reply in Indonesian.
 - Commit identity: always `git -c user.name="Devin" -c user.email="158243242+devin-ai-integration[bot]@users.noreply.github.com" commit …` (owner decision; never change git config). Push to `origin main` is allowed for this project.
 - The dev publisher commits `content: publish vN (job …)` to `main` (prod: to `release`): run `git pull --rebase` before pushing. Promote code to prod by merging `main` into `release`; never merge `release` back.
