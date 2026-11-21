@@ -41,7 +41,7 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 - An interrupted prod setup left the install marker in place, which locked the setup. The marker is now written last, and the lock requires the media folder.
 - After the content-layout change, the beginner guide no longer set `ZIDCMS_ENV` for the web project, so builds would have failed.
 - Biome reformatted raw load-test JSON. The folder is now excluded.
-- **The Vercel Hobby deployment limit was exhausted on release day.** 100 deployments per 24 h are shared by all four projects, and builds cancelled by the Ignored Build Step count too (64 of the 100). Two staging E2E runs, the prod install, benchmark publishes and ~20 pushes used it up, so the 500-item publish ended `DEPLOY_FAILED` (safely — the old version stayed live) and the final staging E2E re-run and prod promotion moved to the next session. The plan's assumption that skipped builds are free only holds for Vercel's native monorepo skip.
+- **The Vercel Hobby deployment limit was exhausted on release day.** 100 deployments per 24 h are shared by all four projects, and builds cancelled by the Ignored Build Step count too (37 of the 100 most recent; native monorepo skips are free). Two staging E2E runs, the prod install, benchmark publishes and ~20 pushes used it up, so the 500-item publish ended `DEPLOY_FAILED` (safely — the old version stayed live) and the final staging E2E re-run and prod promotion moved to the next session. The plan's assumption that skipped builds are free only holds for Vercel's native monorepo skip.
 
 **Platform discoveries**
 

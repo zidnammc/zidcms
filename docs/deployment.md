@@ -38,7 +38,7 @@ Then `ZIDCMS_ENV_FILE=.local/secrets/<env>.env pnpm poc:gas` (TC-GAS-01…08). A
 - Both `vercel.json` files skip every non-production deployment and every production deployment whose diff does not touch the app (`ignoreCommand`), so each project builds only its own branch. Skipped builds show as "Canceled by Ignored Build Step".
 - `apps/web/vercel.json` sets security headers, no-cache for `zidcms-version.json`, immutable caching for `/media/*`.
 - Google OAuth: one client, one redirect URI per admin domain (`https://<admin>/api/auth/callback/google`).
-- Deployment budget (Hobby: 100 deployments per 24 h for the whole account, 1 concurrent build). **Deployments cancelled by the Ignored Build Step count** (measured 2026-11-21: 64 of the 100 that hit the limit were cancelled). Only Vercel's native "Skipped - Not affected" monorepo skip is free. Approximate cost with four projects:
+- Deployment budget (Hobby: 100 deployments per 24 h for the whole account, 1 concurrent build). **Deployments cancelled by the Ignored Build Step count**; Vercel's native "Skipped - Not affected" monorepo skip does not (keep _Skip deployments when there are no changes_ enabled in each project's Build and Deployment settings). Measured 2026-11-21: of the 100 most recent deployments, 37 were Ignored-Build-Step cancellations, mostly cross-environment previews. Approximate cost with four projects:
   - dev publish (commit to `main` touching `apps/web/content/dev`): 1 dev web build + 2 cancelled prod previews = **3**;
   - prod publish (commit to `release`): 1 prod web build + 2 cancelled dev previews = **3**;
   - code push to `main`: up to **4** (affected dev builds + cancelled prod previews);
