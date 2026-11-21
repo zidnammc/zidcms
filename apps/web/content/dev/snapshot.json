@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 18,
+  "version": 19,
   "basedOnVersion": null,
-  "generatedAt": "2026-11-21T20:17:43.285Z",
+  "generatedAt": "2026-11-21T21:00:02.256Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
