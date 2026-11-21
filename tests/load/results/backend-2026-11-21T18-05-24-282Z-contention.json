@@ -1,0 +1,46 @@
+{
+  "command": "contention",
+  "startedAt": "2026-11-21T18:05:24.282Z",
+  "finishedAt": "2026-11-21T18:06:23.336Z",
+  "levels": [
+    {
+      "writers": 2,
+      "success": 2,
+      "lockTimeouts": 0,
+      "otherErrors": [],
+      "latency": {
+        "n": 2,
+        "p50": 3995,
+        "p95": 6588,
+        "max": 6588
+      },
+      "wallMs": 6590
+    },
+    {
+      "writers": 5,
+      "success": 5,
+      "lockTimeouts": 0,
+      "otherErrors": [],
+      "latency": {
+        "n": 5,
+        "p50": 7660,
+        "p95": 12598,
+        "max": 12598
+      },
+      "wallMs": 12601
+    },
+    {
+      "writers": 10,
+      "success": 4,
+      "lockTimeouts": 6,
+      "otherErrors": [],
+      "latency": {
+        "n": 10,
+        "p50": 11557,
+        "p95": 14485,
+        "max": 14485
+      },
+      "wallMs": 14487
+    }
+  ]
+}

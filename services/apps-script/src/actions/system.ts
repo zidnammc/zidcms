@@ -68,7 +68,7 @@ export const systemActions = {
     lock: true,
     run(ctx: Ctx) {
       const meta = readMeta(ctx);
-      if (ctx.environment === 'prod' && meta.installed_at) {
+      if (ctx.environment === 'prod' && meta.installed_at && ctx.props.get('MEDIA_FOLDER_ID')) {
         throw new ZidError('FORBIDDEN', 'system.setup dinonaktifkan di prod setelah instalasi pertama.');
       }
       const created: string[] = [];
@@ -78,7 +78,6 @@ export const systemActions = {
         if (result.created) created.push(name);
         if (result.addedColumns.length && !result.created) addedColumns[name] = result.addedColumns;
       }
-      if (!meta.installed_at) setMeta(ctx, 'installed_at', ctx.nowIso);
       setMeta(ctx, 'schema_version', String(SCHEMA_VERSION));
       setMeta(ctx, 'environment', ctx.environment);
       const settingsAdded = writeDefaultSettings(ctx);
@@ -87,6 +86,7 @@ export const systemActions = {
         mediaFolder = ctx.media.ensureFolder(ctx.environment);
         if (mediaFolder) ctx.props.set('MEDIA_FOLDER_ID', mediaFolder);
       }
+      if (!meta.installed_at) setMeta(ctx, 'installed_at', ctx.nowIso);
       audit(ctx, 'system.setup', 'system', 'spreadsheet', 'ok', `created=${created.join(',')}`);
       return {
         created_sheets: created,

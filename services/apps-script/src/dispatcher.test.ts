@@ -95,6 +95,20 @@ describe('setup & data integrity', () => {
     expect(err('system.setup').code).toBe('FORBIDDEN');
   });
 
+  it('an interrupted prod setup (Drive folder failed) can be re-run until it completes', () => {
+    state = emptyState({ HMAC_SECRET: SECRET, ENVIRONMENT: 'prod' });
+    deps = memoryDeps(state, { now: () => clock });
+    const ensureFolder = deps.media.ensureFolder.bind(deps.media);
+    deps.media.ensureFolder = () => {
+      throw new Error('Izin ditolak saat mengaktifkan API: drive');
+    };
+    expect(err('system.setup').code).toBe('INTERNAL_ERROR');
+    deps.media.ensureFolder = ensureFolder;
+    expect(ok('system.setup').media_folder_configured).toBe(true);
+    expect(ok('system.health')).toMatchObject({ environment: 'prod', media_folder_configured: true });
+    expect(err('system.setup').code).toBe('FORBIDDEN');
+  });
+
   it('TC-DATA-02 formula-like values are stored escaped and read back verbatim', () => {
     const post = ok('posts.create', { title: '=IMPORTXML("https://evil.example","//a")', slug: 'formula' });
     const row = state.sheets.Posts?.[1] ?? [];

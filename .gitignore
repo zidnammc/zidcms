@@ -28,3 +28,4 @@ tests/integration/results/
 apps/web/content/snapshot.json
 apps/web/public/zidcms-version.json
 apps/web/public/media/
+.clasp.*.json

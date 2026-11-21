@@ -1,0 +1,49 @@
+{
+  "command": "publish",
+  "startedAt": "2026-11-21T18:06:25.418Z",
+  "finishedAt": "2026-11-21T18:08:53.428Z",
+  "items": 10,
+  "readPublishedMs": {
+    "n": 3,
+    "p50": 4267,
+    "p95": 4296,
+    "max": 4296
+  },
+  "jobId": "25410645-1efa-45de-93af-cff719f191c2",
+  "final": "live",
+  "error": null,
+  "snapshotVersion": 15,
+  "commit": "c090bb0d939b3183359e170ec9a2c4c300654fd1",
+  "totalSeconds": 91,
+  "stateDurationsMs": {
+    "collecting": 16148,
+    "committing": 20151,
+    "deploying": 27908,
+    "verifying": 14157,
+    "live": 0
+  },
+  "timeline": [
+    {
+      "state": "collecting",
+      "atMs": 12920
+    },
+    {
+      "state": "committing",
+      "atMs": 29068
+    },
+    {
+      "state": "deploying",
+      "atMs": 49219
+    },
+    {
+      "state": "verifying",
+      "atMs": 77127
+    },
+    {
+      "state": "live",
+      "atMs": 91284
+    }
+  ],
+  "snapshotBytes": 26266,
+  "vercelBuildSeconds": 27
+}
