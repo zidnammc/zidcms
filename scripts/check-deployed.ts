@@ -163,10 +163,38 @@ async function webChecks() {
   );
 }
 
+function vercel(args: string[]): string | null {
+  const res = spawnSync('vercel', args, {
+    cwd: root,
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    env: { ...process.env, MSYS_NO_PATHCONV: '1' },
+  });
+  return res.status === 0 ? `${res.stdout}${res.stderr}` : null;
+}
+
+function deployedFunctions() {
+  const inspect = vercel(['inspect', new URL(WEB).hostname]);
+  const id = inspect?.match(/dpl_[A-Za-z0-9]+/)?.[0];
+  const raw = id ? vercel(['api', `/v13/deployments/${id}`, '--raw']) : null;
+  if (!raw) {
+    console.log('SKIP TC-WEB-02 (deployed) Vercel CLI not available or not logged in');
+    return;
+  }
+  const deployment = JSON.parse(raw.slice(raw.indexOf('{'))) as { lambdas?: { output?: unknown[] }[]; target?: string };
+  const outputs = (deployment.lambdas ?? []).flatMap((l) => l.output ?? []).length;
+  check(
+    'TC-WEB-02 (deployed)',
+    outputs === 0,
+    `current ${deployment.target} deployment of the web project has ${outputs} function outputs`,
+  );
+}
+
 async function main() {
   console.log(`Deployed checks: admin ${new URL(ADMIN).host}, web ${new URL(WEB).host}`);
   await adminChecks();
   await webChecks();
+  deployedFunctions();
   console.log(failed ? `${failed} check(s) FAILED` : 'All deployed checks passed');
   process.exit(failed ? 1 : 0);
 }

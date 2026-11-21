@@ -401,7 +401,7 @@ Kita membuat **dua proyek**: satu untuk dasbor admin, satu untuk situs publik.
    1. **Add New → Project** → pilih repo `zidcms` → **Import**.
    2. **Project Name:** misalnya `nama-anda-web`.
    3. **Root Directory:** klik **Edit** → pilih `apps/web`.
-   4. **Environment Variables:** tambahkan `SITE_URL` = `https://nama-anda-web.vercel.app` (sesuai nama proyek).
+   4. **Environment Variables:** tambahkan dua variabel: `SITE_URL` = `https://nama-anda-web.vercel.app` (sesuai nama proyek) dan `ZIDCMS_ENV` = `prod`. Tanpa `ZIDCMS_ENV`, build sengaja gagal.
    5. Klik **Deploy**. Setelah selesai, catat alamatnya sebagai _Alamat situs_.
 3. **Proyek dasbor admin:**
    1. **Add New → Project** → repo `zidcms` lagi → **Import**.
@@ -431,21 +431,22 @@ ZidCMS hanya meminta nama dan email Anda, jadi tidak perlu proses verifikasi Goo
 
 Di Vercel, buka proyek **admin** → **Settings → Environment Variables**. Tambahkan satu per satu:
 
-| Name                 | Value                                                          |
-| -------------------- | -------------------------------------------------------------- |
-| `AUTH_SECRET`        | kunci acak kedua dari 3.3                                      |
-| `AUTH_GOOGLE_ID`     | Client ID dari 3.8                                             |
-| `AUTH_GOOGLE_SECRET` | Client secret dari 3.8                                         |
-| `ADMIN_EMAILS`       | email Google Anda (pisahkan dengan koma kalau lebih dari satu) |
-| `ADMIN_URL`          | _Alamat admin_, tanpa garis miring di akhir                    |
-| `ZIDCMS_ENV`         | `prod`                                                         |
-| `GAS_WEBAPP_URL`     | dari 3.6                                                       |
-| `GAS_HMAC_SECRET`    | **sama persis** dengan `HMAC_SECRET` di 3.4                    |
-| `PUBLISH_TARGET`     | `github`                                                       |
-| `GITHUB_TOKEN`       | token dari 3.2                                                 |
-| `GITHUB_REPO`        | `akun-anda/zidcms`                                             |
-| `GITHUB_BRANCH`      | `main`                                                         |
-| `PUBLIC_SITE_URL`    | _Alamat situs_, tanpa garis miring di akhir                    |
+| Name                    | Value                                                          |
+| ----------------------- | -------------------------------------------------------------- |
+| `AUTH_SECRET`           | kunci acak kedua dari 3.3                                      |
+| `AUTH_GOOGLE_ID`        | Client ID dari 3.8                                             |
+| `AUTH_GOOGLE_SECRET`    | Client secret dari 3.8                                         |
+| `ADMIN_EMAILS`          | email Google Anda (pisahkan dengan koma kalau lebih dari satu) |
+| `ADMIN_URL`             | _Alamat admin_, tanpa garis miring di akhir                    |
+| `ZIDCMS_ENV`            | `prod`                                                         |
+| `GAS_WEBAPP_URL`        | dari 3.6                                                       |
+| `GAS_HMAC_SECRET`       | **sama persis** dengan `HMAC_SECRET` di 3.4                    |
+| `PUBLISH_TARGET`        | `github`                                                       |
+| `GITHUB_TOKEN`          | token dari 3.2                                                 |
+| `GITHUB_REPO`           | `akun-anda/zidcms`                                             |
+| `GITHUB_BRANCH`         | `main`                                                         |
+| `VERCEL_STATUS_CONTEXT` | nama proyek situs publik, mis. `nama-anda-web`                 |
+| `PUBLIC_SITE_URL`       | _Alamat situs_, tanpa garis miring di akhir                    |
 
 Lalu buka tab **Deployments** → titik tiga di deployment teratas → **Redeploy**.
 
@@ -467,26 +468,28 @@ Di Vercel proyek admin: ubah `ADMIN_EMAILS` menjadi `email-anda@example.com,emai
 
 ## Bagian 4 — Kalau ada masalah
 
-| Yang terlihat                                                           | Penyebab yang paling mungkin                                  | Cara memperbaiki                                                                                            |
-| ----------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| "Akses ditolak" saat masuk                                              | Email tidak ada di `ADMIN_EMAILS`, atau bukan Test user       | Periksa 3.9 dan 3.8, lalu Redeploy                                                                          |
-| Google: `redirect_uri_mismatch`                                         | Alamat di 3.8 tidak persis sama dengan alamat admin           | Samakan, termasuk `https://` dan `/api/auth/callback/google`                                                |
-| "Konfigurasi server … belum diatur"                                     | Ada variabel yang lupa diisi                                  | Lengkapi tabel 3.9, lalu Redeploy                                                                           |
-| "Apps Script tidak dapat dihubungi" / "Respons Apps Script tidak valid" | `GAS_WEBAPP_URL` salah, atau web app belum di-deploy          | Ulangi 3.6, salin URL yang berakhiran `/exec`                                                               |
-| Kode `SIGNATURE_INVALID`                                                | `GAS_HMAC_SECRET` (Vercel) ≠ `HMAC_SECRET` (Apps Script)      | Samakan persis — hati-hati spasi tersalin                                                                   |
-| "Sheet … belum disiapkan"                                               | Fungsi `setup` belum dijalankan                               | Jalankan `setup` di editor Apps Script (3.6 langkah 7)                                                      |
-| `setup` gagal: "dinonaktifkan di prod setelah instalasi pertama"        | `setup` sudah pernah dijalankan dengan `ENVIRONMENT` = `prod` | Normal — lembarnya sudah siap. Pengaman ini mencegah perubahan skema tak sengaja di situs sungguhan         |
-| Publikasi lama di "Deploy (Build)"                                      | Vercel sedang antre membangun                                 | Cek tab Deployments di Vercel. Gagal otomatis setelah 15 menit                                              |
-| Gagal dengan `DEPLOY_FAILED`                                            | Build Vercel gagal — situs lama tetap tayang                  | Buka log deployment terakhir di Vercel, lalu klik **Publikasikan Situs** lagi                               |
-| Gagal dengan `VERIFY_TIMEOUT`                                           | `PUBLIC_SITE_URL` salah                                       | Periksa alamat situs di 3.9                                                                                 |
-| Gagal dengan `GITHUB_ERROR`                                             | Token kedaluwarsa atau izinnya kurang                         | Buat token baru (3.2), perbarui di Vercel                                                                   |
-| Gagal dengan `VALIDATION_ERROR`                                         | Ada gambar yang sudah dihapus tapi masih dipakai artikel      | Baca pesan errornya, perbaiki artikel yang disebut                                                          |
-| "Item ini telah diubah di tempat lain"                                  | Artikel diedit di tab/perangkat lain                          | Klik **Salin konten saya**, lalu **Muat ulang**, tempel kembali yang perlu                                  |
-| "Slug … sudah dipakai"                                                  | Ada artikel lain (termasuk arsip) dengan alamat sama          | Ganti slug                                                                                                  |
-| Unggah gambar ditolak                                                   | Lebih dari 3 MB atau bukan JPG/PNG/WebP/GIF                   | Kecilkan/konversi gambar (misalnya dengan squoosh.app)                                                      |
-| "Spreadsheet sedang sibuk"                                              | Dua penyimpanan bersamaan                                     | Tunggu beberapa detik, coba lagi                                                                            |
-| Peringatan merah "baris tidak valid"                                    | Google Sheets diedit manual                                   | Kembalikan versi sheet lewat **File → Version history**                                                     |
-| Situs menampilkan tulisan yang salah                                    | —                                                             | **Publikasi & Snapshot → Rollback** (1.12). Darurat: Vercel proyek web → Deployments → **Instant Rollback** |
+| Yang terlihat                                                           | Penyebab yang paling mungkin                                             | Cara memperbaiki                                                                                                                                                     |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "Akses ditolak" saat masuk                                              | Email tidak ada di `ADMIN_EMAILS`, atau bukan Test user                  | Periksa 3.9 dan 3.8, lalu Redeploy                                                                                                                                   |
+| Google: `redirect_uri_mismatch`                                         | Alamat di 3.8 tidak persis sama dengan alamat admin                      | Samakan, termasuk `https://` dan `/api/auth/callback/google`                                                                                                         |
+| "Konfigurasi server … belum diatur"                                     | Ada variabel yang lupa diisi                                             | Lengkapi tabel 3.9, lalu Redeploy                                                                                                                                    |
+| "Apps Script tidak dapat dihubungi" / "Respons Apps Script tidak valid" | `GAS_WEBAPP_URL` salah, atau web app belum di-deploy                     | Ulangi 3.6, salin URL yang berakhiran `/exec`                                                                                                                        |
+| Kode `SIGNATURE_INVALID`                                                | `GAS_HMAC_SECRET` (Vercel) ≠ `HMAC_SECRET` (Apps Script)                 | Samakan persis — hati-hati spasi tersalin                                                                                                                            |
+| "Sheet … belum disiapkan"                                               | Fungsi `setup` belum dijalankan                                          | Jalankan `setup` di editor Apps Script (3.6 langkah 7)                                                                                                               |
+| Google: "Access blocked" / `Error 403: access_denied` saat **Allow**    | Script memakai proyek Google Cloud bawaan yang diblokir untuk izin Drive | Editor Apps Script → ⚙️ **Project Settings** → **Change project** → isi nomor proyek Google Cloud tempat Anda menjadi Test user (3.8) → **Set project**, lalu ulangi |
+| `setup` gagal: "Izin ditolak saat mengaktifkan API: drive"              | Google Drive API belum aktif di proyek Google Cloud tersebut             | Google Cloud Console → **APIs & Services → Library** → **Google Drive API** → **Enable**, lalu jalankan `setup` lagi                                                 |
+| `setup` gagal: "dinonaktifkan di prod setelah instalasi pertama"        | `setup` sudah pernah dijalankan dengan `ENVIRONMENT` = `prod`            | Normal — lembarnya sudah siap. Pengaman ini mencegah perubahan skema tak sengaja di situs sungguhan                                                                  |
+| Publikasi lama di "Deploy (Build)"                                      | Vercel sedang antre membangun                                            | Cek tab Deployments di Vercel. Gagal otomatis setelah 15 menit                                                                                                       |
+| Gagal dengan `DEPLOY_FAILED`                                            | Build Vercel gagal — situs lama tetap tayang                             | Buka log deployment terakhir di Vercel, lalu klik **Publikasikan Situs** lagi                                                                                        |
+| Gagal dengan `VERIFY_TIMEOUT`                                           | `PUBLIC_SITE_URL` salah                                                  | Periksa alamat situs di 3.9                                                                                                                                          |
+| Gagal dengan `GITHUB_ERROR`                                             | Token kedaluwarsa atau izinnya kurang                                    | Buat token baru (3.2), perbarui di Vercel                                                                                                                            |
+| Gagal dengan `VALIDATION_ERROR`                                         | Ada gambar yang sudah dihapus tapi masih dipakai artikel                 | Baca pesan errornya, perbaiki artikel yang disebut                                                                                                                   |
+| "Item ini telah diubah di tempat lain"                                  | Artikel diedit di tab/perangkat lain                                     | Klik **Salin konten saya**, lalu **Muat ulang**, tempel kembali yang perlu                                                                                           |
+| "Slug … sudah dipakai"                                                  | Ada artikel lain (termasuk arsip) dengan alamat sama                     | Ganti slug                                                                                                                                                           |
+| Unggah gambar ditolak                                                   | Lebih dari 3 MB atau bukan JPG/PNG/WebP/GIF                              | Kecilkan/konversi gambar (misalnya dengan squoosh.app)                                                                                                               |
+| "Spreadsheet sedang sibuk"                                              | Dua penyimpanan bersamaan                                                | Tunggu beberapa detik, coba lagi                                                                                                                                     |
+| Peringatan merah "baris tidak valid"                                    | Google Sheets diedit manual                                              | Kembalikan versi sheet lewat **File → Version history**                                                                                                              |
+| Situs menampilkan tulisan yang salah                                    | —                                                                        | **Publikasi & Snapshot → Rollback** (1.12). Darurat: Vercel proyek web → Deployments → **Instant Rollback**                                                          |
 
 Masih buntu? Lihat `docs/operations.md` untuk langkah lanjutan.
 

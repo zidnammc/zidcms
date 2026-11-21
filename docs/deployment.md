@@ -1,30 +1,56 @@
 # Deployment
 
-## 1. Apps Script (Executor/owner, local with clasp)
+Environments and branches (ADR-0011):
 
-1. `pnpm --filter @zidcms/apps-script build` → `services/apps-script/dist/Code.js` + `appsscript.json`.
-2. `cd services/apps-script && clasp push`.
-3. First time: in the editor, _Deploy → New deployment → Web app_, _Execute as: Me_, _Who has access: Anyone_; authorise the scopes; keep the deployment ID privately. Later: `clasp deploy -i <DEPLOYMENT_ID> -d "<git sha>"` so the URL stays stable.
-4. `pnpm poc:gas` (TC-GAS-01…08) and `pnpm setup:sheet`.
-5. Apps Script keeps at most 200 versions; delete old versions in _Project history_ when approaching the limit.
-6. Prod only with owner approval; prod uses its own spreadsheet, folder, secret, and deployment.
+| Environment | Vercel projects                        | Git branch | Content folder           | Google resources                   | Private config                                                     |
+| ----------- | -------------------------------------- | ---------- | ------------------------ | ---------------------------------- | ------------------------------------------------------------------ |
+| dev/staging | `zidcms-admin`, `zidcms-web`           | `main`     | `apps/web/content/dev/`  | "ZidCMS dev" spreadsheet + script  | `.local/secrets/dev.env`, `services/apps-script/.clasp.json`       |
+| prod        | `zidcms-prod-admin`, `zidcms-prod-web` | `release`  | `apps/web/content/prod/` | "ZidCMS prod" spreadsheet + script | `.local/secrets/prod.env`, `services/apps-script/.clasp.prod.json` |
 
-## 2. Vercel (owner — Hobby has no team seats)
+## 1. Apps Script
 
-| Project | Root directory | Env                                                            |
-| ------- | -------------- | -------------------------------------------------------------- |
-| admin   | `apps/admin`   | all admin variables in `.env.example`; `PUBLISH_TARGET=github` |
-| web     | `apps/web`     | `SITE_URL`                                                     |
+Routine redeploy (keeps the web-app URL):
 
-- `ignoreCommand` in both `vercel.json` files compares against `VERCEL_GIT_PREVIOUS_SHA` with repo-root pathspecs (`:/apps/admin`, …): admin skips content-only commits, web skips admin-only commits, and the first deployment always builds. Git deployments are enabled for `main` and `dev` only.
-- `pnpm exec tsx scripts/vercel-env-sync.ts dev` pushes the variables from `.local/secrets/dev.env` to both projects via the Vercel CLI without printing values.
-- `apps/web/vercel.json` sets security headers, `zidcms-version.json` no-cache, and immutable caching for `/media/*`.
-- Deployment budget (Hobby, 100/day, 1 concurrent build): batch code pushes; ≤ 40 code deploys + ≤ 30 publishes + 30 reserve per day.
+```bash
+pnpm --filter @zidcms/apps-script build
+cd services/apps-script
+clasp push --force && clasp create-deployment -i "$(cat ../../.local/secrets/dev-deployment-id.txt)" -d "<git sha>"            # dev
+clasp -P .clasp.prod.json push --force && clasp -P .clasp.prod.json create-deployment -i "$(cat ../../.local/secrets/prod-deployment-id.txt)" -d "<git sha>"   # prod (owner approval)
+```
 
-## 3. CI
+Then `ZIDCMS_ENV_FILE=.local/secrets/<env>.env pnpm poc:gas` (TC-GAS-01…08). Apps Script keeps at most 200 versions; delete old ones in _Project history_ when approaching the limit.
 
-`.github/workflows/ci.yml` runs on PRs and pushes to `main`/`dev` (content-only commits are ignored): install (frozen lockfile) → lint → typecheck → tests → build → static-output check → secret scans → audit and license reports (non-blocking). No secrets are used in CI. `integration.yml` and `e2e.yml` are `workflow_dispatch` only and run against the local emulator stack; runs against the real dev services are done locally (see [testing.md](testing.md)).
+### First-time install of an environment (as done for prod on 2026-11-21)
 
-## 4. Release checklist
+1. Create spreadsheet + bound script: in `services/apps-script/`, `echo '{"rootDir":"dist"}' > .clasp.prod.json` and `clasp -P .clasp.prod.json create-script --type sheets --title "ZidCMS prod" --rootDir dist > ../../.local/secrets/clasp-create-prod.log`. clasp refuses a `rootDir` outside the folder of the project file, so the project file must live next to `dist/`. `create-script` overwrites `dist/appsscript.json`; rebuild afterwards.
+2. `pnpm exec tsx scripts/init-dev-secrets.ts prod` writes new `HMAC_SECRET` / `AUTH_SECRET` into `.local/secrets/prod.env`.
+3. `pnpm --filter @zidcms/apps-script build && pnpm exec tsx scripts/gas-bootstrap.ts prod` pushes a temporary `Bootstrap.js` that sets the Script Properties and runs `setup`.
+4. **Owner, in the script editor:** _Project Settings → Change project_ → the number of the Google Cloud project that holds the OAuth client (the owner is a test user there; the default Cloud project is blocked from the `drive` scope with `Error 403: access_denied`). Then run `bootstrap` and allow access.
+5. If `setup` reports "Izin ditolak saat mengaktifkan API: drive": add `"projectId": "<that project number>"` to the clasp project file and run `clasp -P .clasp.prod.json enable-api drive`.
+6. `pnpm exec tsx scripts/gas-bootstrap.ts prod --cleanup` removes `Bootstrap.js` (it contains the secret).
+7. `clasp -P .clasp.prod.json create-deployment -d "<sha> initial"`; store the deployment id in `.local/secrets/prod-deployment-id.txt` and `GAS_WEBAPP_URL=https://script.google.com/macros/s/<id>/exec` in `prod.env`. The manifest makes it a web app executing as the owner, accessible to anyone (every request must be HMAC-signed).
+8. `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm poc:gas system.setup '{}'` (completes an interrupted setup; afterwards prod setup is locked) and `… pnpm poc:gas` → all PASS, `system.health` shows `environment: prod`, `media_folder_configured: true`.
 
-See plan §27.2.
+## 2. Vercel (Hobby)
+
+- `pnpm exec tsx scripts/vercel-create-prod.ts` creates `zidcms-prod-admin` (root `apps/admin`) and `zidcms-prod-web` (root `apps/web`) linked to the repo and sets their production branch to `release` (dashboard API `PATCH /v9/projects/<name>/branch`; if it fails, set _Settings → Git → Production Branch_ manually).
+- `pnpm exec tsx scripts/vercel-env-sync.ts dev|prod` pushes variables from `.local/secrets/<env>.env` without printing values: admin gets everything in `.env.example` (`ZIDCMS_ENV`, `CONTENT_ROOT=apps/web/content/<env>`, `GITHUB_BRANCH=main|release`, `VERCEL_STATUS_CONTEXT=<web project>`), web gets `SITE_URL` and `ZIDCMS_ENV`. Variable changes apply to the next deployment.
+- Both `vercel.json` files skip every non-production deployment and every production deployment whose diff does not touch the app (`ignoreCommand`), so each project builds only its own branch. Skipped builds show as "Canceled by Ignored Build Step".
+- `apps/web/vercel.json` sets security headers, no-cache for `zidcms-version.json`, immutable caching for `/media/*`.
+- Google OAuth: one client, one redirect URI per admin domain (`https://<admin>/api/auth/callback/google`).
+- Deployment budget (Hobby: 100/day, 1 concurrent build): ≤ 40 code deploys + ≤ 30 publishes + 30 reserve per day. A staging E2E run costs ~5 deployments.
+
+## 3. Promoting code to prod
+
+1. Code is merged to `main`; CI green; staging checks pass (`pnpm check:deployed`, `E2E_TARGET=staging pnpm test:e2e`).
+2. Merge `main` into `release` (owner approval): GitHub PR `release ← main`, or locally `git fetch && git switch release && git merge --no-edit origin/main && git push && git switch main`. `main` never changes `apps/web/content/prod/`, so the merge cannot touch prod content. Never merge `release` into `main`.
+3. If Apps Script code changed, redeploy the prod script (§1).
+4. `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed`; for releases also `… pnpm smoke:deployed` (sacrificial post: publish → update → rollback → unpublish).
+
+## 4. CI
+
+`.github/workflows/ci.yml` runs on PRs and pushes to `main`/`release` (pushes that only change `apps/web/content/{dev,prod}/**` are ignored): install (frozen lockfile) → lint → typecheck → tests → build → static-output check → secret scans → audit and license reports (non-blocking). No secrets are used in CI. `integration.yml` and `e2e.yml` are `workflow_dispatch` only and run against the local emulator stack; runs against the real dev services are done locally (see [testing.md](testing.md)).
+
+## 5. Release checklist
+
+See plan §27.2 and `docs/status/release-v0.1.0.md`.
