@@ -32,3 +32,17 @@ Source of truth for scope and acceptance: `ZIDCMS_EXECUTION_PLAN.md`. Decisions:
 - Shell heredocs longer than ~10 KB get truncated by the agent tool; write large files with the file-write tool.
 - Do not add comments unless asked; `biome-ignore` directives are allowed where a rule is intentionally bypassed.
 - UI copy is Bahasa Indonesia (owner decision); docs and code identifiers are English.
+
+## Session handoff (read first in a new session)
+
+- Status and next steps: `docs/status/next-steps.md` (then `day-0.md`, `day-1.md`).
+- Owner communicates in Bahasa Indonesia; reply in Indonesian.
+- Commit identity: always `git -c user.name="Devin" -c user.email="158243242+devin-ai-integration[bot]@users.noreply.github.com" commit …` (owner decision; never change git config). Push to `origin main` is allowed for this project.
+- The publisher commits `content: publish vN (job …)` to `main`: run `git pull --rebase` before pushing. Never stage `apps/web/content/snapshot.json`, `apps/web/public/zidcms-version.json`, or `apps/web/public/media/*` produced by local publishing (`git stash` holds one such local test output).
+- CLIs on the owner's machine are logged in: `gh`, `clasp` (cwd `services/apps-script`), `vercel`.
+- Private config lives only in gitignored files: `.local/secrets/dev.env` (secrets, GAS URL, PAT, OAuth client), `.local/secrets/dev-deployment-id.txt`, `services/apps-script/.clasp.json`. Never print their values; redirect CLI output that contains IDs/URLs to `.local/secrets/*.log`.
+- Real-GAS scripts: `ZIDCMS_ENV_FILE=.local/secrets/dev.env pnpm poc:gas [action json]`, `pnpm poc:sheets`.
+- Redeploy Apps Script keeping the URL: `pnpm --filter @zidcms/apps-script build && cd services/apps-script && clasp push --force && clasp create-deployment -i "$(cat ../../.local/secrets/dev-deployment-id.txt)" -d "<sha>"`.
+- Vercel env: edit `.local/secrets/dev.env`, then `pnpm exec tsx scripts/vercel-env-sync.ts dev`. In Git Bash set `MSYS_NO_PATHCONV=1` for `vercel api /v…` calls. Runtime/request logs: `vercel logs [requests] --scope <team> --project zidcms-admin` (Hobby keeps ~30 min).
+- Browser checks: Playwright + Chromium are installed (`@playwright/test` at the root); local dev login is `admin@example.com` with `pnpm init:local` env.
+- Windows gotchas: Python `open()` writes CRLF unless `newline=''`; Biome formats Markdown in CI (run `pnpm exec biome check --write .` before committing); backslashes in shell heredocs can be mangled — use the file-edit tool.
