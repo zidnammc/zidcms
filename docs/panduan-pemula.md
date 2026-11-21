@@ -5,7 +5,7 @@ Panduan ini ditulis untuk Anda yang **belum pernah** memakai terminal, GitHub, a
 **Daftar isi**
 
 - [Bagian 0 — Kenalan dulu dengan ZidCMS](#bagian-0--kenalan-dulu-dengan-zidcms)
-- [Bagian 1 — Memakai dasbor sehari-hari](#bagian-1--memakai-dasbor-sehari-hari) ← *kalau situs Anda sudah dipasang, cukup baca ini*
+- [Bagian 1 — Memakai dasbor sehari-hari](#bagian-1--memakai-dasbor-sehari-hari) ← _kalau situs Anda sudah dipasang, cukup baca ini_
 - [Bagian 2 — Mencoba ZidCMS di komputer sendiri](#bagian-2--mencoba-zidcms-di-komputer-sendiri)
 - [Bagian 3 — Memasang ZidCMS online (gratis)](#bagian-3--memasang-zidcms-online-gratis)
 - [Bagian 4 — Kalau ada masalah](#bagian-4--kalau-ada-masalah)
@@ -19,12 +19,12 @@ Panduan ini ditulis untuk Anda yang **belum pernah** memakai terminal, GitHub, a
 
 ZidCMS adalah aplikasi untuk **membuat dan mengelola website/blog**. Bedanya dengan WordPress:
 
-| | WordPress | ZidCMS |
-|---|---|---|
-| Tempat menyimpan tulisan | Database di server | **Google Sheets** (spreadsheet) |
-| Tempat menyimpan gambar | Server | **Google Drive** (privat) |
+|                            | WordPress                          | ZidCMS                                                          |
+| -------------------------- | ---------------------------------- | --------------------------------------------------------------- |
+| Tempat menyimpan tulisan   | Database di server                 | **Google Sheets** (spreadsheet)                                 |
+| Tempat menyimpan gambar    | Server                             | **Google Drive** (privat)                                       |
 | Situs yang dilihat pembaca | Dibuat ulang setiap ada pengunjung | **File jadi** (statis) yang disebar lewat CDN — cepat dan murah |
-| Biaya hosting | Biasanya bayar | **Gratis** (Vercel Hobby + GitHub + akun Google) |
+| Biaya hosting              | Biasanya bayar                     | **Gratis** (Vercel Hobby + GitHub + akun Google)                |
 
 ### Analogi sederhana
 
@@ -62,10 +62,10 @@ Setelah masuk, Anda melihat **Dasbor Editorial**:
 
 1. Klik tombol hijau **Tulis Artikel Baru** (kiri atas).
 2. **Judul** — ketik di kotak besar paling atas. Kotak **Slug URL** di bawahnya akan terisi otomatis.
-   - *Slug* adalah bagian alamat artikel. Contoh: judul "Resep Nasi Goreng" → alamat `/blog/resep-nasi-goreng/`.
+   - _Slug_ adalah bagian alamat artikel. Contoh: judul "Resep Nasi Goreng" → alamat `/blog/resep-nasi-goreng/`.
    - Slug hanya boleh huruf kecil, angka, dan tanda hubung (`-`).
 3. **Konten** — tulis di kotak besar. Di atasnya ada tombol bantu:
-   - **H** (judul bagian), **B** (tebal), *I* (miring), 🔗 (tautan), kode, daftar, kutipan.
+   - **H** (judul bagian), **B** (tebal), _I_ (miring), 🔗 (tautan), kode, daftar, kutipan.
    - Tidak hafal Markdown? Pakai tombol-tombol itu saja. Contekan ada di [Lampiran A](#lampiran-a--contekan-markdown).
 4. Di kanan atas kotak konten, pilih tampilan:
    - **Tulis** — hanya editor.
@@ -94,14 +94,14 @@ Setelah masuk, Anda melihat **Dasbor Editorial**:
 1. Klik tombol hijau **Terbitkan**.
 2. Proses publikasi berjalan otomatis. Lihat kemajuannya di kanan atas atau di menu **Publikasi & Snapshot**:
 
-   | Tahap | Artinya |
-   |---|---|
-   | Antrean | Permintaan diterima |
-   | Merakit Snapshot | Semua tulisan yang terbit dikumpulkan dan diperiksa |
-   | Commit GitHub | Edisi baru disimpan di GitHub |
-   | Deploy (Build) | Vercel sedang "mencetak" situs |
-   | Verifikasi Versi | ZidCMS memastikan situs benar-benar sudah berganti |
-   | **Tayang (Live)** | Selesai! Artikel bisa dibaca semua orang |
+   | Tahap             | Artinya                                             |
+   | ----------------- | --------------------------------------------------- |
+   | Antrean           | Permintaan diterima                                 |
+   | Merakit Snapshot  | Semua tulisan yang terbit dikumpulkan dan diperiksa |
+   | Commit GitHub     | Edisi baru disimpan di GitHub                       |
+   | Deploy (Build)    | Vercel sedang "mencetak" situs                      |
+   | Verifikasi Versi  | ZidCMS memastikan situs benar-benar sudah berganti  |
+   | **Tayang (Live)** | Selesai! Artikel bisa dibaca semua orang            |
 
 3. Biasanya **2–5 menit**. Anda boleh menutup tab; proses akan dilanjutkan saat Anda membuka dasbor lagi.
 4. Kalau beberapa artikel diterbitkan berdekatan, ZidCMS **menggabungkannya** ke satu antrean — tidak perlu menunggu satu per satu.
@@ -118,23 +118,23 @@ Menu **Artikel** menampilkan tab **Semua / Draf / Terbit / Arsip / Sampah**, kot
 
 **Status** (di Google Sheets):
 
-| Lencana | Arti |
-|---|---|
-| Draf | Belum diterbitkan |
-| Terbit | Ditandai untuk tayang |
-| Arsip | Disimpan, tidak tayang |
-| Sampah | Dihapus (masih bisa dipulihkan) |
+| Lencana | Arti                            |
+| ------- | ------------------------------- |
+| Draf    | Belum diterbitkan               |
+| Terbit  | Ditandai untuk tayang           |
+| Arsip   | Disimpan, tidak tayang          |
+| Sampah  | Dihapus (masih bisa dipulihkan) |
 
 **Situs publik** (apa yang sebenarnya dilihat pembaca):
 
-| Lencana | Arti |
-|---|---|
-| Tayang | Versi terbaru sudah ada di situs |
-| Tayang – pembaruan tertunda | Situs masih menampilkan versi lama; tunggu publikasi selesai |
-| Menunggu publikasi | Sudah diterbitkan, tapi publikasi belum selesai |
-| Penghapusan tertunda | Akan hilang dari situs setelah publikasi berikutnya |
-| Belum tayang | Tidak ada di situs |
-| Selisih Rollback | Situs sedang menampilkan versi lama hasil rollback (lihat 1.12) |
+| Lencana                     | Arti                                                            |
+| --------------------------- | --------------------------------------------------------------- |
+| Tayang                      | Versi terbaru sudah ada di situs                                |
+| Tayang – pembaruan tertunda | Situs masih menampilkan versi lama; tunggu publikasi selesai    |
+| Menunggu publikasi          | Sudah diterbitkan, tapi publikasi belum selesai                 |
+| Penghapusan tertunda        | Akan hilang dari situs setelah publikasi berikutnya             |
+| Belum tayang                | Tidak ada di situs                                              |
+| Selisih Rollback            | Situs sedang menampilkan versi lama hasil rollback (lihat 1.12) |
 
 ### 1.8 Arsip, hapus, dan pulihkan
 
@@ -198,7 +198,7 @@ Catatan: rollback hanya mengembalikan **situs**, bukan isi dasbor. Artikel yang 
 
 ### 2.1 Pasang program yang dibutuhkan (sekali saja)
 
-1. **Node.js** — buka <https://nodejs.org>, unduh versi **LTS** (versi 26), instal dengan klik *Next* sampai selesai.
+1. **Node.js** — buka <https://nodejs.org>, unduh versi **LTS** (versi 26), instal dengan klik _Next_ sampai selesai.
 2. **Git** — buka <https://git-scm.com/downloads>, unduh, instal (pilihan default sudah benar).
 3. **Visual Studio Code** (editor teks yang punya terminal) — <https://code.visualstudio.com>.
 
@@ -251,11 +251,11 @@ pnpm init:local
 
 Sekarang kita butuh **3 terminal** yang berjalan bersamaan. Klik ikon **+** di panel terminal untuk membuka terminal baru.
 
-| Terminal | Perintah | Fungsinya |
-|---|---|---|
-| 1 | `pnpm dev:gas` | Tiruan Google Sheets + Apps Script |
-| 2 | `pnpm dev:web` | Situs publik di <http://localhost:3001> |
-| 3 | `pnpm dev:admin` | Dasbor admin di <http://localhost:3000> |
+| Terminal | Perintah         | Fungsinya                               |
+| -------- | ---------------- | --------------------------------------- |
+| 1        | `pnpm dev:gas`   | Tiruan Google Sheets + Apps Script      |
+| 2        | `pnpm dev:web`   | Situs publik di <http://localhost:3001> |
+| 3        | `pnpm dev:admin` | Dasbor admin di <http://localhost:3000> |
 
 Biarkan ketiganya tetap terbuka. Kalau ditutup, aplikasinya berhenti.
 
@@ -289,17 +289,17 @@ Selama pemasangan Anda akan mendapat banyak **kode rahasia** (token, kunci, alam
 
 Isi tabel ini sambil berjalan:
 
-| Nama | Dari langkah | Nilai |
-|---|---|---|
-| `GITHUB_REPO` | 3.1 | `akun-anda/zidcms` |
-| `GITHUB_TOKEN` | 3.2 | `github_pat_…` |
-| `HMAC_SECRET` | 3.3 | (acak) |
-| `AUTH_SECRET` | 3.3 | (acak) |
-| `GAS_WEBAPP_URL` | 3.6 | `https://script.google.com/macros/s/…/exec` |
-| Alamat admin | 3.7 | `https://….vercel.app` |
-| Alamat situs | 3.7 | `https://….vercel.app` |
-| `AUTH_GOOGLE_ID` | 3.8 | `….apps.googleusercontent.com` |
-| `AUTH_GOOGLE_SECRET` | 3.8 | `GOCSPX-…` |
+| Nama                 | Dari langkah | Nilai                                       |
+| -------------------- | ------------ | ------------------------------------------- |
+| `GITHUB_REPO`        | 3.1          | `akun-anda/zidcms`                          |
+| `GITHUB_TOKEN`       | 3.2          | `github_pat_…`                              |
+| `HMAC_SECRET`        | 3.3          | (acak)                                      |
+| `AUTH_SECRET`        | 3.3          | (acak)                                      |
+| `GAS_WEBAPP_URL`     | 3.6          | `https://script.google.com/macros/s/…/exec` |
+| Alamat admin         | 3.7          | `https://….vercel.app`                      |
+| Alamat situs         | 3.7          | `https://….vercel.app`                      |
+| `AUTH_GOOGLE_ID`     | 3.8          | `….apps.googleusercontent.com`              |
+| `AUTH_GOOGLE_SECRET` | 3.8          | `GOCSPX-…`                                  |
 
 ### 3.1 GitHub — tempat menyimpan kode
 
@@ -324,10 +324,10 @@ ZidCMS butuh izin terbatas untuk menyimpan edisi situs ke repo Anda.
 2. Isi:
    - **Token name:** `zidcms-publisher`
    - **Expiration:** 90 hari (catat di kalender untuk diperbarui)
-   - **Repository access:** *Only select repositories* → pilih `zidcms`
+   - **Repository access:** _Only select repositories_ → pilih `zidcms`
    - **Permissions → Repository permissions:**
-     - **Contents:** *Read and write*
-     - **Commit statuses:** *Read-only*
+     - **Contents:** _Read and write_
+     - **Commit statuses:** _Read-only_
 3. Klik **Generate token**, salin token `github_pat_…` ke buku catatan rahasia. Token hanya ditampilkan **sekali**.
 
 ### 3.3 Buat dua kunci acak
@@ -346,9 +346,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
    - Salin **Script ID** ke buku catatan.
    - Di bagian **Script Properties**, klik **Add script property**, tambahkan:
 
-     | Property | Value |
-     |---|---|
-     | `HMAC_SECRET` | kunci acak pertama dari 3.3 |
+     | Property      | Value                               |
+     | ------------- | ----------------------------------- |
+     | `HMAC_SECRET` | kunci acak pertama dari 3.3         |
      | `ENVIRONMENT` | `prod` (atau `dev` untuk situs uji) |
 
    - Klik **Save script properties**.
@@ -382,8 +382,8 @@ Kalau ditanya apakah manifest boleh ditimpa, jawab **y**. File `.clasp.json` tid
 2. Klik **Deploy → New deployment**.
 3. Klik ikon ⚙️ di sebelah "Select type" → pilih **Web app**.
 4. Isi:
-   - **Execute as:** *Me*
-   - **Who has access:** *Anyone*
+   - **Execute as:** _Me_
+   - **Who has access:** _Anyone_
 5. Klik **Deploy** → **Authorize access** → pilih akun Anda.
    - Kalau muncul "Google hasn't verified this app", klik **Advanced** → **Go to … (unsafe)**. Ini aman karena aplikasinya milik Anda sendiri.
    - Klik **Allow**.
@@ -402,12 +402,12 @@ Kita membuat **dua proyek**: satu untuk dasbor admin, satu untuk situs publik.
    2. **Project Name:** misalnya `nama-anda-web`.
    3. **Root Directory:** klik **Edit** → pilih `apps/web`.
    4. **Environment Variables:** tambahkan `SITE_URL` = `https://nama-anda-web.vercel.app` (sesuai nama proyek).
-   5. Klik **Deploy**. Setelah selesai, catat alamatnya sebagai *Alamat situs*.
+   5. Klik **Deploy**. Setelah selesai, catat alamatnya sebagai _Alamat situs_.
 3. **Proyek dasbor admin:**
    1. **Add New → Project** → repo `zidcms` lagi → **Import**.
    2. **Project Name:** misalnya `nama-anda-admin`.
    3. **Root Directory:** `apps/admin`.
-   4. Klik **Deploy** dulu (boleh gagal/eror saat dibuka — variabelnya diisi di 3.9). Catat alamatnya sebagai *Alamat admin*.
+   4. Klik **Deploy** dulu (boleh gagal/eror saat dibuka — variabelnya diisi di 3.9). Catat alamatnya sebagai _Alamat admin_.
 
 ### 3.8 Google Cloud — tombol "Masuk dengan Google"
 
@@ -417,11 +417,11 @@ Kita membuat **dua proyek**: satu untuk dasbor admin, satu untuk situs publik.
    - **Audience:** pilih **External**.
    - Selesaikan langkahnya. Di bagian **Audience → Test users**, tambahkan email Google Anda sendiri.
 3. Buka **Clients** (atau **Credentials → Create credentials → OAuth client ID**):
-   - **Application type:** *Web application*
+   - **Application type:** _Web application_
    - **Name:** `zidcms-admin`
    - **Authorized redirect URIs** → **Add URI**:
      `https://nama-anda-admin.vercel.app/api/auth/callback/google`
-     (ganti dengan *Alamat admin* Anda; harus persis, termasuk `https://`)
+     (ganti dengan _Alamat admin_ Anda; harus persis, termasuk `https://`)
    - Klik **Create**.
 4. Salin **Client ID** dan **Client secret** ke buku catatan.
 
@@ -431,30 +431,30 @@ ZidCMS hanya meminta nama dan email Anda, jadi tidak perlu proses verifikasi Goo
 
 Di Vercel, buka proyek **admin** → **Settings → Environment Variables**. Tambahkan satu per satu:
 
-| Name | Value |
-|---|---|
-| `AUTH_SECRET` | kunci acak kedua dari 3.3 |
-| `AUTH_GOOGLE_ID` | Client ID dari 3.8 |
-| `AUTH_GOOGLE_SECRET` | Client secret dari 3.8 |
-| `ADMIN_EMAILS` | email Google Anda (pisahkan dengan koma kalau lebih dari satu) |
-| `ADMIN_URL` | *Alamat admin*, tanpa garis miring di akhir |
-| `ZIDCMS_ENV` | `prod` |
-| `GAS_WEBAPP_URL` | dari 3.6 |
-| `GAS_HMAC_SECRET` | **sama persis** dengan `HMAC_SECRET` di 3.4 |
-| `PUBLISH_TARGET` | `github` |
-| `GITHUB_TOKEN` | token dari 3.2 |
-| `GITHUB_REPO` | `akun-anda/zidcms` |
-| `GITHUB_BRANCH` | `main` |
-| `PUBLIC_SITE_URL` | *Alamat situs*, tanpa garis miring di akhir |
+| Name                 | Value                                                          |
+| -------------------- | -------------------------------------------------------------- |
+| `AUTH_SECRET`        | kunci acak kedua dari 3.3                                      |
+| `AUTH_GOOGLE_ID`     | Client ID dari 3.8                                             |
+| `AUTH_GOOGLE_SECRET` | Client secret dari 3.8                                         |
+| `ADMIN_EMAILS`       | email Google Anda (pisahkan dengan koma kalau lebih dari satu) |
+| `ADMIN_URL`          | _Alamat admin_, tanpa garis miring di akhir                    |
+| `ZIDCMS_ENV`         | `prod`                                                         |
+| `GAS_WEBAPP_URL`     | dari 3.6                                                       |
+| `GAS_HMAC_SECRET`    | **sama persis** dengan `HMAC_SECRET` di 3.4                    |
+| `PUBLISH_TARGET`     | `github`                                                       |
+| `GITHUB_TOKEN`       | token dari 3.2                                                 |
+| `GITHUB_REPO`        | `akun-anda/zidcms`                                             |
+| `GITHUB_BRANCH`      | `main`                                                         |
+| `PUBLIC_SITE_URL`    | _Alamat situs_, tanpa garis miring di akhir                    |
 
 Lalu buka tab **Deployments** → titik tiga di deployment teratas → **Redeploy**.
 
 ### 3.10 Uji coba pertama 🎉
 
-1. Buka *Alamat admin* → **Masuk dengan Google** → pilih akun yang ada di `ADMIN_EMAILS`.
+1. Buka _Alamat admin_ → **Masuk dengan Google** → pilih akun yang ada di `ADMIN_EMAILS`.
 2. **Tulis Artikel Baru** → isi judul dan konten → **Terbitkan**.
 3. Tunggu sampai **Tayang** (beberapa menit — Vercel sedang membangun situs).
-4. Buka *Alamat situs* — artikel Anda sudah online!
+4. Buka _Alamat situs_ — artikel Anda sudah online!
 5. Cek juga `https://alamat-situs-anda/zidcms-version.json` — angka `version` harus sama dengan snapshot di dasbor.
 
 Selamat, ZidCMS Anda sudah online dengan biaya **Rp0**.
@@ -467,26 +467,26 @@ Di Vercel proyek admin: ubah `ADMIN_EMAILS` menjadi `email-anda@example.com,emai
 
 ## Bagian 4 — Kalau ada masalah
 
-| Yang terlihat | Penyebab yang paling mungkin | Cara memperbaiki |
-|---|---|---|
-| "Akses ditolak" saat masuk | Email tidak ada di `ADMIN_EMAILS`, atau bukan Test user | Periksa 3.9 dan 3.8, lalu Redeploy |
-| Google: `redirect_uri_mismatch` | Alamat di 3.8 tidak persis sama dengan alamat admin | Samakan, termasuk `https://` dan `/api/auth/callback/google` |
-| "Konfigurasi server … belum diatur" | Ada variabel yang lupa diisi | Lengkapi tabel 3.9, lalu Redeploy |
-| "Apps Script tidak dapat dihubungi" / "Respons Apps Script tidak valid" | `GAS_WEBAPP_URL` salah, atau web app belum di-deploy | Ulangi 3.6, salin URL yang berakhiran `/exec` |
-| Kode `SIGNATURE_INVALID` | `GAS_HMAC_SECRET` (Vercel) ≠ `HMAC_SECRET` (Apps Script) | Samakan persis — hati-hati spasi tersalin |
-| "Sheet … belum disiapkan" | Fungsi `setup` belum dijalankan | Jalankan `setup` di editor Apps Script (3.6 langkah 7) |
-| `setup` gagal: "dinonaktifkan di prod setelah instalasi pertama" | `setup` sudah pernah dijalankan dengan `ENVIRONMENT` = `prod` | Normal — lembarnya sudah siap. Pengaman ini mencegah perubahan skema tak sengaja di situs sungguhan |
-| Publikasi lama di "Deploy (Build)" | Vercel sedang antre membangun | Cek tab Deployments di Vercel. Gagal otomatis setelah 15 menit |
-| Gagal dengan `DEPLOY_FAILED` | Build Vercel gagal — situs lama tetap tayang | Buka log deployment terakhir di Vercel, lalu klik **Publikasikan Situs** lagi |
-| Gagal dengan `VERIFY_TIMEOUT` | `PUBLIC_SITE_URL` salah | Periksa alamat situs di 3.9 |
-| Gagal dengan `GITHUB_ERROR` | Token kedaluwarsa atau izinnya kurang | Buat token baru (3.2), perbarui di Vercel |
-| Gagal dengan `VALIDATION_ERROR` | Ada gambar yang sudah dihapus tapi masih dipakai artikel | Baca pesan errornya, perbaiki artikel yang disebut |
-| "Item ini telah diubah di tempat lain" | Artikel diedit di tab/perangkat lain | Klik **Salin konten saya**, lalu **Muat ulang**, tempel kembali yang perlu |
-| "Slug … sudah dipakai" | Ada artikel lain (termasuk arsip) dengan alamat sama | Ganti slug |
-| Unggah gambar ditolak | Lebih dari 3 MB atau bukan JPG/PNG/WebP/GIF | Kecilkan/konversi gambar (misalnya dengan squoosh.app) |
-| "Spreadsheet sedang sibuk" | Dua penyimpanan bersamaan | Tunggu beberapa detik, coba lagi |
-| Peringatan merah "baris tidak valid" | Google Sheets diedit manual | Kembalikan versi sheet lewat **File → Version history** |
-| Situs menampilkan tulisan yang salah | — | **Publikasi & Snapshot → Rollback** (1.12). Darurat: Vercel proyek web → Deployments → **Instant Rollback** |
+| Yang terlihat                                                           | Penyebab yang paling mungkin                                  | Cara memperbaiki                                                                                            |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| "Akses ditolak" saat masuk                                              | Email tidak ada di `ADMIN_EMAILS`, atau bukan Test user       | Periksa 3.9 dan 3.8, lalu Redeploy                                                                          |
+| Google: `redirect_uri_mismatch`                                         | Alamat di 3.8 tidak persis sama dengan alamat admin           | Samakan, termasuk `https://` dan `/api/auth/callback/google`                                                |
+| "Konfigurasi server … belum diatur"                                     | Ada variabel yang lupa diisi                                  | Lengkapi tabel 3.9, lalu Redeploy                                                                           |
+| "Apps Script tidak dapat dihubungi" / "Respons Apps Script tidak valid" | `GAS_WEBAPP_URL` salah, atau web app belum di-deploy          | Ulangi 3.6, salin URL yang berakhiran `/exec`                                                               |
+| Kode `SIGNATURE_INVALID`                                                | `GAS_HMAC_SECRET` (Vercel) ≠ `HMAC_SECRET` (Apps Script)      | Samakan persis — hati-hati spasi tersalin                                                                   |
+| "Sheet … belum disiapkan"                                               | Fungsi `setup` belum dijalankan                               | Jalankan `setup` di editor Apps Script (3.6 langkah 7)                                                      |
+| `setup` gagal: "dinonaktifkan di prod setelah instalasi pertama"        | `setup` sudah pernah dijalankan dengan `ENVIRONMENT` = `prod` | Normal — lembarnya sudah siap. Pengaman ini mencegah perubahan skema tak sengaja di situs sungguhan         |
+| Publikasi lama di "Deploy (Build)"                                      | Vercel sedang antre membangun                                 | Cek tab Deployments di Vercel. Gagal otomatis setelah 15 menit                                              |
+| Gagal dengan `DEPLOY_FAILED`                                            | Build Vercel gagal — situs lama tetap tayang                  | Buka log deployment terakhir di Vercel, lalu klik **Publikasikan Situs** lagi                               |
+| Gagal dengan `VERIFY_TIMEOUT`                                           | `PUBLIC_SITE_URL` salah                                       | Periksa alamat situs di 3.9                                                                                 |
+| Gagal dengan `GITHUB_ERROR`                                             | Token kedaluwarsa atau izinnya kurang                         | Buat token baru (3.2), perbarui di Vercel                                                                   |
+| Gagal dengan `VALIDATION_ERROR`                                         | Ada gambar yang sudah dihapus tapi masih dipakai artikel      | Baca pesan errornya, perbaiki artikel yang disebut                                                          |
+| "Item ini telah diubah di tempat lain"                                  | Artikel diedit di tab/perangkat lain                          | Klik **Salin konten saya**, lalu **Muat ulang**, tempel kembali yang perlu                                  |
+| "Slug … sudah dipakai"                                                  | Ada artikel lain (termasuk arsip) dengan alamat sama          | Ganti slug                                                                                                  |
+| Unggah gambar ditolak                                                   | Lebih dari 3 MB atau bukan JPG/PNG/WebP/GIF                   | Kecilkan/konversi gambar (misalnya dengan squoosh.app)                                                      |
+| "Spreadsheet sedang sibuk"                                              | Dua penyimpanan bersamaan                                     | Tunggu beberapa detik, coba lagi                                                                            |
+| Peringatan merah "baris tidak valid"                                    | Google Sheets diedit manual                                   | Kembalikan versi sheet lewat **File → Version history**                                                     |
+| Situs menampilkan tulisan yang salah                                    | —                                                             | **Publikasi & Snapshot → Rollback** (1.12). Darurat: Vercel proyek web → Deployments → **Instant Rollback** |
 
 Masih buntu? Lihat `docs/operations.md` untuk langkah lanjutan.
 
@@ -494,26 +494,26 @@ Masih buntu? Lihat `docs/operations.md` untuk langkah lanjutan.
 
 ## Lampiran A — Contekan Markdown
 
-| Ketik ini | Hasilnya |
-|---|---|
-| `## Judul Bagian` | Judul bagian besar |
-| `### Sub-judul` | Judul lebih kecil |
-| `**tebal**` | **tebal** |
-| `_miring_` | *miring* |
-| `~~coret~~` | ~~coret~~ |
-| `[teks tautan](https://contoh.com)` | tautan |
-| `- poin` | daftar berbutir |
-| `1. langkah` | daftar bernomor |
-| `- [x] selesai` | kotak centang |
-| `> kutipan` | blok kutipan |
-| `` `kode` `` | `kode` |
-| Baris kosong | Paragraf baru |
+| Ketik ini                           | Hasilnya           |
+| ----------------------------------- | ------------------ |
+| `## Judul Bagian`                   | Judul bagian besar |
+| `### Sub-judul`                     | Judul lebih kecil  |
+| `**tebal**`                         | **tebal**          |
+| `_miring_`                          | _miring_           |
+| `~~coret~~`                         | ~~coret~~          |
+| `[teks tautan](https://contoh.com)` | tautan             |
+| `- poin`                            | daftar berbutir    |
+| `1. langkah`                        | daftar bernomor    |
+| `- [x] selesai`                     | kotak centang      |
+| `> kutipan`                         | blok kutipan       |
+| `` `kode` ``                        | `kode`             |
+| Baris kosong                        | Paragraf baru      |
 
 Tabel:
 
 ```markdown
-| Nama | Harga |
-|---|---|
+| Nama | Harga  |
+| ---- | ------ |
 | Kopi | 15.000 |
 ```
 
@@ -521,21 +521,21 @@ Tabel:
 
 ## Lampiran B — Kamus istilah
 
-| Istilah | Artinya |
-|---|---|
-| **Admin / dasbor** | Halaman pengelolaan situs, hanya untuk Anda |
-| **Situs publik** | Website yang dilihat pembaca |
-| **Draf** | Tulisan yang belum diterbitkan |
-| **Slug** | Bagian alamat halaman, misalnya `resep-nasi-goreng` |
-| **Markdown** | Cara menulis format teks dengan simbol sederhana |
-| **Snapshot** | "Edisi" situs: kumpulan semua tulisan yang terbit pada satu waktu |
-| **Publikasi** | Proses membuat snapshot baru dan menayangkannya |
-| **Rollback** | Mengembalikan situs ke snapshot/edisi sebelumnya |
-| **Repo (repository)** | Folder proyek yang disimpan di GitHub |
-| **Commit** | Satu catatan perubahan yang disimpan di repo |
-| **Deploy / build** | Proses Vercel membuat dan mengunggah situs |
-| **Token / secret** | Kata sandi khusus untuk aplikasi — wajib dirahasiakan |
-| **Environment variable** | Pengaturan rahasia yang disimpan di Vercel, bukan di kode |
-| **Terminal** | Jendela untuk mengetik perintah |
-| **DEV / PROD** | Situs uji coba / situs sungguhan |
-| **Apps Script** | Program kecil milik Google yang menjembatani dasbor dengan Google Sheets |
+| Istilah                  | Artinya                                                                  |
+| ------------------------ | ------------------------------------------------------------------------ |
+| **Admin / dasbor**       | Halaman pengelolaan situs, hanya untuk Anda                              |
+| **Situs publik**         | Website yang dilihat pembaca                                             |
+| **Draf**                 | Tulisan yang belum diterbitkan                                           |
+| **Slug**                 | Bagian alamat halaman, misalnya `resep-nasi-goreng`                      |
+| **Markdown**             | Cara menulis format teks dengan simbol sederhana                         |
+| **Snapshot**             | "Edisi" situs: kumpulan semua tulisan yang terbit pada satu waktu        |
+| **Publikasi**            | Proses membuat snapshot baru dan menayangkannya                          |
+| **Rollback**             | Mengembalikan situs ke snapshot/edisi sebelumnya                         |
+| **Repo (repository)**    | Folder proyek yang disimpan di GitHub                                    |
+| **Commit**               | Satu catatan perubahan yang disimpan di repo                             |
+| **Deploy / build**       | Proses Vercel membuat dan mengunggah situs                               |
+| **Token / secret**       | Kata sandi khusus untuk aplikasi — wajib dirahasiakan                    |
+| **Environment variable** | Pengaturan rahasia yang disimpan di Vercel, bukan di kode                |
+| **Terminal**             | Jendela untuk mengetik perintah                                          |
+| **DEV / PROD**           | Situs uji coba / situs sungguhan                                         |
+| **Apps Script**          | Program kecil milik Google yang menjembatani dasbor dengan Google Sheets |
