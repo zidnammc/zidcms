@@ -1,0 +1,74 @@
+{
+  "site": "https://zidcms-web.vercel.app",
+  "startedAt": "2026-11-21T17:48:20.960Z",
+  "finishedAt": "2026-11-21T17:50:26.878Z",
+  "tester": {
+    "platform": "win32 10.0.26220",
+    "cpus": 2,
+    "node": "v26.13.1",
+    "network": "owner laptop, residential connection"
+  },
+  "method": {
+    "label": "cdn",
+    "levels": [
+      1
+    ],
+    "durationS": 120,
+    "warmupS": 5,
+    "closedLoop": true,
+    "thinkTimeMs": 500,
+    "paths": [
+      "/",
+      "/blog/menulis-dengan-markdown/",
+      "/tentang/",
+      "/zidcms-version.json"
+    ]
+  },
+  "totalBytes": 579666,
+  "levels": [
+    {
+      "vus": 1,
+      "warmupRequests": 6,
+      "stoppedForBudget": false,
+      "requests": 203,
+      "rps": 1.7,
+      "p50": 77,
+      "p95": 131,
+      "p99": 327,
+      "max": 493,
+      "errorRate": 0,
+      "status": {
+        "200": 203
+      },
+      "cache": {
+        "HIT": 203
+      },
+      "edge": {
+        "sin1": 203
+      },
+      "bytes": 560808,
+      "perPath": {
+        "/": {
+          "requests": 51,
+          "p50": 78,
+          "p95": 140
+        },
+        "/blog/menulis-dengan-markdown/": {
+          "requests": 51,
+          "p50": 78,
+          "p95": 96
+        },
+        "/tentang/": {
+          "requests": 51,
+          "p50": 75,
+          "p95": 127
+        },
+        "/zidcms-version.json": {
+          "requests": 50,
+          "p50": 77,
+          "p95": 183
+        }
+      }
+    }
+  ]
+}

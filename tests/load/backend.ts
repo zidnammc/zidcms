@@ -243,9 +243,13 @@ async function setPublished(want: Set<string>, posts: Summary[]) {
   });
 }
 
-async function runPublish(api: Awaited<ReturnType<typeof adminSession>>) {
+async function runPublish(api: Awaited<ReturnType<typeof adminSession>>, rollbackTo?: number) {
   const t0 = Date.now();
-  const { job } = await api<{ job: { id: string } }>('POST', '/api/publish', { idempotency_key: randomUUID() });
+  const { job } = await api<{ job: { id: string } }>(
+    'POST',
+    rollbackTo ? '/api/publish/rollback' : '/api/publish',
+    rollbackTo ? { idempotency_key: randomUUID(), target_version: rollbackTo } : { idempotency_key: randomUUID() },
+  );
   const timeline: { state: string; atMs: number }[] = [];
   for (;;) {
     const { job: j } = await api<{
@@ -344,10 +348,26 @@ async function republish() {
   console.log(`publish: ${run.final.state} v${run.final.snapshot_version} in ${Math.round(run.totalMs / 1000)} s`);
 }
 
+async function rollback() {
+  const to = Number(arg('to', '0'));
+  const run = await runPublish(await adminSession(), to);
+  console.log(
+    `rollback to v${to}: ${run.final.state} v${run.final.snapshot_version} commit ${run.final.git_commit_sha?.slice(0, 7)} ${run.final.error_code ?? ''}`,
+  );
+}
+
 async function main() {
   const health = await call<{ environment: string }>('system.health');
   if (health.environment === 'prod') throw new Error('Refusing to benchmark ENVIRONMENT=prod (plan §18.1).');
-  const commands: Record<string, () => Promise<void>> = { latency, seed, contention, publish, cleanup, republish };
+  const commands: Record<string, () => Promise<void>> = {
+    latency,
+    seed,
+    contention,
+    publish,
+    cleanup,
+    republish,
+    rollback,
+  };
   const fn = commands[command];
   if (!fn) throw new Error(`unknown command ${command}; use ${Object.keys(commands).join('|')}`);
   await fn();

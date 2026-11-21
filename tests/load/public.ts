@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { Agent as HttpAgent, request as httpRequest } from 'node:http';
 import { Agent, request } from 'node:https';
 import { cpus, platform, release } from 'node:os';
 import { resolve } from 'node:path';
@@ -13,11 +14,20 @@ const LEVELS = arg('vus', '1,10,50,100')
   .split(',')
   .map(Number)
   .filter((n) => n > 0 && n <= 100);
+if (!SITE.startsWith('http://') && (LEVELS.some((n) => n > 1) || Number(arg('pace-ms', '0')) < 250)) {
+  console.error(
+    'Vercel permits load testing only on Enterprise plans: against a Vercel URL use --vus 1 --pace-ms >= 250 (latency sampling).',
+  );
+  process.exit(1);
+}
 const DURATION_S = Number(arg('duration', '60'));
 const WARMUP_S = Number(arg('warmup', '10'));
 const MONTHLY_BUDGET = Number(arg('budget-gb', '5')) * 1024 ** 3;
 const RUN_BUDGET = Number(arg('run-budget-gb', '2')) * 1024 ** 3;
 const NETWORK = arg('network', 'unspecified');
+const PACE_MS = Number(arg('pace-ms', '0'));
+const LABEL = arg('label', SITE.startsWith('http://') ? 'local-static' : 'cdn');
+const insecure = SITE.startsWith('http://');
 const resultsDir = resolve(import.meta.dirname, 'results');
 
 interface Sample {
@@ -25,6 +35,7 @@ interface Sample {
   ms: number;
   status: number;
   cache: string;
+  pop: string;
   bytes: number;
 }
 
@@ -33,19 +44,22 @@ function monthBytesUsed(): number {
   const month = new Date().toISOString().slice(0, 7);
   let total = 0;
   for (const file of readdirSync(resultsDir)) {
-    if (!file.startsWith(`public-${month}`) || !file.endsWith('.json')) continue;
+    if (!file.startsWith(`public-cdn-${month}`) || !file.endsWith('.json')) continue;
     const data = JSON.parse(readFileSync(resolve(resultsDir, file), 'utf8')) as { totalBytes?: number };
     total += data.totalBytes ?? 0;
   }
   return total;
 }
 
-function get(agent: Agent, path: string): Promise<Sample> {
+function get(agent: Agent | HttpAgent, path: string): Promise<Sample> {
   const started = performance.now();
   return new Promise((done) => {
-    const req = request(
+    const req = (insecure ? httpRequest : request)(
       `${SITE}${path}`,
-      { agent, headers: { 'accept-encoding': 'br, gzip', 'user-agent': 'zidcms-benchmark/0.1 (+plan §21)' } },
+      {
+        agent: agent as Agent,
+        headers: { 'accept-encoding': 'br, gzip', 'user-agent': 'zidcms-benchmark/0.1 (+plan §21)' },
+      },
       (res) => {
         let bytes = 0;
         res.on('data', (c: Buffer) => {
@@ -57,13 +71,16 @@ function get(agent: Agent, path: string): Promise<Sample> {
             ms: performance.now() - started,
             status: res.statusCode ?? 0,
             cache: String(res.headers['x-vercel-cache'] ?? 'none'),
+            pop: String(res.headers['x-vercel-id'] ?? 'none').split('::')[0] ?? 'none',
             bytes,
           }),
         );
       },
     );
     req.setTimeout(30_000, () => req.destroy(new Error('timeout')));
-    req.on('error', () => done({ path, ms: performance.now() - started, status: 0, cache: 'error', bytes: 0 }));
+    req.on('error', () =>
+      done({ path, ms: performance.now() - started, status: 0, cache: 'error', pop: 'none', bytes: 0 }),
+    );
     req.end();
   });
 }
@@ -89,6 +106,7 @@ function summarize(samples: Sample[], seconds: number) {
     errorRate: samples.length ? Math.round((errors / samples.length) * 10000) / 100 : 0,
     status: count((s) => String(s.status)),
     cache: count((s) => s.cache),
+    edge: count((s) => s.pop),
     bytes: samples.reduce((a, s) => a + s.bytes, 0),
     perPath: Object.fromEntries(
       [...new Set(samples.map((s) => s.path))].map((p) => {
@@ -103,7 +121,9 @@ function summarize(samples: Sample[], seconds: number) {
 }
 
 async function phase(vus: number, seconds: number, paths: string[], budgetLeft: () => number) {
-  const agent = new Agent({ keepAlive: true, maxSockets: vus });
+  const agent = insecure
+    ? new HttpAgent({ keepAlive: true, maxSockets: vus })
+    : new Agent({ keepAlive: true, maxSockets: vus });
   const samples: Sample[] = [];
   const deadline = Date.now() + seconds * 1000;
   let stoppedForBudget = false;
@@ -117,6 +137,7 @@ async function phase(vus: number, seconds: number, paths: string[], budgetLeft: 
         }
         samples.push(await get(agent, paths[i % paths.length] as string));
         i += 1;
+        if (PACE_MS) await new Promise((r) => setTimeout(r, PACE_MS));
       }
     }),
   );
@@ -175,7 +196,7 @@ async function main() {
     }
   }
   mkdirSync(resultsDir, { recursive: true });
-  const file = resolve(resultsDir, `public-${started.toISOString().replace(/[:.]/g, '-')}.json`);
+  const file = resolve(resultsDir, `public-${LABEL}-${started.toISOString().replace(/[:.]/g, '-')}.json`);
   writeFileSync(
     file,
     `${JSON.stringify(
@@ -189,7 +210,15 @@ async function main() {
           node: process.version,
           network: NETWORK,
         },
-        method: { levels: LEVELS, durationS: DURATION_S, warmupS: WARMUP_S, closedLoop: true, thinkTimeMs: 0, paths },
+        method: {
+          label: LABEL,
+          levels: LEVELS,
+          durationS: DURATION_S,
+          warmupS: WARMUP_S,
+          closedLoop: true,
+          thinkTimeMs: PACE_MS,
+          paths,
+        },
         totalBytes: runBytes,
         levels,
       },

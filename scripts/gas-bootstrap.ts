@@ -8,8 +8,13 @@ const root = resolve(import.meta.dirname, '..');
 const gasDir = resolve(root, 'services/apps-script');
 const bootstrapFile = resolve(gasDir, 'dist/Bootstrap.js');
 const secretsFile = resolve(root, `.local/secrets/${env}.env`);
+const project = env === 'prod' ? ['-P', resolve(root, '.local/gas-prod')] : [];
 
-const push = () => execSync('clasp push --force', { cwd: gasDir, stdio: ['ignore', 'pipe', 'pipe'] });
+const push = () =>
+  execSync(['clasp', ...project, 'push', '--force'].map((a) => (a.includes(' ') ? `"${a}"` : a)).join(' '), {
+    cwd: gasDir,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  });
 
 if (cleanup) {
   if (existsSync(bootstrapFile)) rmSync(bootstrapFile);
