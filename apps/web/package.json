@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --port 3001",
-    "build": "next build",
+    "build": "node scripts/build-guard.mjs && next build",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

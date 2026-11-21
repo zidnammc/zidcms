@@ -22,3 +22,4 @@ tests/load/results/*.har
 playwright-report/
 test-results/
 
+tests/integration/results/

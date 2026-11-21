@@ -175,6 +175,9 @@ importers:
 
   .:
     devDependencies:
+      '@auth/core':
+        specifier: 0.41.3
+        version: 0.41.3
       '@biomejs/biome':
         specifier: 2.6.7
         version: 2.6.7

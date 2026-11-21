@@ -26,9 +26,18 @@ export class LocalStore implements SnapshotStore {
     return existsSync(file) ? (JSON.parse(readFileSync(file, 'utf8')) as LocalCommit[]) : [];
   }
 
+  private deployFails(): boolean {
+    return process.env.LOCAL_DEPLOY_FAIL === 'true' || existsSync(join(this.historyDir, 'deploy-fail'));
+  }
+
   async commit(input: CommitInput): Promise<string> {
     const body = `${JSON.stringify(input.snapshot, null, 2)}\n`;
     const sha = createHash('sha1').update(`${input.jobId}\n${body}`).digest('hex');
+    if (this.deployFails()) {
+      writeFileSync(join(this.historyDir, `${sha}.json`), body);
+      this.append(sha, input.message);
+      return sha;
+    }
     const mediaDir = join(this.webRoot, 'public/media');
     mkdirSync(mediaDir, { recursive: true });
     mkdirSync(join(this.historyDir, 'media'), { recursive: true });
@@ -50,10 +59,14 @@ export class LocalStore implements SnapshotStore {
     writeFileSync(join(this.webRoot, 'content/snapshot.json'), body);
     writeFileSync(join(this.webRoot, 'public/zidcms-version.json'), `${JSON.stringify(input.versionFile)}\n`);
     writeFileSync(join(this.historyDir, `${sha}.json`), body);
-    const log = this.log();
-    log.unshift({ sha, message: input.message, at: new Date().toISOString() });
-    writeFileSync(join(this.historyDir, 'commits.json'), JSON.stringify(log.slice(0, 200), null, 2));
+    this.append(sha, input.message);
     return sha;
+  }
+
+  private append(sha: string, message: string): void {
+    const log = this.log();
+    log.unshift({ sha, message, at: new Date().toISOString() });
+    writeFileSync(join(this.historyDir, 'commits.json'), JSON.stringify(log.slice(0, 200), null, 2));
   }
 
   async findCommitForJob(jobId: string): Promise<string | null> {
@@ -69,8 +82,7 @@ export class LocalStore implements SnapshotStore {
   }
 
   async deployStatus(): Promise<{ state: DeployState; detail: string }> {
-    if (process.env.LOCAL_DEPLOY_FAIL === 'true')
-      return { state: 'failure', detail: 'Simulasi build gagal (LOCAL_DEPLOY_FAIL)' };
+    if (this.deployFails()) return { state: 'failure', detail: 'Simulasi build gagal (LOCAL_DEPLOY_FAIL)' };
     return { state: 'success', detail: 'Mode lokal: berkas ditulis ke apps/web' };
   }
 }

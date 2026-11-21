@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "biome check .",
     "format": "biome format --write .",
-    "typecheck": "pnpm -r --parallel typecheck",
+    "typecheck": "pnpm -r --parallel typecheck && tsc -p tsconfig.json",
     "test": "pnpm -r test",
     "build": "pnpm -r build",
     "dev:gas": "pnpm --filter @zidcms/apps-script dev:server",
@@ -23,11 +23,15 @@
     "poc:gas": "tsx scripts/poc/hmac-call.ts",
     "poc:git": "tsx scripts/poc/git-publish.ts",
     "poc:sheets": "tsx scripts/poc/sheets-roundtrip.ts",
+    "test:integration": "tsx tests/integration/run.ts",
+    "test:e2e": "playwright test",
+    "build-switch": "tsx scripts/staging-build-switch.ts",
     "smoke:local": "tsx scripts/smoke-local.ts",
     "check:web": "tsx scripts/check-web-output.ts",
     "init:local": "tsx scripts/init-local-env.ts"
   },
   "devDependencies": {
+    "@auth/core": "0.41.3",
     "@biomejs/biome": "2.6.7",
     "@playwright/test": "1.65.1",
     "@types/node": "26.6.6",

@@ -1,19 +1,5 @@
 import { call } from '../lib/rpc';
-
-const SAMPLES = [
-  '2026-01-01',
-  '001',
-  'TRUE',
-  '1e5',
-  '12:30',
-  '=IMPORTXML("https://example.com","//a")',
-  '+1',
-  '-1',
-  '@SUM(A1)',
-  "'quoted",
-  '~tilde',
-  'Halo 👋 — ünïcödé 日本語',
-];
+import { ROUND_TRIP_SAMPLES as SAMPLES } from '../lib/samples';
 
 async function main() {
   let failed = 0;
