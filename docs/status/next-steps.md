@@ -23,12 +23,16 @@
 
 ### Open owner items
 
-1. Manual sign-in with a non-allowlisted Google account → expect "Akses ditolak".
-2. Add the prod admin redirect URI to the OAuth client (until then, Google sign-in on the prod admin does not work).
-3. Screenshot of this month's Vercel usage (without private IDs).
-4. Fresh-account setup by another person following `docs/beginner-guide.md`.
-5. Decide whether to purge the execution plan from old Git history (destructive; not done).
-6. Optional: trash the "ZidCMS dev" spreadsheet in Drive and remove the dev admin redirect URI from the OAuth client.
+Owner decision (2026-11-22): the project is considered complete for v0.1.0 without further owner testing. The manual non-allowlisted Google sign-in, the Vercel usage screenshot and the fresh-account setup by another person are **waived** (not done; the automated evidence in `docs/status/day-2.md` stands).
+
+Still needed for Google sign-in on the prod admin (configuration, not testing):
+
+1. Add the prod admin redirect URI `https://zidcms-prod-admin.vercel.app/api/auth/callback/google` to the OAuth client.
+
+Optional:
+
+2. Decide whether to purge the execution plan from old Git history (destructive; not done).
+3. Trash the "ZidCMS dev" spreadsheet in Drive and remove the dev admin redirect URI from the OAuth client.
 
 ### Reminders
 
