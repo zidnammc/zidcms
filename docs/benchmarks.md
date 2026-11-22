@@ -155,7 +155,7 @@ Not measured because of the limit: the Vercel build time and verification for a 
 Run only against **dev**. `tests/load/backend.ts` calls `system.health` first and refuses to run when `environment` is `prod`. The env file supplies the Apps Script URL and HMAC secret, plus, for `publish`, the admin URL, admin allowlist, `AUTH_SECRET` and the GitHub repo and token.
 
 ```bash
-export ZIDCMS_ENV_FILE=.local/secrets/dev.env
+export ZIDCMS_ENV_FILE=.local/secrets/dev.env   # a dev environment: retired, recreate it first (ADR-0012); the tools refuse prod
 pnpm exec tsx tests/load/backend.ts latency            # 10 samples per action (--samples N)
 pnpm exec tsx tests/load/backend.ts seed --to 50        # --concurrency 3 by default
 pnpm exec tsx tests/load/backend.ts contention          # needs ≥ 10 draft bench posts

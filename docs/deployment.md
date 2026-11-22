@@ -23,7 +23,7 @@ The dev line applies only to a recreated dev environment (ADR-0012). Then `ZIDCM
 ### First-time install of an environment (as done for prod on 2026-11-21)
 
 1. Create spreadsheet + bound script: in `services/apps-script/`, `echo '{"rootDir":"dist"}' > .clasp.prod.json` and `clasp -P .clasp.prod.json create-script --type sheets --title "ZidCMS prod" --rootDir dist > ../../.local/secrets/clasp-create-prod.log`. clasp refuses a `rootDir` outside the folder of the project file, so the project file must live next to `dist/`. `create-script` overwrites `dist/appsscript.json`; rebuild afterwards.
-2. `pnpm exec tsx scripts/init-dev-secrets.ts prod` writes new `HMAC_SECRET` / `AUTH_SECRET` into `.local/secrets/prod.env`.
+2. `pnpm exec tsx scripts/init-secrets.ts prod` writes new `HMAC_SECRET` / `AUTH_SECRET` into `.local/secrets/prod.env`.
 3. `pnpm --filter @zidcms/apps-script build && pnpm exec tsx scripts/gas-bootstrap.ts prod` pushes a temporary `Bootstrap.js` that sets the Script Properties and runs `setup`.
 4. **Owner, in the script editor:** _Project Settings → Change project_ → the number of the Google Cloud project that holds the OAuth client (the owner is a test user there; the default Cloud project is blocked from the `drive` scope with `Error 403: access_denied`). Then run `bootstrap` and allow access.
 5. If `setup` reports "Izin ditolak saat mengaktifkan API: drive": add `"projectId": "<that project number>"` to the clasp project file and run `clasp -P .clasp.prod.json enable-api drive`.

@@ -2,7 +2,11 @@ import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const env = process.argv[2] ?? 'dev';
+const env = process.argv[2];
+if (env !== 'dev' && env !== 'prod') {
+  console.error('Usage: tsx scripts/init-secrets.ts dev|prod');
+  process.exit(1);
+}
 const dir = resolve(import.meta.dirname, '../.local/secrets');
 const target = resolve(dir, `${env}.env`);
 mkdirSync(dir, { recursive: true });

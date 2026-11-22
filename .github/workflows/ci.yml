@@ -5,7 +5,6 @@ on:
   push:
     branches: [main, release]
     paths-ignore:
-      - apps/web/content/dev/**
       - apps/web/content/prod/**
 
 permissions:

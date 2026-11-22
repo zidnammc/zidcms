@@ -11,7 +11,7 @@
 
 ### Next steps
 
-1. Promote the latest `main` (including the ADR-0012 changes) to `release` (owner approval; `docs/deployment.md` §3), then `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed`, and for a release also `… pnpm smoke:deployed`. Result: to be confirmed.
+1. Done on 2026-11-22: `main` `d1e78c0` (CI 44980359791, `integration.yml` 44980459836, `e2e.yml` 44980463137 — all green) promoted to `release` as `d7f49a6`; both prod builds succeeded; `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed` → all PASS (35-route 401 matrix, headers, sitemap, snapshot allowlist, 0 web functions); `smoke:deployed` → publish v5 (`d1590f4b`, 72 s), update v6 (`04a85560`, 74 s), rollback v7 (`212cde14`, 70 s, checksum = v5), unpublish v8 (`a71cfc31`, 65 s). Prod now runs the latest code; nothing is pending for the executor.
 2. Before each promotion: CI plus `integration.yml` and `e2e.yml` (emulator stack) green on `main`. Real-service integration tests, the staging E2E and `pnpm build-switch` need a recreated dev environment (`docs/deployment.md` §1–2 with `ZIDCMS_ENV=dev`).
 
 ### How to resume
@@ -23,12 +23,16 @@
 
 ### Open owner items
 
-1. Manual sign-in with a non-allowlisted Google account → expect "Akses ditolak".
-2. Add the prod admin redirect URI to the OAuth client (until then, Google sign-in on the prod admin does not work).
-3. Screenshot of this month's Vercel usage (without private IDs).
-4. Fresh-account setup by another person following `docs/beginner-guide.md`.
-5. Decide whether to purge the execution plan from old Git history (destructive; not done).
-6. Optional: trash the "ZidCMS dev" spreadsheet in Drive and remove the dev admin redirect URI from the OAuth client.
+Owner decision (2026-11-22): the project is considered complete for v0.1.0 without further owner testing. The manual non-allowlisted Google sign-in, the Vercel usage screenshot and the fresh-account setup by another person are **waived** (not done; the automated evidence in `docs/status/day-2.md` stands).
+
+Still needed for Google sign-in on the prod admin (configuration, not testing):
+
+1. Add the prod admin redirect URI `https://zidcms-prod-admin.vercel.app/api/auth/callback/google` to the OAuth client.
+
+Optional:
+
+2. Decide whether to purge the execution plan from old Git history (destructive; not done).
+3. Trash the "ZidCMS dev" spreadsheet in Drive and remove the dev admin redirect URI from the OAuth client.
 
 ### Reminders
 
