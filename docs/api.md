@@ -4,29 +4,29 @@
 
 All routes are JSON, require an admin session (`401 UNAUTHENTICATED` otherwise) and, for mutations, `Origin` equal to `ADMIN_URL` (`403 FORBIDDEN`). Error body: `{ "error": { "code", "message", "details?", "requestId" } }`.
 
-| Method       | Route                                  | Body / query                                                               | Success                                                      |
-| ------------ | -------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| GET          | `/api/posts`                           | `status=all\|draft\|published\|archived\|trash`, `q`, `cursor`, `limit≤50` | `{ items, total, counts, nextCursor }` (no bodies)           |
-| POST         | `/api/posts`                           | post fields                                                                | 201 item (status `draft`)                                    |
-| GET          | `/api/posts/:id`                       | —                                                                          | item                                                         |
-| PATCH        | `/api/posts/:id`                       | `{ expected_version, patch }`                                              | `{ item, publishJob }` (job when the item is published)      |
-| POST         | `/api/posts/:id/status`                | `{ expected_version, to }`                                                 | `{ item, publishJob }`                                       |
-| DELETE       | `/api/posts/:id`                       | `{ expected_version }`                                                     | `{ item, publishJob }`                                       |
-| POST         | `/api/posts/:id/restore`               | `{ expected_version }`                                                     | `{ item, publishJob: null }`                                 |
-| GET          | `/api/posts/:id/revisions`             | —                                                                          | revision summaries                                           |
-| *            | `/api/pages[...]`                      | same as posts                                                              |                                                              |
-| GET/POST     | `/api/categories`, `/api/tags`         | `{ name, slug?, description? }`                                            | list / 201 item                                              |
-| PATCH/DELETE | `/api/categories/:id`, `/api/tags/:id` | `{ expected_version, patch? }`                                             | item                                                         |
-| GET          | `/api/media`                           | —                                                                          | `{ items }`                                                  |
-| POST         | `/api/media`                           | multipart `file`, `alt_text`                                               | 201 `{ item, deduplicated }`                                 |
-| PATCH        | `/api/media/:id`                       | `{ expected_version, alt_text }`                                           | item                                                         |
-| GET          | `/api/media/:id/preview`               | —                                                                          | image bytes (admin only)                                     |
-| GET/PATCH    | `/api/settings`                        | `{ patch }`                                                                | `{ settings, updated_at }`                                   |
-| GET          | `/api/publish`                         | —                                                                          | `{ jobs, snapshots }`                                        |
-| POST         | `/api/publish`                         | `{ idempotency_key }`                                                      | 202 `{ job, coalesced, existing }`                           |
-| GET          | `/api/publish/:jobId`                  | —                                                                          | `{ job, followUp, warnings }` — advances the job by one step |
-| POST         | `/api/publish/rollback`                | `{ target_version, idempotency_key }`                                      | 202 `{ job }`                                                |
-| GET          | `/api/health`                          | —                                                                          | admin + GAS health                                           |
+| Method       | Route                                  | Body / query                                                               | Success                                                     |
+| ------------ | -------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| GET          | `/api/posts`                           | `status=all\|draft\|published\|archived\|trash`, `q`, `cursor`, `limit≤50` | `{ items, total, counts, nextCursor }` (no bodies)          |
+| POST         | `/api/posts`                           | post fields                                                                | 201 item (status `draft`)                                   |
+| GET          | `/api/posts/:id`                       | none                                                                       | item                                                        |
+| PATCH        | `/api/posts/:id`                       | `{ expected_version, patch }`                                              | `{ item, publishJob }` (job when the item is published)     |
+| POST         | `/api/posts/:id/status`                | `{ expected_version, to }`                                                 | `{ item, publishJob }`                                      |
+| DELETE       | `/api/posts/:id`                       | `{ expected_version }`                                                     | `{ item, publishJob }`                                      |
+| POST         | `/api/posts/:id/restore`               | `{ expected_version }`                                                     | `{ item, publishJob: null }`                                |
+| GET          | `/api/posts/:id/revisions`             | none                                                                       | revision summaries                                          |
+| *            | `/api/pages[...]`                      | same as posts                                                              |                                                             |
+| GET/POST     | `/api/categories`, `/api/tags`         | `{ name, slug?, description? }`                                            | list / 201 item                                             |
+| PATCH/DELETE | `/api/categories/:id`, `/api/tags/:id` | `{ expected_version, patch? }`                                             | item                                                        |
+| GET          | `/api/media`                           | none                                                                       | `{ items }`                                                 |
+| POST         | `/api/media`                           | multipart `file`, `alt_text`                                               | 201 `{ item, deduplicated }`                                |
+| PATCH        | `/api/media/:id`                       | `{ expected_version, alt_text }`                                           | item                                                        |
+| GET          | `/api/media/:id/preview`               | none                                                                       | image bytes (admin only)                                    |
+| GET/PATCH    | `/api/settings`                        | `{ patch }`                                                                | `{ settings, updated_at }`                                  |
+| GET          | `/api/publish`                         | none                                                                       | `{ jobs, snapshots }`                                       |
+| POST         | `/api/publish`                         | `{ idempotency_key }`                                                      | 202 `{ job, coalesced, existing }`                          |
+| GET          | `/api/publish/:jobId`                  | none                                                                       | `{ job, followUp, warnings }`; advances the job by one step |
+| POST         | `/api/publish/rollback`                | `{ target_version, idempotency_key }`                                      | 202 `{ job }`                                               |
+| GET          | `/api/health`                          | none                                                                       | admin + GAS health                                          |
 
 ### Fields
 
@@ -72,4 +72,4 @@ Transport: `POST <GAS_WEBAPP_URL>` with body `{ "e": "<envelope JSON>", "s": "<h
 
 ## Snapshot format
 
-`apps/web/content/<env>/snapshot.json` (`zidcms.snapshot/1`) and `apps/web/content/<env>/zidcms-version.json` (served as `/zidcms-version.json`; copied to the build paths by `apps/web/scripts/prepare-content.mjs`; ADR-0011) — see plan §14 and `packages/core/src/snapshot.ts`. `checksum = "sha256:" + sha256(canonical JSON without version/basedOnVersion/generatedAt/checksum)`.
+`apps/web/content/<env>/snapshot.json` (`zidcms.snapshot/1`) and `apps/web/content/<env>/zidcms-version.json` (served as `/zidcms-version.json`; copied to the build paths by `apps/web/scripts/prepare-content.mjs`; ADR-0011). The format is defined in `packages/core/src/snapshot.ts`. `checksum = "sha256:" + sha256(canonical JSON without version/basedOnVersion/generatedAt/checksum)`.

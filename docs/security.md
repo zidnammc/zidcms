@@ -1,6 +1,6 @@
 # Security
 
-## Controls (plan §17.1) and where they live
+## Controls and where they live
 
 | #   | Control          | Implementation                                                                                                                                                                                                                                  | Test                                                                                                                      |
 | --- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
@@ -12,13 +12,13 @@
 | 6   | Uploads          | Size cap (admin + GAS), magic bytes must equal the declared type, no SVG, sha256 recomputed in GAS, sanitized filenames, Drive never shared                                                                                                     | TC-SEC-03                                                                                                                 |
 | 7   | Snapshot privacy | Allowlist builder (explicit field mapping), key-set test, publish fails if any value outside `authorName` contains an actor e-mail                                                                                                              | TC-SEC-06                                                                                                                 |
 | 8   | Secrets          | Server-only env; no `NEXT_PUBLIC_` secrets; log redaction (`lib/log.ts`); `pnpm scan:secrets` (bundles) and `--repo` (tracked files incl. local `.env.local` values and the admin e-mail) in CI                                                 | TC-SEC-07                                                                                                                 |
-| 9   | Supply chain     | Lockfile, exact versions ≥ 7 days old, pnpm 12 build-script allowlist (`esbuild` only), Actions pinned to SHAs, `pnpm audit` report in CI                                                                                                       | —                                                                                                                         |
-| 10  | Least privilege  | GAS scopes `spreadsheets.currentonly` + `drive` (ADR-0006: `drive.file` cannot create folders); single-repo fine-grained PAT; separate dev/prod spreadsheets, scripts, HMAC/Auth secrets, deployments, Vercel projects, branches                | —                                                                                                                         |
+| 9   | Supply chain     | Lockfile, exact versions ≥ 7 days old, pnpm 12 build-script allowlist (`esbuild` only), Actions pinned to SHAs, `pnpm audit` report in CI                                                                                                       | none                                                                                                                      |
+| 10  | Least privilege  | GAS scopes `spreadsheets.currentonly` + `drive` (ADR-0006: `drive.file` cannot create folders); single-repo fine-grained PAT; separate dev/prod spreadsheets, scripts, HMAC/Auth secrets, deployments, Vercel projects, branches                | none                                                                                                                      |
 | 11  | Audit            | Every mutation, coalesce, transition, and failed locked mutation appends to `AuditLog`                                                                                                                                                          | dispatcher tests                                                                                                          |
 
 `dangerouslySetInnerHTML` is used only for `renderMarkdown()` output and for a static, constant theme-initialisation script in the admin root layout (no user input).
 
-## Threat model status (plan §17.2)
+## Threat model status
 
 | #   | Threat                      | Status                                                                                                                                                              |
 | --- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -39,7 +39,7 @@
 
 ## Notes and accepted risks
 
-- `GET /api/publish/:jobId` advances an existing job (plan §11). It requires a session and cannot start new work; a forged cross-site GET can at most advance a job the admin already requested.
+- `GET /api/publish/:jobId` advances an existing job. It requires a session and cannot start new work; a forged cross-site GET can at most advance a job the admin already requested.
 - The local "dev login" is compiled in only for `next dev` with `ZIDCMS_DEV_LOGIN=true` and outside Vercel.
 - Anyone holding `AUTH_SECRET` can mint a valid admin session (inherent to Auth.js JWT sessions). The staging E2E, `smoke:deployed` and the backend benchmark use exactly this, on the owner's machine only, with the secret read from the gitignored env file (ADR-0010). Treat `AUTH_SECRET` like a password; rotate it to invalidate all sessions (runbook R6).
 - Public repository: all published content and media remain in Git history forever (owner decision G2).

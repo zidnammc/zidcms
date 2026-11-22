@@ -1,4 +1,4 @@
-# 0005 — Public site: Next.js static export
+# 0005: Public site: Next.js static export
 
 - **Status:** accepted (2026-11-21).
 

@@ -1,12 +1,12 @@
-# 0011 — Environment topology: per-environment content folders, prod on `release`
+# 0011: Environment topology: per-environment content folders, prod on `release`
 
 Amended by ADR-0012: the dev/staging environment was retired on 2026-11-22.
 
-- **Status:** accepted (2026-11-21, owner approval). Supersedes the staging mechanism default in plan §8.1/G10 (`dev` branch).
+- **Status:** accepted (2026-11-21, owner approval). Supersedes the earlier default staging mechanism (G10: a `dev` branch).
 
 ## Problem
 
-Dev and prod need separate published snapshots. With one content path (`apps/web/content/snapshot.json`) on two branches, every code promotion merges content files: either a conflict, or — when prod content is unchanged since the merge base — dev content silently replaces prod content and is deployed to the prod site.
+Dev and prod need separate published snapshots. With one content path (`apps/web/content/snapshot.json`) on two branches, every code promotion merges content files: either a conflict, or (when prod content is unchanged since the merge base) dev content silently replaces prod content and is deployed to the prod site.
 
 ## Decision
 

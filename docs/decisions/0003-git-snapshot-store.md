@@ -1,4 +1,4 @@
-# 0003 — Snapshot store: Git commits to the project repository
+# 0003: Snapshot store: Git commits to the project repository
 
 - **Status:** accepted (2026-11-21). **PoC-2 passed on 2026-11-21**: the owner published v1 from the deployed admin; publisher commit `7ac3141` (authored by the PAT owner) triggered the Vercel build, the orchestrator detected the `Vercel – zidcms-web` commit status, and `zidcms-version.json` on the live site matched version 1 and its checksum.
 
@@ -13,8 +13,8 @@
 
 ## [NV] items resolved by PoC-2
 
-- Commits authored by the PAT owner trigger Hobby deployments — **confirmed**.
-- Combined commit status contains one context per project (`Vercel – zidcms-web`, `Vercel – zidcms-admin`); `VERCEL_STATUS_CONTEXT=zidcms-web` selects the web project — **confirmed**.
+- **Confirmed:** commits authored by the PAT owner trigger Hobby deployments.
+- **Confirmed:** the combined commit status contains one context per project (`Vercel – zidcms-web`, `Vercel – zidcms-admin`), and `VERCEL_STATUS_CONTEXT=zidcms-web` selects the web project.
 - Branch protection: not enabled on `main` yet; if enabled later, the publisher token needs a bypass or a `content` branch.
 - Fixed after PoC-2: the media-dir cleanup no longer deletes `public/media/.gitkeep`.
 

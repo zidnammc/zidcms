@@ -2,7 +2,7 @@
 
 **Status:** measured on 2026-11-21 against the **dev** environment. Raw output is committed in `tests/load/results/`. Every number below comes from a single run from one location. These are observations, not guarantees.
 
-Scope follows the private execution plan, §21 (public site, admin/Apps Script, publish end-to-end).
+Scope: the public site, the admin/Apps Script backend, and publishing end-to-end.
 
 ## Environment and method
 
@@ -26,7 +26,7 @@ How each measurement works:
 
 ### No load test, by policy
 
-Plan §21 called for 1/10/50/100 virtual users, and the owner approved a ceiling of ≤ 100 VU and ≤ 5 GB/month (ADR-0010). Vercel's [load-testing policy](https://vercel.com/kb/guide/what-s-vercel-s-policy-regarding-load-testing-deployments) (last updated 2026-11-18) permits load testing only on **Enterprise** plans. It says unannounced tests breach fair use and can get the source IPs blocked. ZidCMS runs on Hobby, so **no 1/10/50/100-VU CDN test was run**. `tests/load/public.ts` refuses more than 1 VU, or pacing under 250 ms, against any non-`http://` (Vercel) URL.
+The intended CDN test used 1/10/50/100 virtual users, and the owner approved a ceiling of ≤ 100 VU and ≤ 5 GB/month (ADR-0010). Vercel's [load-testing policy](https://vercel.com/kb/guide/what-s-vercel-s-policy-regarding-load-testing-deployments) (last updated 2026-11-18) permits load testing only on **Enterprise** plans. It says unannounced tests breach fair use and can get the source IPs blocked. ZidCMS runs on Hobby, so **no 1/10/50/100-VU CDN test was run**. `tests/load/public.ts` refuses more than 1 VU, or pacing under 250 ms, against any non-`http://` (Vercel) URL.
 
 ### Latency sampling (1 VU)
 
@@ -106,7 +106,7 @@ Taken from `tests/integration/results/2026-11-21T17-08-20-674Z-apps-script.json`
 | ----: | ---------------------------------------------: | ----------------: | ---------: | ---------: | --------------------: | --------: | ------------------: | -----------: | ---------------------------------------------------------- |
 |    10 |                                           91 s |            12.9 s |     16.1 s |     20.2 s |                27.9 s |    14.2 s |      26,266 (26 KB) |         27 s | job `25410645-1efa-45de-93af-cff719f191c2`, v15, `c090bb0` |
 |   100 |                                           78 s |             8.7 s |     14.5 s |     19.6 s |                21.2 s |    13.9 s |    231,108 (231 KB) |         16 s | job `6fa2bca7-13d1-4e39-b41b-ff9816952a0a`, v16, `5682b2e` |
-|   500 | failed after 71 s (`DEPLOY_FAILED`, see below) |             9.5 s |     21.4 s |     25.2 s | 15.3 s (rate limited) |         — | 1,143,050 (1.14 MB) |    not built | job `061db927-60b2-45a9-9e2b-71a9df96631f`, v17, `a70017f` |
+|   500 | failed after 71 s (`DEPLOY_FAILED`, see below) |             9.5 s |     21.4 s |     25.2 s | 15.3 s (rate limited) |   not run | 1,143,050 (1.14 MB) |    not built | job `061db927-60b2-45a9-9e2b-71a9df96631f`, v17, `a70017f` |
 
 Raw: `backend-2026-11-21T18-06-25-418Z-publish.json` (Posts ≈ 100 rows) and `…T18-23-36-064Z-publish.json` (Posts ≈ 250 rows). Both jobs ended `live` with no error. "Before first poll" is the time from the POST response to the first status response, which already showed `collecting`. `publish.readPublished` just before each publish took 4.3 s (10 items) and 5.3 s p50 (100 items).
 
@@ -127,9 +127,9 @@ Raw: `backend-2026-11-21T18-06-25-418Z-publish.json` (Posts ≈ 100 rows) and `�
 
 ### 500 items and the Vercel deployment limit
 
-Raw: `backend-2026-11-21T18-53-34-672Z-publish.json` (Posts ≈ 550 rows). Switching 400 bench posts to `published` over RPC took several minutes (concurrency 3). `publish.readPublished` returned 500 posts in 6.0 s p50 (14.1 s max). Collecting (21 s) and committing the 1.14 MB snapshot (25 s) worked; then Vercel refused the build with "Deployment rate limited — retry in 24 hours", and the job ended `failed` / `DEPLOY_FAILED` with the previous version (v16) still live — the failure path behaved as designed.
+Raw: `backend-2026-11-21T18-53-34-672Z-publish.json` (Posts ≈ 550 rows). Switching 400 bench posts to `published` over RPC took several minutes (concurrency 3). `publish.readPublished` returned 500 posts in 6.0 s p50 (14.1 s max). Collecting (21 s) and committing the 1.14 MB snapshot (25 s) worked; then Vercel refused the build because the deployment rate limit was reached (retry in 24 hours), and the job ended `failed` / `DEPLOY_FAILED` with the previous version (v16) still live. The failure path behaved as designed.
 
-The account had reached the Vercel Hobby limit of 100 deployments per 24 h (`api-deployments-free-per-day`, HTTP 402). Among the 100 most recent deployments listed by the Vercel API (all from the preceding ~4 h): 32 `READY`, 3 `ERROR`, **37 cancelled by the Ignored Build Step** — these count toward the limit ([Vercel KB](https://vercel.com/kb/guide/why-aren-t-commits-triggering-deployments-on-vercel)) — and 28 native "not affected" monorepo skips, which no longer count since Vercel's [2026-10-21 change](https://vercel.com/changelog/skipped-monorepo-deployments-no-longer-count-against-limits). Most Ignored-Build-Step cancellations are preview builds of the other environment's branch (prod projects building `main`, dev projects building `release`). See the deployment budget in [deployment.md](deployment.md#2-vercel-hobby).
+The account had reached the Vercel Hobby limit of 100 deployments per 24 h (`api-deployments-free-per-day`, HTTP 402). Among the 100 most recent deployments listed by the Vercel API (all from the preceding ~4 h): 32 `READY`, 3 `ERROR`, **37 cancelled by the Ignored Build Step** (these count toward the limit, see [Vercel KB](https://vercel.com/kb/guide/why-aren-t-commits-triggering-deployments-on-vercel)), and 28 native "not affected" monorepo skips, which no longer count since Vercel's [2026-10-21 change](https://vercel.com/changelog/skipped-monorepo-deployments-no-longer-count-against-limits). Most Ignored-Build-Step cancellations are preview builds of the other environment's branch (prod projects building `main`, dev projects building `release`). See the deployment budget in [deployment.md](deployment.md#2-vercel-hobby).
 
 Not measured because of the limit: the Vercel build time and verification for a 500-item snapshot. The cleanup (unpublish and trash the bench posts) ran over RPC; its final publish has to wait until the limit resets.
 
@@ -141,9 +141,9 @@ Not measured because of the limit: the Vercel build time and verification for a 
 - **≥ 10 simultaneous writers produce `LOCK_TIMEOUT`** (6 of 10 in this run). 5 writers succeeded but the last one waited 12.6 s.
 - **Vercel Hobby deployment limit is the practical publish ceiling:** 100 deployments per 24 h across all projects, and builds cancelled by the Ignored Build Step count too. A day of heavy testing (two staging E2E runs, a prod install, benchmarks, ~20 pushes) exhausted it.
 - **`system.health` takes about 11 s** (p50) because it reads all 11 sheets. Its p95 reached 17.1 s. In this range it did not grow measurably with total rows (500 → 2,302).
-- **Cold start:** the first call after idle took 11.1 s, versus 1.3–1.6 s warm (PoC-1, `docs/status/day-0.md`).
+- **Cold start:** the first call after idle took 11.1 s, versus 1.3–1.6 s warm (PoC-1, `docs/history/day-0.md`).
 - **Publish takes about 1–1.5 min.** Measured values were 60–91 s across all runs on dev and prod. Apps Script calls (collecting and committing, about 35 s) and the Vercel build and verification (deploying and verifying, about 35–42 s) take most of that time.
-- **RPCs over 10 s** (plan §21 asks for the first item count where this happens):
+- **RPCs over 10 s** (the first item count where this happens):
   - `system.health` already exceeds 10 s at the smallest size measured (50 Posts rows).
   - Concurrent writes exceed 10 s from 5 writers (max 12.6 s), and from 3 concurrent creates during seeding (p95 11.8–12.7 s, max 21.0 s at 550 rows).
   - TC-CONC-01 reached a max of 13.5 s.

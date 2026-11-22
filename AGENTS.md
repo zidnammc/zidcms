@@ -1,11 +1,13 @@
-# AGENTS.md — working notes for AI agents and contributors
+# AGENTS.md: working notes for AI agents
 
-Source of truth for scope and acceptance: the owner's private execution plan, kept outside Git at `.local/ZIDCMS_EXECUTION_PLAN.md` (ask the owner for a copy if it is missing; never commit it). References like "plan §21" in docs and code point to its sections. Decisions: `docs/decisions/`.
+Notes for AI coding agents working in this repository. Human contributors: see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Source of truth for scope and acceptance: the owner's private execution plan, kept outside Git at `.local/ZIDCMS_EXECUTION_PLAN.md` (ask the owner for a copy if it is missing; never commit it). Decisions: `docs/decisions/`.
 
 ## Toolchain
 
 - Node 26 (`.nvmrc`), pnpm 12 (`packageManager`). pnpm 12 uses `allowBuilds` in `pnpm-workspace.yaml` (not `onlyBuiltDependencies`).
-- Next.js 16 (Turbopack). APIs differ from older versions — read `node_modules/next/dist/docs/` before changing framework code. `params`/`searchParams` are Promises. `output: 'export'` rejects empty `generateStaticParams()`, hence the `__zidcms-empty__` placeholder in `apps/web/lib/site.ts`.
+- Next.js 16 (Turbopack). APIs differ from older versions: read `node_modules/next/dist/docs/` before changing framework code. `params`/`searchParams` are Promises. `output: 'export'` rejects empty `generateStaticParams()`, hence the `__zidcms-empty__` placeholder in `apps/web/lib/site.ts`.
 - `agentRules: false` is set in both `next.config.ts` files so `next dev` does not generate per-app AGENTS.md files.
 - Tailwind CSS 4 (CSS-first config in `app/globals.css`), Biome 2 for lint + format, Vitest 5.
 
@@ -40,7 +42,7 @@ Source of truth for scope and acceptance: the owner's private execution plan, ke
 
 ## Session handoff (read first in a new session)
 
-- Status and next steps: `docs/status/next-steps.md` (then `day-2.md`, `release-v0.1.0.md`, `retrospective.md`). v0.1.0 is tagged as an early-stage pre-release.
+- Status and next steps: `docs/history/next-steps.md` (then `day-2.md`, `release-v0.1.0.md`, `retrospective.md`). v0.1.0 is tagged as an early-stage pre-release.
 - Only prod is hosted (ADR-0012, 2026-11-22): admin <https://zidcms-prod-admin.vercel.app>, site <https://zidcms-prod-web.vercel.app>, branch `release`. The dev Vercel projects and dev Apps Script deployment were deleted; dev local config is archived as `.local/secrets/*.retired`. Real-service integration tests, the staging E2E and `pnpm build-switch` need a recreated dev env (`docs/deployment.md` §1–2 with `ZIDCMS_ENV=dev`).
 - Vercel Hobby allows 100 deployments per 24 h for the whole account, and builds cancelled by the Ignored Build Step count. `main` creates no deployments; a prod publish costs ~1–2, a promotion ~1–2, `smoke:deployed` ~4–8. Count before running anything that publishes (`vercel api /v6/deployments?limit=100`).
 - Prod Apps Script uses `services/apps-script/.clasp.prod.json` (`clasp -P .clasp.prod.json …`; prod deploys need owner approval). Promote code with `main` → `release` merges only, then verify with `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed`.
@@ -54,4 +56,4 @@ Source of truth for scope and acceptance: the owner's private execution plan, ke
 - Redeploy Apps Script keeping the URL: see `docs/deployment.md` §1 (prod uses `clasp -P .clasp.prod.json`; owner approval).
 - Vercel env: edit `.local/secrets/prod.env`, then `pnpm exec tsx scripts/vercel-env-sync.ts prod`. In Git Bash set `MSYS_NO_PATHCONV=1` for `vercel api /v…` calls. Runtime/request logs: `vercel logs [requests] --scope <team> --project zidcms-prod-admin` (Hobby keeps ~30 min).
 - Browser checks: Playwright + Chromium are installed (`@playwright/test` at the root); local dev login is `admin@example.com` with `pnpm init:local` env.
-- Windows gotchas: Python `open()` writes CRLF unless `newline=''`; Biome formats Markdown in CI (run `pnpm exec biome check --write .` before committing); backslashes in shell heredocs can be mangled — use the file-edit tool.
+- Windows gotchas: Python `open()` writes CRLF unless `newline=''`; Biome formats Markdown in CI (run `pnpm exec biome check --write .` before committing); backslashes in shell heredocs can be mangled, so use the file-edit tool.

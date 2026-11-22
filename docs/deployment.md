@@ -4,7 +4,7 @@ Environments and branches (ADR-0011, amended by ADR-0012). Prod is the only host
 
 | Environment | Vercel projects                        | Git branch | Content folder           | Google resources                   | Private config                                                     |
 | ----------- | -------------------------------------- | ---------- | ------------------------ | ---------------------------------- | ------------------------------------------------------------------ |
-| dev/staging | retired 2026-11-22 (ADR-0012)          | —          | removed                  | none (old spreadsheet unreachable) | archived as `.local/secrets/*.retired`                             |
+| dev/staging | retired 2026-11-22 (ADR-0012)          | none       | removed                  | none (old spreadsheet unreachable) | archived as `.local/secrets/*.retired`                             |
 | prod        | `zidcms-prod-admin`, `zidcms-prod-web` | `release`  | `apps/web/content/prod/` | "ZidCMS prod" spreadsheet + script | `.local/secrets/prod.env`, `services/apps-script/.clasp.prod.json` |
 
 ## 1. Apps Script
@@ -43,7 +43,7 @@ The dev line applies only to a recreated dev environment (ADR-0012). Then `ZIDCM
   - prod publish (commit to `release`): 1 prod web build + at most 1 cancelled admin build = **~1–2**;
   - promotion (`main` → `release`): affected prod builds = **~1–2**;
   - `smoke:deployed` (4 publishes): **~4–8**.
-    When the limit is hit, publish jobs fail with `DEPLOY_FAILED` ("Deployment rate limited — retry in 24 hours") and the live site stays unchanged. A recreated dev environment on `main` would add its own builds again (re-enable `main` in `git.deploymentEnabled`).
+    When the limit is hit, publish jobs fail with `DEPLOY_FAILED` (Vercel reports the deployment rate limit and asks to retry in 24 hours) and the live site stays unchanged. A recreated dev environment on `main` would add its own builds again (re-enable `main` in `git.deploymentEnabled`).
 
 ## 3. Promoting code to prod
 
@@ -58,4 +58,4 @@ The dev line applies only to a recreated dev environment (ADR-0012). Then `ZIDCM
 
 ## 5. Release checklist
 
-See plan §27.2 and `docs/status/release-v0.1.0.md`.
+The checklist used for v0.1.0 is in `docs/history/release-v0.1.0.md`.

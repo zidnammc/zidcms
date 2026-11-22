@@ -1,0 +1,69 @@
+name: Bug report
+description: Something in ZidCMS does not work as expected.
+title: "bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Security problems must not be reported here: follow the Security policy (SECURITY.md) instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: A clear description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `pnpm dev:gas`, `pnpm dev:web` and `pnpm dev:admin`
+        2. Open the admin dashboard and ...
+        3. See the error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - Local emulator stack
+        - Own deployment (Vercel, Google Apps Script, GitHub)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: ZidCMS version or commit, Node.js, pnpm, operating system and browser.
+      placeholder: |
+        ZidCMS: 0.1.0 (or commit SHA)
+        Node.js: 26.x
+        pnpm: 12.21.0
+        OS: Windows 11
+        Browser: Chrome 150
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and screenshots
+      description: Relevant terminal output, browser console output or screenshots. Remove secrets first.
+      render: text
+  - type: checkboxes
+    id: no-secrets
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed secrets, URLs of my Apps Script deployment and personal e-mail addresses.
+          required: true

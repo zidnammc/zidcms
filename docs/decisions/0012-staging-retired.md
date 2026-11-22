@@ -1,4 +1,4 @@
-# 0012 — Staging environment retired
+# 0012: Staging environment retired
 
 - **Status:** accepted (2026-11-22, owner decision). Amends ADR-0011.
 

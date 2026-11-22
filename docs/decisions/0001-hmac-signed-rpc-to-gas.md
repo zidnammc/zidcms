@@ -1,7 +1,7 @@
-# 0001 — Admin ↔ Apps Script: HMAC-signed RPC to a GAS web app
+# 0001: Admin ↔ Apps Script: HMAC-signed RPC to a GAS web app
 
 - **Status:** accepted (2026-11-21). **PoC-1 passed against the real dev deployment on 2026-11-21** (TC-GAS-01…08; first call ~11 s cold start, then ~1.3–1.6 s per call).
-- **Context:** Apps Script web apps deployed as _Execute as: Me_ / _Anyone_ are reachable by anyone with the URL. `doPost(e)` cannot read request headers, always answers HTTP 200, and replies via a 302 to `script.googleusercontent.com` **[V per plan]**.
+- **Context:** Apps Script web apps deployed as _Execute as: Me_ / _Anyone_ are reachable by anyone with the URL. `doPost(e)` cannot read request headers, always answers HTTP 200, and replies via a 302 to `script.googleusercontent.com` **[verified]**.
 
 ## Decision
 

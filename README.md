@@ -2,21 +2,19 @@
 
 **Publish from Sheets. Serve at scale.**
 
-[![Built with Devin](https://img.shields.io/badge/built%20with-Devin-0f172a)](https://devin.ai) [![Made possible by Poke](https://img.shields.io/badge/made%20possible%20by-Poke-10b981)](https://poke.com) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![CI](https://github.com/zidnammc/zidcms/actions/workflows/ci.yml/badge.svg)](https://github.com/zidnammc/zidcms/actions/workflows/ci.yml) [![Built with Devin](https://img.shields.io/badge/built%20with-Devin-0f172a)](https://devin.ai) [![Made possible by Poke](https://img.shields.io/badge/made%20possible%20by-Poke-10b981)](https://poke.com) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-> Built by [Devin](https://devin.ai), the AI software engineer by Cognition, using Devin AI Max access provided by [Poke](https://poke.com). Planned, directed and approved by the project owner.
+ZidCMS is an open-source, spreadsheet-native headless CMS. You write in a web dashboard, your content lives in a Google Sheet you own, and readers get a fast static website.
 
-ZidCMS is an open-source, spreadsheet-native headless CMS:
+## Features
 
-- a standalone **admin dashboard** (Next.js on Vercel) for allowlisted admins,
-- **Google Sheets** as the content store and **Google Drive** as the private media origin,
-- **Google Apps Script** as the only component that touches Sheets/Drive, reached through an **HMAC-signed RPC**,
-- **Git (GitHub)** as the versioned store of published snapshots,
-- a **fully static public site** (Next.js static export on the Vercel CDN), rebuilt from the snapshot on every publish.
+- **Write in a real editor:** Markdown with live preview, drafts, cover images, categories, tags, static pages and SEO fields.
+- **Your data stays yours:** posts are rows in your own Google Sheet; images stay private in your Google Drive.
+- **Publishing you can trust:** every publish creates a versioned snapshot in Git, rebuilds the site and checks that the new version is live. A failed build never breaks the site, and any earlier version can be restored in one click.
+- **Fast, cheap public site:** fully static pages on a CDN; readers never touch Sheets, Apps Script or a server.
+- **Free to run:** Vercel Hobby, GitHub Free and a normal Google account. One allowlisted admin account signs in with Google.
 
-Readers never trigger Apps Script, Sheets, Drive, or any serverless function. Content becomes public only through a verifiable publish job: `queued → collecting → committing → deploying → verifying → live`.
-
-> **Status: early stage.** v0.1.0 is an early-stage release and ZidCMS may be developed further. It is a non-commercial open-source experiment built during a seven-day AI-executed sprint — not a WordPress replacement. See [`docs/limitations.md`](docs/limitations.md) and the [changelog](CHANGELOG.md).
+> **Status: early stage.** v0.1.0 is an early-stage release and may be developed further. It is a non-commercial open-source experiment, not a WordPress replacement. Built by [Devin](https://devin.ai) (Cognition) using Devin AI Max access provided by [Poke](https://poke.com), planned and directed by the project owner. See the [limitations](docs/limitations.md) and the [changelog](CHANGELOG.md).
 
 ## Screenshots
 
@@ -26,7 +24,7 @@ Readers never trigger Apps Script, Sheets, Drive, or any serverless function. Co
 | **Publishing & snapshots**                               | **Public site**                                |
 | ![Publish screen](docs/screenshots/admin-publish.png)    | ![Public site](docs/screenshots/site-home.png) |
 
-The admin UI is in **Bahasa Indonesia**; this README quotes on-screen labels exactly, with the English meaning in brackets.
+The admin UI is in **Bahasa Indonesia**. This README quotes on-screen labels exactly, with the English meaning in brackets.
 
 ---
 
@@ -38,7 +36,7 @@ There are three ways to meet ZidCMS. Pick the one you need:
 | -------------------------------------------------- | --------------------------------------------------------------------------------- | --------- | ----------------------------- |
 | try it on my computer                              | [1. Try it locally](#1-try-it-locally)                                            | ~10 min   | none                          |
 | run my own site online for free                    | [2. Put your own ZidCMS online](#2-put-your-own-zidcms-online)                    | 1–2 hours | GitHub, Google, Vercel        |
-| write and publish on a site that is already set up | [3. Everyday use: writing and publishing](#3-everyday-use-writing-and-publishing) | —         | an allowlisted Google account |
+| write and publish on a site that is already set up | [3. Everyday use: writing and publishing](#3-everyday-use-writing-and-publishing) | none      | an allowlisted Google account |
 
 Never used a terminal, GitHub or Vercel? The [Beginner Guide](docs/beginner-guide.md) explains every click in detail.
 
@@ -56,16 +54,16 @@ pnpm init:local      # creates apps/admin/.env.local with random local keys
 Start the three parts, each in its own terminal, and leave them running:
 
 ```bash
-pnpm dev:gas         # terminal 1 — Sheets + Apps Script emulator (http://localhost:8787)
-pnpm dev:web         # terminal 2 — public site            (http://localhost:3001)
-pnpm dev:admin       # terminal 3 — admin dashboard        (http://localhost:3000)
+pnpm dev:gas         # terminal 1: Sheets + Apps Script emulator (http://localhost:8787)
+pnpm dev:web         # terminal 2: public site            (http://localhost:3001)
+pnpm dev:admin       # terminal 3: admin dashboard        (http://localhost:3000)
 ```
 
 Then:
 
 1. Open <http://localhost:3000>. In the purple **Dev login** box type `admin@example.com` and click **Masuk** (Sign in).
 2. Optional sample content: in a fourth terminal run `pnpm seed`, then reload the dashboard.
-3. Click **Publikasikan Situs** (Publish Site) and wait until the job shows **Tayang** (Live) — a few seconds locally.
+3. Click **Publikasikan Situs** (Publish Site) and wait until the job shows **Tayang** (Live). Locally this takes a few seconds.
 4. Open <http://localhost:3001>: that is your static public site.
 5. Now follow [section 3](#3-everyday-use-writing-and-publishing) to write your own post.
 
@@ -73,7 +71,7 @@ Stop everything with **Ctrl + C** in each terminal. To start over: stop the serv
 
 ### 2. Put your own ZidCMS online
 
-Everything runs on free plans (Vercel Hobby, GitHub Free, a normal Google account) and on **your own** accounts. The full click-by-click walkthrough is [Beginner Guide, Part 3](docs/beginner-guide.md#part-3--putting-zidcms-online-free); this is the overview:
+Everything runs on free plans (Vercel Hobby, GitHub Free, a normal Google account) and on **your own** accounts. The full click-by-click walkthrough is [Beginner Guide, Part 3](docs/beginner-guide.md#part-3-putting-zidcms-online-free); this is the overview:
 
 | Step | What you do                                                                                                                                                                                                             | Guide |
 | ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
@@ -82,7 +80,7 @@ Everything runs on free plans (Vercel Hobby, GitHub Free, a normal Google accoun
 | 3    | Generate two random keys: `HMAC_SECRET` and `AUTH_SECRET`.                                                                                                                                                              | 3.3   |
 | 4    | Create a **Google Sheet**, open _Extensions → Apps Script_, set the Script Properties `HMAC_SECRET` and `ENVIRONMENT=prod`, enable the Apps Script API.                                                                 | 3.4   |
 | 5    | Upload the Apps Script code with `clasp` (`pnpm build` in `services/apps-script`, then `clasp push`).                                                                                                                   | 3.5   |
-| 6    | Deploy it as a **web app** (_Execute as: Me_, _Who has access: Anyone_ — every request must be HMAC-signed), copy the `/exec` URL, run `setup` once.                                                                    | 3.6   |
+| 6    | Deploy it as a **web app** (_Execute as: Me_, _Who has access: Anyone_; every request must be HMAC-signed), copy the `/exec` URL, run `setup` once.                                                                     | 3.6   |
 | 7    | Create two **Vercel Hobby projects** from your repo: `apps/web` (env `SITE_URL`, `ZIDCMS_ENV=prod`) and `apps/admin`.                                                                                                   | 3.7   |
 | 8    | Create a **Google OAuth client** (consent screen _External_, you as test user) with the redirect URI `https://<your-admin>.vercel.app/api/auth/callback/google`, and enable the Google Drive API in that Cloud project. | 3.8   |
 | 9    | Fill in the admin project's environment variables (`AUTH_*`, `ADMIN_EMAILS`, `GAS_*`, `GITHUB_*`, `PUBLIC_SITE_URL`, `VERCEL_STATUS_CONTEXT`, …) and redeploy.                                                          | 3.9   |
@@ -90,8 +88,8 @@ Everything runs on free plans (Vercel Hobby, GitHub Free, a normal Google accoun
 
 Rules that matter:
 
-- Put **only your own Google account** in `ADMIN_EMAILS`, and never commit it or any secret — the repository is public.
-- If Google answers the Apps Script authorization with `Error 403: access_denied`, link the script to your own Google Cloud project (_Project Settings → Change project_) — see [troubleshooting](docs/beginner-guide.md#part-4--troubleshooting).
+- Put **only your own Google account** in `ADMIN_EMAILS`, and never commit it or any secret: the repository is public.
+- If Google answers the Apps Script authorization with `Error 403: access_denied`, link the script to your own Google Cloud project (_Project Settings → Change project_); see [troubleshooting](docs/beginner-guide.md#part-4-troubleshooting).
 - Vercel Hobby allows 100 deployments per day; each publish costs one or two. Bundle changes instead of publishing every small edit.
 
 Maintainers who want separate dev and prod environments, scripted installs and promotion between branches: [`docs/setup.md`](docs/setup.md), [`docs/deployment.md`](docs/deployment.md) and [`docs/operations.md`](docs/operations.md).
@@ -120,7 +118,7 @@ Open your admin address and click **Masuk dengan Google** (Sign in with Google).
 
 | To…                            | Do this                                                                                                           |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| update a live post             | Edit it and click **Perbarui** (Update) — the change is published immediately.                                    |
+| update a live post             | Edit it and click **Perbarui** (Update). The change is published immediately.                                     |
 | rework a post privately        | Click **Batalkan terbit** (Unpublish) first; it leaves the site and becomes a draft. Publish again when ready.    |
 | keep a post without showing it | **Arsipkan** (Archive). Revive it with **Pindahkan ke draf** (Move to draft).                                     |
 | delete / restore               | **Pindahkan ke sampah** (Move to trash); restore from **Artikel → Sampah → Pulihkan** (Posts → Trash → Restore).  |
@@ -137,7 +135,7 @@ Open your admin address and click **Masuk dengan Google** (Sign in with Google).
 - A failed publish (e.g. `DEPLOY_FAILED`) never breaks the site: the previous version stays live. Read the message in **Publikasi & Snapshot** and publish again.
 - "Item ini telah diubah di tempat lain" (changed elsewhere) means someone saved the same post in another tab: copy your text, reload, and paste it back.
 - Don't edit the Google Sheet by hand; invalid rows are skipped and reported.
-- More answers: [Beginner Guide, Part 4](docs/beginner-guide.md#part-4--troubleshooting) and [`docs/operations.md`](docs/operations.md).
+- More answers: [Beginner Guide, Part 4](docs/beginner-guide.md#part-4-troubleshooting) and [`docs/operations.md`](docs/operations.md).
 
 ---
 
@@ -169,13 +167,11 @@ The reference deployment has one hosted environment, **prod**: it builds from `r
 
 ## Development and quality gates
 
-`pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:web && pnpm scan:secrets` — the same steps run in [`.github/workflows/ci.yml`](.github/workflows/ci.yml). `pnpm test:integration` and `pnpm test:e2e` run against the local emulator stack (also available as manual GitHub workflows); see [`docs/testing.md`](docs/testing.md). Contributor notes: [`AGENTS.md`](AGENTS.md).
+`pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:web && pnpm scan:secrets`: the same steps run in [`.github/workflows/ci.yml`](.github/workflows/ci.yml). `pnpm test:integration` and `pnpm test:e2e` run against the local emulator stack (also available as manual GitHub workflows); see [`docs/testing.md`](docs/testing.md). How to contribute: [`CONTRIBUTING.md`](CONTRIBUTING.md). Security reports: [`SECURITY.md`](SECURITY.md).
 
 ## Documentation
 
-[Beginner guide](docs/beginner-guide.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/) · [Changelog](CHANGELOG.md)
-
-References such as "plan §21" in the docs point to the project's internal execution plan, which is not published; the ADRs in `docs/decisions/` record every decision that matters for users and contributors.
+[Beginner guide](docs/beginner-guide.md) · [Architecture](docs/architecture.md) · [API](docs/api.md) · [Security](docs/security.md) · [Testing](docs/testing.md) · [Setup](docs/setup.md) · [Deployment](docs/deployment.md) · [Operations](docs/operations.md) · [Limitations](docs/limitations.md) · [Benchmarks](docs/benchmarks.md) · [Decisions](docs/decisions/) · [Project history](docs/history/) · [Changelog](CHANGELOG.md) · [Contributing](CONTRIBUTING.md)
 
 ## Hosting note
 
@@ -186,7 +182,7 @@ The reference deployment runs on Vercel Hobby, GitHub Free, and a free Google ac
 ZidCMS was developed during a seven-day sprint using Devin AI Max access provided by Poke.
 
 - **[Poke](https://poke.com)** provided the Devin AI Max access that made this sprint possible.
-- **[Devin](https://devin.ai)** (Cognition) executed the work: code, tests, infrastructure setup, benchmarks and documentation, working from the owner's plan and decisions. Commits made by Devin are authored as `devin-ai-integration[bot]`; the process, findings and limits of this AI-executed sprint are described in the [retrospective](docs/status/retrospective.md).
+- **[Devin](https://devin.ai)** (Cognition) executed the work: code, tests, infrastructure setup, benchmarks and documentation, working from the owner's plan and decisions. Commits made by Devin are authored as `devin-ai-integration[bot]`; the process, findings and limits of this AI-executed sprint are described in the [retrospective](docs/history/retrospective.md).
 
 ## License
 

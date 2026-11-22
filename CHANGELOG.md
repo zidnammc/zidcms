@@ -9,7 +9,7 @@ All notable changes to ZidCMS are documented in this file. The format follows [K
 - The dev/staging environment was retired on 2026-11-22 (ADR-0012): its Vercel projects and Apps Script deployment were deleted and `apps/web/content/dev/` was removed. Prod (branch `release`) is the only hosted environment; `main` carries code only and creates no Vercel deployments (both `vercel.json` files deploy `release` only).
 - `pnpm check:deployed`, `pnpm smoke:deployed` and the staging E2E require an explicit `ZIDCMS_ENV_FILE`; the staging E2E refuses prod environment files.
 
-## [0.1.0] — 2026-11-21 (early stage)
+## [0.1.0] - 2026-11-21 (early stage)
 
 First public release, published as a GitHub pre-release. ZidCMS is an early-stage, non-commercial experiment and not a WordPress replacement; it may be developed further.
 

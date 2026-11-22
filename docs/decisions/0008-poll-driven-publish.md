@@ -1,4 +1,4 @@
-# 0008 — Publish orchestration is poll-driven
+# 0008: Publish orchestration is poll-driven
 
 - **Status:** accepted (2026-11-21).
 
@@ -11,9 +11,9 @@
 - `collecting` builds the snapshot and compares checksums with the live snapshot (no-op → `live` without a commit). Because a full snapshot cannot be stored in a 50k-character cell, `committing` rebuilds it from Sheets (or the rollback target commit) and records the possibly updated checksum.
 - Timeouts: `deploying` 15 min (`DEPLOY_TIMEOUT`), `verifying` 3 min (`VERIFY_TIMEOUT`), measured from `state_entered_at`. Retryable errors (`GITHUB_ERROR`, `UPSTREAM_ERROR`, `LOCK_TIMEOUT`) release the claim and are retried up to 3 attempts per step.
 - On failure the snapshot row (if committed) becomes `failed`; the previous live snapshot is untouched. On success the snapshot becomes `live` and the previous one `superseded`.
-- **GET with a side effect:** advancing an already-requested job via GET is accepted (plan §11); it requires an admin session and can only move a job the admin already started. Documented in `docs/security.md`.
+- **GET with a side effect:** advancing an already-requested job via GET is accepted; it requires an admin session and can only move a job the admin already started. Documented in `docs/security.md`.
 
-## Schema additions (vs. plan §9.2 `PublishJobs`)
+## Schema additions to `PublishJobs`
 
 `step_lease_until`, `deploy_detail` (Vercel sub-state / human-readable progress), `state_entered_at`.
 

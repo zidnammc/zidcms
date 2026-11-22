@@ -1,4 +1,4 @@
-# ZidCMS — retrospective (v0.1.0, 2026-11-21)
+# ZidCMS retrospective (v0.1.0, 2026-11-21)
 
 ZidCMS is an **early-stage**, non-commercial experiment, not a WordPress replacement. v0.1.0 is an early-stage pre-release and the project may be developed further. Detailed evidence: [day-2.md](day-2.md) and [release-v0.1.0.md](release-v0.1.0.md).
 
@@ -27,7 +27,7 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 
 **Day 0 (first contact with real services)**
 
-- The `drive.file` scope is not enough for `DriveApp.createFolder`; switched to `drive` (ADR-0006). The plan had flagged this as an assumption, and the PoC confirmed it was wrong.
+- The `drive.file` scope is not enough for `DriveApp.createFolder`; switched to `drive` (ADR-0006). This had been flagged as an assumption up front, and the PoC confirmed it was wrong.
 - "Write new article" looked broken on the deployed admin: the editor waited for five Apps Script calls (3–7 s cold) with no feedback, and repeated clicks cancelled navigation. Fixed with a loading state and a single `editor.context` RPC.
 - The Vercel ignore step used cwd-relative pathspecs, so the first admin deployment was skipped.
 - A dev HMAC secret was visible in a screenshot. It was rotated before first use.
@@ -41,11 +41,11 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 - An interrupted prod setup left the install marker in place, which locked the setup. The marker is now written last, and the lock requires the media folder.
 - After the content-layout change, the beginner guide no longer set `ZIDCMS_ENV` for the web project, so builds would have failed.
 - Biome reformatted raw load-test JSON. The folder is now excluded.
-- **The Vercel Hobby deployment limit was exhausted on release day.** 100 deployments per 24 h are shared by all four projects, and builds cancelled by the Ignored Build Step count too (37 of the 100 most recent; native monorepo skips are free). Two staging E2E runs, the prod install, benchmark publishes and ~20 pushes used it up, so the 500-item publish ended `DEPLOY_FAILED` (safely — the old version stayed live) and the final staging E2E re-run and prod promotion moved to the next session. The plan's assumption that skipped builds are free only holds for Vercel's native monorepo skip.
+- **The Vercel Hobby deployment limit was exhausted on release day.** 100 deployments per 24 h are shared by all four projects, and builds cancelled by the Ignored Build Step count too (37 of the 100 most recent; native monorepo skips are free). Two staging E2E runs, the prod install, benchmark publishes and ~20 pushes used it up, so the 500-item publish ended `DEPLOY_FAILED` (safely: the old version stayed live) and the final staging E2E re-run and prod promotion moved to the next session. The assumption that skipped builds are free only holds for Vercel's native monorepo skip.
 
 **Platform discoveries**
 
-- **Load testing on Vercel:** the plan budgeted a public-site load test at up to 100 virtual users. Vercel's published policy (updated 2026-11-18) allows load testing only on Enterprise plans, and unannounced tests can get IPs blocked. No CDN load test was run. The tool now refuses more than 1 VU or pacing below 250 ms against Vercel, and a gentle latency sample was taken instead.
+- **Load testing on Vercel:** the original budget included a public-site load test at up to 100 virtual users. Vercel's published policy (updated 2026-11-18) allows load testing only on Enterprise plans, and unannounced tests can get IPs blocked. No CDN load test was run. The tool now refuses more than 1 VU or pacing below 250 ms against Vercel, and a gentle latency sample was taken instead.
 - **Prod install on Google:** clasp rejects a `rootDir` outside the project-file folder, so a separate `.clasp.prod.json` is needed. A new script on Google's default Cloud project could not get consent for the `drive` scope (403 `access_denied`) until the owner linked it to the Cloud project that holds the OAuth client. After that, the Drive API also had to be enabled explicitly for that project. Both steps are now in `docs/deployment.md`.
 
 ## Where AI execution helped and where it hurt
@@ -61,7 +61,7 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 
 - Account-bound steps needed the owner: OAuth consent screens, Cloud project linking, Vercel and GitHub tokens, manual sign-in checks. These were the critical path more than once.
 - The deployment budget was not tracked while testing; a running count of deployments per day would have prevented hitting the Vercel limit.
-- Platform policies were assumed rather than checked. The load-test plan was only corrected when the Vercel policy was read, and the `drive.file` assumption only failed at the PoC. Checking vendor policies and scopes up front would have saved rework.
+- Platform policies were assumed rather than checked. The load-test approach was only corrected when the Vercel policy was read, and the `drive.file` assumption only failed at the PoC. Checking vendor policies and scopes up front would have saved rework.
 - A later run overwrote a test-evidence file (Playwright cleans its output folder), so the evidence had to be reconstructed from logs. Evidence now lives outside Playwright's output folder.
 - Some fixes had to be applied twice: the docs needed a follow-up once the content layout changed (beginner guide `ZIDCMS_ENV`).
 
@@ -77,7 +77,7 @@ Open items: a manual sign-in with a non-allowlisted Google account, the prod OAu
 Details and raw data: [../benchmarks.md](../benchmarks.md). All numbers are from the dev environment, measured from a residential connection.
 
 - **Public site (CDN):** latency sample at 1 VU, 500 ms pacing, 120 s: 203 requests, p50 77 ms, p95 131 ms, p99 327 ms, 0 errors, 100 % cache HIT. Throughput was intentionally not measured (Vercel policy).
-- **Admin RPC latency (Apps Script):** reads (`posts.list`, `posts.get`) stay around 2–2.5 s p50 from 50 to 550 post rows; `posts.update` is around 4–5 s p50 and about 6 s p95. The plan's admin-action target of p95 ≤ 4 s is **not met for writes**. `system.health` takes about 11 s p50 because it scans every sheet. The first call after idle has an ~11 s cold start.
+- **Admin RPC latency (Apps Script):** reads (`posts.list`, `posts.get`) stay around 2–2.5 s p50 from 50 to 550 post rows; `posts.update` is around 4–5 s p50 and about 6 s p95. The admin-action target of p95 ≤ 4 s is **not met for writes**. `system.health` takes about 11 s p50 because it scans every sheet. The first call after idle has an ~11 s cold start.
 - **Write contention (single script lock):** 2 and 5 parallel writers all succeed; at 10 writers, 4 succeed and 6 hit `LOCK_TIMEOUT`. Ten parallel updates to the same post produce 1 success and 9 `VERSION_CONFLICT` (as designed).
 - **Publish to live:** 60–91 s end to end (10 and 100 items, staging E2E, prod smoke), well within the 5 min target. A 100-item snapshot is ~231 KB. The 500-item publish was still running when this was written.
 

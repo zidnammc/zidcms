@@ -9,6 +9,13 @@ test.skip(target !== 'local' || process.env.SCREENSHOTS !== '1', 'set SCREENSHOT
 
 test('capture README screenshots', async ({ page }) => {
   mkdirSync(dir, { recursive: true });
+  await page.addInitScript(() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      const style = document.createElement('style');
+      style.textContent = 'nextjs-portal { display: none !important; }';
+      document.head.appendChild(style);
+    });
+  });
   await page.setViewportSize({ width: 1366, height: 820 });
   await page.goto('/login');
   await page.screenshot({ path: `${dir}/admin-login.png` });

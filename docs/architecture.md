@@ -52,7 +52,7 @@
 
 ## Data model
 
-See plan §9 and `packages/core/src/schema/sheets.ts` (columns are resolved by header name; additional `PublishJobs` columns are listed in ADR-0008). Rows are never deleted; soft delete uses `deleted_at`.
+The sheet schema is defined in `packages/core/src/schema/sheets.ts` (columns are resolved by header name; additional `PublishJobs` columns are listed in ADR-0008). Rows are never deleted; soft delete uses `deleted_at`.
 
 ## Trust zones
 

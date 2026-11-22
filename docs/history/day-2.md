@@ -1,4 +1,4 @@
-## ZidCMS — Day 2 status (2026-11-21, session 2)
+## ZidCMS: Day 2 status (2026-11-21, session 2)
 
 Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-mail addresses) stay in the owner's gitignored files and are not recorded here. Result files under `tests/integration/results/`, `tests/e2e/results/` and `test-results/` are gitignored and stay on the owner's machine; the numbers below are copied from them.
 
@@ -6,8 +6,8 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 
 1. **Manual sign-in with a non-allowlisted Google account** → must show "Akses ditolak". Last open check for P0 row 1 and demo step 1 (automated coverage: `apps/admin/lib/security.test.ts`, staging E2E with a minted cookie).
 2. **Prod OAuth redirect URI**: add `https://zidcms-prod-admin.vercel.app/api/auth/callback/google` to the existing OAuth client. Until then Google sign-in on the prod admin fails; prod checks so far used a minted prod session cookie.
-3. **Vercel usage screenshot** for the month (no private IDs). Needed for release checklist §27.2 and for the "zero function invocations" dashboard part of demo step 8.
-4. **Fresh-account setup by another person** following `docs/beginner-guide.md` (§24.4).
+3. **Vercel usage screenshot** for the month (no private IDs). Needed for the release checklist and for the "zero function invocations" dashboard part of demo step 8.
+4. **Fresh-account setup by another person** following `docs/beginner-guide.md`.
 5. **Decision:** purge the private execution plan from Git history (destructive rewrite; not done). It was removed from the tree in `87b2017`.
 6. **Reminder:** renew the GitHub PAT (used by dev and prod) before 90 days from 2026-11-21.
 7. Approval to promote `main` to `release` and tag `v0.1.0` as a pre-release. `release` is at `b75ffad` plus the prod content commits; `4c0691d`, `bb1b1d5`, `87b2017` and `16a4fff` are not promoted yet.
@@ -15,8 +15,8 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 **Planned exit criteria:**
 
 - Stage 1: integration suite against the real dev Apps Script; Playwright E2E (local stack and staging); build-failure switch for TC-PUB-07 on staging.
-- Stage 2: staging acceptance (§24.3 demo on the deployed dev admin and site, `pnpm check:deployed`).
-- Stage 3: benchmarks per §21; fresh-clone and fresh-account dry runs of the setup docs.
+- Stage 2: staging acceptance (demo scenario on the deployed dev admin and site, `pnpm check:deployed`).
+- Stage 3: benchmarks; fresh-clone and fresh-account dry runs of the setup docs.
 - Stage 4: prod environment, prod smoke and rollback test, `v0.1.0` release.
 
 **Met?** partially. Stages 1 and 2 are met. Prod is set up and its rollback is tested. Still open:
@@ -32,7 +32,7 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 - Integration harness, Playwright E2E and build-failure switch: `b419c6c` (ADR-0010). Emulator-stack workflows are green: `integration.yml` run 44925349688 and `e2e.yml` run 44925353661.
 - Deployed checks, write-trail and P0-5 coverage, load-test tools: `744eae4`.
 - Integration suite vs real dev Apps Script: **16 passed, 0 failed, 2 skipped** (`tests/integration/results/2026-11-21T17-08-20-674Z-apps-script.json`, see "Test case coverage").
-- Staging E2E run 2: **PASS in 8.8 min** (2026-11-21 16:58:55Z → 17:07:45Z). The run covered every §24.3 demo step plus PoC-3 media and the P0-5 errors (jobs below). Run 1 used an earlier version of the test and also passed in 7.3 min: publish v2, update v3, failed build v4 (v3 stayed live), rollback v5 (= v2), cleanup v6.
+- Staging E2E run 2: **PASS in 8.8 min** (2026-11-21 16:58:55Z → 17:07:45Z). The run covered every demo step plus PoC-3 media and the P0-5 errors (jobs below). Run 1 used an earlier version of the test and also passed in 7.3 min: publish v2, update v3, failed build v4 (v3 stayed live), rollback v5 (= v2), cleanup v6.
 
   | Step      | Job                                    | States                                             | Version | Commit    | Time | Live after                        |
   | --------- | -------------------------------------- | -------------------------------------------------- | ------- | --------- | ---: | --------------------------------- |
@@ -86,7 +86,7 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
   - The beginner guide did not set `ZIDCMS_ENV` for the web project, so builds would fail (`bb1b1d5`).
   - Biome reformatted raw load-test JSON. The results are now excluded from the formatter (`07ef05e`).
 
-**Acceptance — §24.1 Functional (P0):**
+**Functional acceptance criteria (P0):**
 
 | #   | Criterion                                                                              | Status    | Evidence                                                                                                                                                                                                                                                                                                                                         |
 | --- | -------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -102,7 +102,7 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 | 10  | Rollback restores an earlier snapshot as a new version                                 | met       | Staging rollback v10 has the checksum of v7. Prod rollback v3 has the checksum of v1. Legacy-layout rollback on dev → v13 with media reused. Unit test TC-PUB-08.                                                                                                                                                                                |
 | 11  | Snapshot: only allowlisted fields of published, non-deleted items + public settings    | met       | TC-SEC-06 key-set test and TC-PUB-01 (draft never in snapshot) in `snapshot.test.ts`. `check:deployed` finds no actor fields or e-mails in the live dev and prod snapshots. E2E step 3: draft absent from the public site.                                                                                                                       |
 
-**Acceptance — §24.2 Functional (P1, shipped):**
+**Functional acceptance criteria (P1, shipped):**
 
 | #   | Criterion                                                                 | Status    | Evidence                                                                                                                                                                                                                                                                                                                |
 | --- | ------------------------------------------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -110,7 +110,7 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 | 13  | Categories/tags assignable and listed on archive pages                    | partially | Snapshot category/tag mapping is unit-tested. Category and tag archive URLs are in the live sitemap (TC-WEB-04, `check:deployed`). No automated test checks archive page contents on staging.                                                                                                                           |
 | 14  | Media upload enforces type/size; images served from Vercel; Drive private | met       | TC-SEC-03 contract test: type, size and magic bytes enforced; SVG rejected. PoC-3 on staging: PNG upload → Drive → publish → `/media/<sha256>.png` on `zidcms-web.vercel.app` with matching sha256. Admin media preview without a session → 401. Drive privacy is by design (ADR-0004) and was not probed from outside. |
 
-**Acceptance — §24.3 Demo scenario (TC-E2E-01, staging E2E run 2):**
+**Demo scenario (TC-E2E-01, staging E2E run 2):**
 
 | #   | Step                                                                | Status    | Evidence                                                                                                                                                                                       |
 | --- | ------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -123,20 +123,20 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 | 7   | Failed build keeps previous version; roll back                      | met       | Job `8148aaa7…` v9 `DEPLOY_FAILED`, v8 still served; rollback job `54367da1…` v10 = v7 checksum, 60 s.                                                                                         |
 | 8   | Network evidence: only Vercel domain; zero web function invocations | partially | Public page requested only `zidcms-web.vercel.app` (TC-WEB-06). The web deployment has 0 function outputs (`check:deployed`, `check:web`). The Vercel dashboard screenshot is pending (owner). |
 
-**Acceptance — §24.4 Engineering:**
+**Engineering acceptance criteria:**
 
 | Criterion                                                                         | Status    | Evidence                                                                                                                                                                                                                                                                                                                                                                                   |
 | --------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `apps/web` build output has zero functions (TC-WEB-02)                            | met       | `pnpm check:web` in CI (latest run 44937929097 on `87b2017`). `check:deployed`: current dev and prod web deployments have 0 function outputs.                                                                                                                                                                                                                                              |
 | Bundle secret scan passes for both apps (TC-SEC-07)                               | met       | `pnpm scan:secrets` in CI. `pnpm scan:secrets --repo` clean on every commit.                                                                                                                                                                                                                                                                                                               |
-| All §18.1 test levels executed with recorded output                               | partially | Unit, contract and admin unit tests run in CI. Integration ran against real dev GAS. E2E ran locally, in CI and on staging. Security checks ran in CI, integration and `check:deployed`. Load: the public CDN got 1-VU sampling only (Vercel policy) and the 500-item publish could not be built (Vercel deployment limit).                                                                |
+| All test levels executed with recorded output                                     | partially | Unit, contract and admin unit tests run in CI. Integration ran against real dev GAS. E2E ran locally, in CI and on staging. Security checks ran in CI, integration and `check:deployed`. Load: the public CDN got 1-VU sampling only (Vercel policy) and the 500-item publish could not be built (Vercel deployment limit).                                                                |
 | TC-CONC-01/02 and TC-PUB-04 pass                                                  | met       | Real dev GAS: TC-CONC-01 10 parallel updates → 1 ok + 9 `VERSION_CONFLICT` (p50 8.8 s, max 13.5 s). TC-CONC-02 5 creates on the same slug → 1 ok + 4 `SLUG_CONFLICT`. TC-PUB-04/05 PASS.                                                                                                                                                                                                   |
-| Benchmark report complete per §21                                                 | partially | `docs/benchmarks.md` covers latency vs rows, contention, seed, publish at 10/100 items and public 1-VU sampling. Publish at 500 items: collect + commit measured, build blocked by the Vercel deployment limit. The 1/10/50/100-VU CDN levels were replaced by sampling (Vercel allows load tests only on Enterprise). Dashboard confirmation of zero functions is pending the screenshot. |
+| Benchmark report complete                                                         | partially | `docs/benchmarks.md` covers latency vs rows, contention, seed, publish at 10/100 items and public 1-VU sampling. Publish at 500 items: collect + commit measured, build blocked by the Vercel deployment limit. The 1/10/50/100-VU CDN levels were replaced by sampling (Vercel allows load tests only on Enterprise). Dashboard confirmation of zero functions is pending the screenshot. |
 | Fresh-account setup reproduced from docs                                          | pending   | Fresh-clone local dry run passed (SMOKE OK). Cloud setup on a fresh account by another person is not done.                                                                                                                                                                                                                                                                                 |
-| Deployment steps and owner approvals documented                                   | met       | `docs/deployment.md` (incl. first-time prod install), `docs/setup.md`, `docs/beginner-guide.md`, ADR-0010, ADR-0011, `docs/status/day-0.md`.                                                                                                                                                                                                                                               |
+| Deployment steps and owner approvals documented                                   | met       | `docs/deployment.md` (incl. first-time prod install), `docs/setup.md`, `docs/beginner-guide.md`, ADR-0010, ADR-0011, [day-0.md](day-0.md).                                                                                                                                                                                                                                                 |
 | README, architecture, API, security, operations, limitations, benchmarks, license | met       | `README.md`, `docs/architecture.md`, `docs/api.md`, `docs/security.md`, `docs/operations.md`, `docs/limitations.md`, `docs/benchmarks.md`, `LICENSE`, `NOTICE`.                                                                                                                                                                                                                            |
 
-**Test case coverage (§18.2):**
+**Test case coverage:**
 
 | Group | Cases                                                                                   | Where covered                                                                                                                                                                              | Result                                                            |
 | ----- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
@@ -147,7 +147,7 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 | PUB   | 01–11                                                                                   | Unit `snapshot.test.ts` (01, 10), `orchestrator.test.ts` (02, 03/06, 04, 07, 08, 09, 10); integration real GAS (04/05); staging E2E (02, 03, 07, 08, 11); prod smoke (02, 03, 08, 11)      | PASS                                                              |
 | SEC   | 01–07                                                                                   | Unit `snapshot.test.ts` (01, 06), `core.test.ts` (04); contract (03, 05); `check:deployed` dev + prod (02, 05, 06); CI `scan:secrets` (07)                                                 | PASS                                                              |
 | WEB   | 01–06                                                                                   | Unit (01); CI `check:web` (01, 02); `check:deployed` dev + prod (02, 03, 04, 05); staging/local E2E (05, 06)                                                                               | PASS                                                              |
-| E2E   | 01 full demo §24.3                                                                      | `tests/e2e/demo.spec.ts`: local stack, CI `e2e.yml` run 44925353661, staging (run 2, 8.8 min)                                                                                              | PASS (step 1 manual part and step 8 dashboard part pending owner) |
+| E2E   | 01 full demo scenario                                                                   | `tests/e2e/demo.spec.ts`: local stack, CI `e2e.yml` run 44925353661, staging (run 2, 8.8 min)                                                                                              | PASS (step 1 manual part and step 8 dashboard part pending owner) |
 
 **Tests run:**
 
@@ -182,14 +182,14 @@ Private values (Apps Script URLs, spreadsheet/Drive/GCP/Vercel IDs, secrets, e-m
 
 **Risks changed:**
 
-- **New — Apps Script write contention:** at 10 simultaneous writers on different posts, 6 of 10 got `LOCK_TIMEOUT` (10 s lock wait). That error is retryable and surfaced, but multi-author bursts are limited.
-- **New — `system.health` is slow:** it takes about 11 s p50 at every sheet size, above the 10 s mark in §21. It is a diagnostic call, not on the editing path. Every other RPC stayed under 10 s p95 up to 550 Posts rows.
-- **Reduced — content overwrite on promotion:** removed by ADR-0011.
-- **Reduced — wrong Vercel status:** fixed with exact project matching.
-- **Reduced — partial prod setup locking itself:** fixed in `b75ffad`.
-- **New — public capacity untested:** CDN capacity under concurrency is not measured (Vercel policy). The "3,000 simultaneous visitors" figure stays an untested hypothesis.
-- **New — shared credentials:** dev and prod share one GitHub PAT, which needs renewal within 90 days, and one OAuth client. A leaked PAT affects both environments (runbook R7).
-- **Open — history:** the private execution plan is still in old Git history until the owner decides on a purge.
+- **Apps Script write contention (new):** at 10 simultaneous writers on different posts, 6 of 10 got `LOCK_TIMEOUT` (10 s lock wait). That error is retryable and surfaced, but multi-author bursts are limited.
+- **`system.health` is slow (new):** it takes about 11 s p50 at every sheet size, above the 10 s benchmark mark. It is a diagnostic call, not on the editing path. Every other RPC stayed under 10 s p95 up to 550 Posts rows.
+- **Content overwrite on promotion (reduced):** removed by ADR-0011.
+- **Wrong Vercel status (reduced):** fixed with exact project matching.
+- **Partial prod setup locking itself (reduced):** fixed in `b75ffad`.
+- **Public capacity untested (new):** CDN capacity under concurrency is not measured (Vercel policy). The "3,000 simultaneous visitors" figure stays an untested hypothesis.
+- **Shared credentials (new):** dev and prod share one GitHub PAT, which needs renewal within 90 days, and one OAuth client. A leaked PAT affects both environments (runbook R7).
+- **History (open):** the private execution plan is still in old Git history until the owner decides on a purge.
 
 **Scope cuts applied:** none. P1 (pages, taxonomy, media, read-only revisions) shipped. The public 1/10/50/100-VU load test was replaced by 1-VU latency sampling because of Vercel's policy, not as a scope cut.
 
