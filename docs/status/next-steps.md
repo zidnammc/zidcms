@@ -11,7 +11,7 @@
 
 ### Next steps
 
-1. Promote the latest `main` (including the ADR-0012 changes) to `release` (owner approval; `docs/deployment.md` §3), then `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed`, and for a release also `… pnpm smoke:deployed`. Result: to be confirmed.
+1. Done on 2026-11-22: `main` `d1e78c0` (CI 44980359791, `integration.yml` 44980459836, `e2e.yml` 44980463137 — all green) promoted to `release` as `d7f49a6`; both prod builds succeeded; `ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed` → all PASS (35-route 401 matrix, headers, sitemap, snapshot allowlist, 0 web functions); `smoke:deployed` → publish v5 (`d1590f4b`, 72 s), update v6 (`04a85560`, 74 s), rollback v7 (`212cde14`, 70 s, checksum = v5), unpublish v8 (`a71cfc31`, 65 s). Prod now runs the latest code; nothing is pending for the executor.
 2. Before each promotion: CI plus `integration.yml` and `e2e.yml` (emulator stack) green on `main`. Real-service integration tests, the staging E2E and `pnpm build-switch` need a recreated dev environment (`docs/deployment.md` §1–2 with `ZIDCMS_ENV=dev`).
 
 ### How to resume
