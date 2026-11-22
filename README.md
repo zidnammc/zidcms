@@ -2,6 +2,10 @@
 
 **Publish from Sheets. Serve at scale.**
 
+[![Built with Devin](https://img.shields.io/badge/built%20with-Devin-0f172a)](https://devin.ai) [![Made possible by Poke](https://img.shields.io/badge/made%20possible%20by-Poke-10b981)](https://poke.com) [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
+> Built by [Devin](https://devin.ai), the AI software engineer by Cognition, using Devin AI Max access provided by [Poke](https://poke.com). Planned, directed and approved by the project owner.
+
 ZidCMS is an open-source, spreadsheet-native headless CMS:
 
 - a standalone **admin dashboard** (Next.js on Vercel) for allowlisted admins,
@@ -180,6 +184,9 @@ The reference deployment runs on Vercel Hobby, GitHub Free, and a free Google ac
 ## Acknowledgments
 
 ZidCMS was developed during a seven-day sprint using Devin AI Max access provided by Poke.
+
+- **[Poke](https://poke.com)** provided the Devin AI Max access that made this sprint possible.
+- **[Devin](https://devin.ai)** (Cognition) executed the work: code, tests, infrastructure setup, benchmarks and documentation, working from the owner's plan and decisions. Commits made by Devin are authored as `devin-ai-integration[bot]`; the process, findings and limits of this AI-executed sprint are described in the [retrospective](docs/status/retrospective.md).
 
 ## License
 
