@@ -2,7 +2,11 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const env = process.argv.find((a) => a === 'dev' || a === 'prod') ?? 'dev';
+const env = process.argv.find((a) => a === 'dev' || a === 'prod');
+if (!env) {
+  console.error('Usage: pass the environment explicitly: dev | prod');
+  process.exit(1);
+}
 const root = resolve(import.meta.dirname, '..');
 const file = resolve(root, `.local/secrets/${env}.env`);
 if (!existsSync(file)) throw new Error(`Missing .local/secrets/${env}.env`);

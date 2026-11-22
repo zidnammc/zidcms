@@ -229,8 +229,8 @@ export default async function DashboardPage() {
             </div>
           </dl>
           <p className="text-[11px] text-slate-500 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
-            Vercel Hobby: maks. 100 deployment/hari (kode + publikasi), 1 build bersamaan. Panduan: ≤40 kode + ≤30
-            publikasi + 30 cadangan.
+            Vercel Hobby: maks. 100 deployment/hari, 1 build bersamaan. Setiap publikasi memakai 1–2 deployment —
+            gabungkan beberapa perubahan sebelum menerbitkan.
           </p>
         </section>
       </div>

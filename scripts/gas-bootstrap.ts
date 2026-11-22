@@ -2,7 +2,11 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const env = process.argv.find((a) => a === 'dev' || a === 'prod') ?? 'dev';
+const env = process.argv.find((a) => a === 'dev' || a === 'prod');
+if (!env) {
+  console.error('Usage: pass the environment explicitly: dev | prod');
+  process.exit(1);
+}
 const cleanup = process.argv.includes('--cleanup');
 const root = resolve(import.meta.dirname, '..');
 const gasDir = resolve(root, 'services/apps-script');
@@ -23,8 +27,7 @@ if (cleanup) {
   process.exit(0);
 }
 
-if (!existsSync(secretsFile))
-  throw new Error(`Missing .local/secrets/${env}.env — run scripts/init-dev-secrets.ts first.`);
+if (!existsSync(secretsFile)) throw new Error(`Missing .local/secrets/${env}.env — run scripts/init-secrets.ts first.`);
 const secret = /^HMAC_SECRET=([A-Za-z0-9+/=]{40,})$/m.exec(readFileSync(secretsFile, 'utf8'))?.[1];
 if (!secret) throw new Error('HMAC_SECRET not found in the secrets file.');
 
