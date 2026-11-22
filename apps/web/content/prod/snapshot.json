@@ -1,8 +1,8 @@
 {
   "schema": "zidcms.snapshot/1",
-  "version": 7,
-  "basedOnVersion": 5,
-  "generatedAt": "2026-11-22T03:36:39.179Z",
+  "version": 8,
+  "basedOnVersion": null,
+  "generatedAt": "2026-11-22T03:37:57.866Z",
   "site": {
     "title": "ZidCMS Site",
     "description": "",
@@ -13,28 +13,10 @@
     "socialImage": null,
     "allowExternalImages": false
   },
-  "posts": [
-    {
-      "id": "8cdd6a71-09eb-44fa-a714-717120831c65",
-      "slug": "uji-rilis-mwra7u4g",
-      "title": "Uji rilis mwra7u4g",
-      "excerpt": "Versi pertama artikel tumbal mwra7u4g.",
-      "markdown": "Versi **pertama** artikel tumbal mwra7u4g.",
-      "authorName": "",
-      "publishedAt": "2026-11-22T03:33:27.636Z",
-      "updatedAt": "2026-11-22T03:33:27.636Z",
-      "category": null,
-      "tags": [],
-      "cover": null,
-      "seo": {
-        "title": "",
-        "description": ""
-      }
-    }
-  ],
+  "posts": [],
   "pages": [],
   "categories": [],
   "tags": [],
   "media": [],
-  "checksum": "sha256:ebe40523b100588d7a8cb499ce6d4eeb6ab2facbcc7ae86c112805b4e045378e"
+  "checksum": "sha256:310447d5538d863031b0db49e9a4d39b0780a97408c2d541cd1d7bba58355ea5"
 }
