@@ -11,9 +11,12 @@ const root = resolve(import.meta.dirname, '../..');
 export const target: 'local' | 'staging' = process.env.E2E_TARGET === 'staging' ? 'staging' : 'local';
 
 if (target === 'staging') {
-  const file = resolve(root, process.env.ZIDCMS_ENV_FILE ?? '.local/secrets/dev.env');
-  if (!existsSync(file)) throw new Error('E2E_TARGET=staging needs ZIDCMS_ENV_FILE (default .local/secrets/dev.env)');
+  const file = resolve(root, process.env.ZIDCMS_ENV_FILE ?? '');
+  if (!process.env.ZIDCMS_ENV_FILE || !existsSync(file)) throw new Error('E2E_TARGET=staging needs ZIDCMS_ENV_FILE');
   process.loadEnvFile(file);
+  if ((process.env.ZIDCMS_ENV ?? '').toLowerCase() === 'prod') {
+    throw new Error('Refusing to run the E2E scenario against a prod environment file (it publishes test content).');
+  }
 }
 
 const trimSlash = (url: string) => url.replace(/\/+$/, '');

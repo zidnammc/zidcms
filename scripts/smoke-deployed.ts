@@ -3,7 +3,11 @@ import { resolve } from 'node:path';
 import { adminApi, type Job, waitForJob } from './lib/admin';
 
 const root = resolve(import.meta.dirname, '..');
-process.loadEnvFile(resolve(root, process.env.ZIDCMS_ENV_FILE ?? '.local/secrets/dev.env'));
+if (!process.env.ZIDCMS_ENV_FILE) {
+  console.error('Set ZIDCMS_ENV_FILE explicitly: this publishes and removes a sacrificial post on that environment.');
+  process.exit(1);
+}
+process.loadEnvFile(resolve(root, process.env.ZIDCMS_ENV_FILE));
 const WEB = (process.env.PUBLIC_SITE_URL ?? '').replace(/\/+$/, '');
 const stamp = Date.now().toString(36);
 const evidence: Record<string, unknown> = { startedAt: new Date().toISOString(), web: new URL(WEB).host };

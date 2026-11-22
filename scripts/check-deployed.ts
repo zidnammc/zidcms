@@ -5,7 +5,11 @@ import { join, relative, resolve } from 'node:path';
 import type { Snapshot } from '../packages/core/src/index';
 
 const root = resolve(import.meta.dirname, '..');
-const envFile = resolve(root, process.env.ZIDCMS_ENV_FILE ?? '.local/secrets/dev.env');
+if (!process.env.ZIDCMS_ENV_FILE) {
+  console.error('Set ZIDCMS_ENV_FILE, e.g. ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed');
+  process.exit(1);
+}
+const envFile = resolve(root, process.env.ZIDCMS_ENV_FILE);
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 const ADMIN = (process.env.ADMIN_URL ?? '').replace(/\/+$/, '');
 const WEB = (process.env.PUBLIC_SITE_URL ?? '').replace(/\/+$/, '');

@@ -1,5 +1,7 @@
 # 0011 — Environment topology: per-environment content folders, prod on `release`
 
+Amended by ADR-0012: the dev/staging environment was retired on 2026-11-22.
+
 - **Status:** accepted (2026-11-21, owner approval). Supersedes the staging mechanism default in plan §8.1/G10 (`dev` branch).
 
 ## Problem

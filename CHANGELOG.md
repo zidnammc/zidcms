@@ -2,6 +2,13 @@
 
 All notable changes to ZidCMS are documented in this file. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- The dev/staging environment was retired on 2026-11-22 (ADR-0012): its Vercel projects and Apps Script deployment were deleted and `apps/web/content/dev/` was removed. Prod (branch `release`) is the only hosted environment; `main` carries code only and creates no Vercel deployments (both `vercel.json` files deploy `release` only).
+- `pnpm check:deployed`, `pnpm smoke:deployed` and the staging E2E require an explicit `ZIDCMS_ENV_FILE`; the staging E2E refuses prod environment files.
+
 ## [0.1.0] — 2026-11-21 (early stage)
 
 First public release, published as a GitHub pre-release. ZidCMS is an early-stage, non-commercial experiment and not a WordPress replacement; it may be developed further.
@@ -44,9 +51,9 @@ See [`docs/limitations.md`](docs/limitations.md).
 
 ### Not yet validated
 
-- A staging E2E run on the final per-environment content layout (blocked by the Vercel Hobby deployment limit on release day; local and CI E2E pass on it).
-
+- A staging E2E run on the final per-environment content layout (blocked by the Vercel Hobby deployment limit on release day; local and CI E2E pass on it). Superseded: staging was retired (ADR-0012, see Unreleased); prod is verified with `pnpm check:deployed` after promotion.
 - Setup on fresh accounts by a third party following [`docs/beginner-guide.md`](docs/beginner-guide.md).
 - Public CDN capacity under load. Vercel permits load testing only on Enterprise plans, so only low-rate latency sampling was run (see [`docs/benchmarks.md`](docs/benchmarks.md)).
 
+[Unreleased]: https://github.com/zidnammc/zidcms/compare/v0.1.0...main
 [0.1.0]: https://github.com/zidnammc/zidcms/releases/tag/v0.1.0

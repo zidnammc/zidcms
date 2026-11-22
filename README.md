@@ -61,7 +61,7 @@ Set `ADMIN_EMAILS` to your own Google account. Never commit it.
 
 ## Environments
 
-The reference deployment has two environments: **dev/staging** builds from `main`, **prod** builds from `release`; each has its own Google resources, secrets, Vercel projects, and content folder (`apps/web/content/<env>/`). See [`docs/deployment.md`](docs/deployment.md) and ADR-0011.
+The reference deployment has one hosted environment, **prod**: it builds from `release` and publishes to `apps/web/content/prod/`; `main` carries code only and creates no Vercel deployments. The dev/staging environment was retired on 2026-11-22 (ADR-0012); the code stays multi-environment (`ZIDCMS_ENV=dev|prod`), so a staging environment can be recreated. See [`docs/deployment.md`](docs/deployment.md), ADR-0011 and ADR-0012.
 
 ## Quality gates
 

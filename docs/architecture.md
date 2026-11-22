@@ -11,9 +11,9 @@
                                 ▼               ▼
                  ┌─────────────────────┐   ┌─────────────────────────┐
                  │ services/apps-script│   │ GitHub repo             │
-                 │  doPost dispatcher  │   │  apps/web/content/<env> │
-                 │  LockService        │   │  (main: dev, release:   │
-                 │                     │   │   prod) — ADR-0011      │
+                 │  doPost dispatcher  │   │  apps/web/content/prod  │
+                 │  LockService        │   │  (branch release; main  │
+                 │                     │   │   is code only) ADR-0012│
                  └──────┬───────┬──────┘   └───────────┬─────────────┘
                         ▼       ▼                      │ push → Vercel build
                Google Sheets  Google Drive             ▼
@@ -69,4 +69,4 @@ See plan §9 and `packages/core/src/schema/sheets.ts` (columns are resolved by h
 
 ## Environments
 
-Dev/staging builds `main` and publishes to `apps/web/content/dev/`; prod builds `release` and publishes to `apps/web/content/prod/`. Each has its own spreadsheet, script, secrets and Vercel projects; code reaches prod by merging `main` into `release`. See ADR-0011 and [deployment.md](deployment.md).
+Prod is the only hosted environment: it builds `release` and publishes to `apps/web/content/prod/`, with its own spreadsheet, script, secrets and Vercel projects. `main` carries code only and creates no Vercel deployments; code reaches prod by merging `main` into `release`. Until 2026-11-22 a dev/staging environment built `main` and published to `apps/web/content/dev/`; it was retired (ADR-0012), but the code stays multi-environment (`ZIDCMS_ENV=dev|prod`, per-environment content folders), so it can be recreated. See ADR-0011, ADR-0012 and [deployment.md](deployment.md).
