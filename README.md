@@ -179,7 +179,7 @@ The reference deployment runs on Vercel Hobby, GitHub Free, and a free Google ac
 
 ## Acknowledgments
 
-ZidCMS was developed during a seven-day sprint using Devin AI Max access provided by Poke.
+ZidCMS was developed using Devin AI Max access provided by Poke.
 
 - **[Poke](https://poke.com)** provided the Devin AI Max access that made this sprint possible.
 - **[Devin](https://devin.ai)** (Cognition) executed the work: code, tests, infrastructure setup, benchmarks and documentation, working from the owner's plan and decisions. Commits made by Devin are authored as `devin-ai-integration[bot]`; the process, findings and limits of this AI-executed sprint are described in the [retrospective](docs/history/retrospective.md).
