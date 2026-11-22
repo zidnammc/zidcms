@@ -171,7 +171,7 @@ export class GitHubStore implements SnapshotStore {
     const contexts = combined.statuses.map((s) => ({ ...s, key: s.context.toLowerCase() }));
     const status =
       contexts.find((s) => s.key === needle || /[–-]\s+(\S+)$/.exec(s.key)?.[1] === needle) ??
-      contexts.find((s) => s.key.includes(needle));
+      (needle === 'vercel' ? contexts.find((s) => s.key.includes(needle)) : undefined);
     if (!status) return { state: 'pending', detail: 'Menunggu Vercel memulai build' };
     const detail = (status.description ?? status.context).slice(0, 200);
     if (status.state === 'success') return { state: 'success', detail };

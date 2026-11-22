@@ -1,0 +1,70 @@
+{
+  "command": "latency",
+  "startedAt": "2026-11-21T20:18:16.316Z",
+  "finishedAt": "2026-11-21T20:24:44.847Z",
+  "postsRows": {
+    "_Meta": 3,
+    "Posts": 550,
+    "Pages": 1,
+    "Categories": 1,
+    "Tags": 1,
+    "Media": 2,
+    "Settings": 8,
+    "Revisions": 2173,
+    "PublishJobs": 21,
+    "Snapshots": 18,
+    "AuditLog": 2362
+  },
+  "samples": 10,
+  "result": {
+    "system.health": {
+      "n": 10,
+      "p50": 11901,
+      "p95": 14950,
+      "max": 14950,
+      "errors": 0
+    },
+    "posts.list(limit 20)": {
+      "n": 10,
+      "p50": 2182,
+      "p95": 3683,
+      "max": 3683,
+      "errors": 0
+    },
+    "posts.list(limit 50, q)": {
+      "n": 10,
+      "p50": 2379,
+      "p95": 2709,
+      "max": 2709,
+      "errors": 0
+    },
+    "posts.get": {
+      "n": 10,
+      "p50": 2525,
+      "p95": 3804,
+      "max": 3804,
+      "errors": 0
+    },
+    "posts.update": {
+      "n": 10,
+      "p50": 5662,
+      "p95": 6874,
+      "max": 6874,
+      "errors": 0
+    },
+    "publish.readPublished": {
+      "n": 10,
+      "p50": 4547,
+      "p95": 7592,
+      "max": 7592,
+      "errors": 0
+    },
+    "editor.context": {
+      "n": 10,
+      "p50": 4239,
+      "p95": 6168,
+      "max": 6168,
+      "errors": 0
+    }
+  }
+}

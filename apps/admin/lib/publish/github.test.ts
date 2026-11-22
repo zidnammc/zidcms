@@ -78,4 +78,10 @@ describe('GitHubStore per-environment content layout', () => {
     const { store: s } = store(() => ({ status: 200, body: { statuses } }));
     expect(await s.deployStatus('c1')).toEqual({ state: 'success', detail: 'dev ok' });
   });
+
+  it('waits instead of borrowing the status of a similarly named project', async () => {
+    const statuses = [{ context: 'Vercel – zidcms-web-foo', state: 'success', description: 'other project' }];
+    const { store: s } = store(() => ({ status: 200, body: { statuses } }));
+    expect((await s.deployStatus('c1')).state).toBe('pending');
+  });
 });

@@ -1,0 +1,15 @@
+{
+  "command": "seed",
+  "startedAt": "2026-11-21T18:08:58.168Z",
+  "finishedAt": "2026-11-21T18:17:07.686Z",
+  "to": 200,
+  "created": 150,
+  "errors": [],
+  "createMs": {
+    "n": 150,
+    "p50": 9265,
+    "p95": 11847,
+    "max": 12854
+  },
+  "wallSeconds": 472
+}

@@ -5,7 +5,11 @@ import { join, relative, resolve } from 'node:path';
 import type { Snapshot } from '../packages/core/src/index';
 
 const root = resolve(import.meta.dirname, '..');
-const envFile = resolve(root, process.env.ZIDCMS_ENV_FILE ?? '.local/secrets/dev.env');
+if (!process.env.ZIDCMS_ENV_FILE) {
+  console.error('Set ZIDCMS_ENV_FILE, e.g. ZIDCMS_ENV_FILE=.local/secrets/prod.env pnpm check:deployed');
+  process.exit(1);
+}
+const envFile = resolve(root, process.env.ZIDCMS_ENV_FILE);
 if (existsSync(envFile)) process.loadEnvFile(envFile);
 const ADMIN = (process.env.ADMIN_URL ?? '').replace(/\/+$/, '');
 const WEB = (process.env.PUBLIC_SITE_URL ?? '').replace(/\/+$/, '');
@@ -163,10 +167,38 @@ async function webChecks() {
   );
 }
 
+function vercel(args: string[]): string | null {
+  const res = spawnSync('vercel', args, {
+    cwd: root,
+    encoding: 'utf8',
+    shell: process.platform === 'win32',
+    env: { ...process.env, MSYS_NO_PATHCONV: '1' },
+  });
+  return res.status === 0 ? `${res.stdout}${res.stderr}` : null;
+}
+
+function deployedFunctions() {
+  const inspect = vercel(['inspect', new URL(WEB).hostname]);
+  const id = inspect?.match(/dpl_[A-Za-z0-9]+/)?.[0];
+  const raw = id ? vercel(['api', `/v13/deployments/${id}`, '--raw']) : null;
+  if (!raw) {
+    console.log('SKIP TC-WEB-02 (deployed) Vercel CLI not available or not logged in');
+    return;
+  }
+  const deployment = JSON.parse(raw.slice(raw.indexOf('{'))) as { lambdas?: { output?: unknown[] }[]; target?: string };
+  const outputs = (deployment.lambdas ?? []).flatMap((l) => l.output ?? []).length;
+  check(
+    'TC-WEB-02 (deployed)',
+    outputs === 0,
+    `current ${deployment.target} deployment of the web project has ${outputs} function outputs`,
+  );
+}
+
 async function main() {
   console.log(`Deployed checks: admin ${new URL(ADMIN).host}, web ${new URL(WEB).host}`);
   await adminChecks();
   await webChecks();
+  deployedFunctions();
   console.log(failed ? `${failed} check(s) FAILED` : 'All deployed checks passed');
   process.exit(failed ? 1 : 0);
 }

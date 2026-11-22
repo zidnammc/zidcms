@@ -61,6 +61,7 @@ function record(name: string, trace: JobTrace, version?: VersionFile) {
 }
 
 test.describe.configure({ mode: 'serial' });
+test.skip(process.env.SCREENSHOTS === '1', 'screenshot run');
 
 test('TC-E2E-01 demo scenario (plan §24.3) incl. PoC-3 media, P0-5 errors and TC-PUB-07/08/11', async ({
   page,
